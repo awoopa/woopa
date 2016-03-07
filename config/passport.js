@@ -72,17 +72,20 @@ module.exports = function(passport) {
 
     passport.use('local-login', new LocalStrategy({
         passReqToCallback : true // allows us to pass back the entire request to the callback
-    }, function(req, email, password, done) { // callback with email and password from our form
+    }, function(req, username, password, done) { // callback with username and password from our form
       db.oneOrNone("SELECT * FROM WoopaUser WHERE username = $1", username)
       .then(user => {
         if (user) {
-          crypto.pbkdf2(password, user.salt, 10000, 512), (err, hash) => {
+          crypto.pbkdf2(password, user.salt, 10000, 512, (err, hash) => {
+            hash = new Buffer(hash).toString('hex');
             if (hash == user.password) {
+              console.log("success! logging in");
               return done(null, user);
             } else {
+              console.log("incorrect password");
               return done(null, false, req.flash('loginMessage', 'Incorrect password.'))
             }
-          }
+          })
         } else {
           return done(null, false, req.flash('loginMessage', 'No user found.'));
         }

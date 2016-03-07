@@ -1,13 +1,13 @@
 var db = require('../models');
 
 module.exports = function (app, passport) {
-  app.route('/signup')
+  app.route('/login')
     .get(function (req, res, next) {
-      res.render('signup', {message: req.flash('signupMessage')});
+      res.render('login', {message: req.flash('loginMessage')});
     })
-    .post(passport.authenticate('local-signup', {
+    .post(passport.authenticate('local-login', {
       successRedirect: '/',
-      failureRedirect: '/signup',
+      failureRedirect: '/login',
       failureFlash: true
     }));
 };
