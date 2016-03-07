@@ -1,8 +1,6 @@
 var pgp = require('pg-promise')({}),
-    config = require('./config'),
-    connectionString = process.env.DATABASE_URL || config.db;
+    db = require('../app/models/index');
 
-var db = pgp(connectionString);
 
 
 db.tx(function() {
