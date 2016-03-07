@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dbinit": "node config/dbinit.js"
   },
   "dependencies": {
     "better-console": "^0.2.4",
@@ -39,12 +40,13 @@
     "method-override": "^2.3.0",
     "morgan": "^1.6.1",
     "nunjucks": "^2.0.0",
+    "passport": "^0.3.2",
     "pg": "^4.4.1",
     "pg-hstore": "2.3.2",
+    "pg-promise": "^3.3.0",
     "require-dot-file": "^0.4.0",
     "run-sequence": "^1.1.5",
     "semantic-ui": "^2.1.8",
-    "sequelize": "^3.5.1",
     "serve-favicon": "^2.3.0",
     "yamljs": "^0.2.6"
   },
