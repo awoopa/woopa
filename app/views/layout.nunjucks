@@ -13,6 +13,7 @@
   {% endif %}
 </head>
 <body>
+  {% include "partial-navbar.nunjucks" %}
   {% block content %}{% endblock %}
 </body>
 </html>
