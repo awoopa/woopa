@@ -14,14 +14,17 @@ module.exports = function(passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function(user, done) {
-        done(null, user.userID);
+        //done(null, user.userID);
+        console.log("serialize user: " + user);
+        console.log(user);
+        done(null, user.userid);
     });
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
-      db.one(`SELECT * FROM WoopaUser WHERE userID = $1`, [id])
+      db.one(`SELECT * FROM WoopaUser WHERE userID = $1`, id)
         .then(user => done(null, user))
-        .catch(err => done(err));
+        .catch(err => done(err, null));
     });
 
     // =========================================================================
@@ -32,34 +35,59 @@ module.exports = function(passport) {
 
     passport.use('local-signup', new LocalStrategy({
         passReqToCallback : true // allows us to pass back the entire request to the callback
-    },
-    function(req, username, password, done) {
-        db.oneOrNone("SELECT * FROM WoopaUser WHERE userID = $1", [username])
-        .then(user => {
-          if (user) {
-            return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
-          } else {
+    }, function(req, username, password, done) {
+      db.oneOrNone("SELECT * FROM WoopaUser WHERE username = $1", username)
+      .then(user => {
+        if (user) {
+          return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
+        } else {
 
-            crypto.randomBytes(256, (err, salt) => {
+          crypto.randomBytes(512, (err, salt) => {
+            if (err) throw err;
+
+            salt = new Buffer(salt).toString('hex');
+            crypto.pbkdf2(password, salt, 10000, 512, (err, hashedPassword) => {
               if (err) throw err;
 
-              salt = new Buffer(salt).toString('hex');
-              crypto.pkdf2(password, salt, 1000, 512, (err, hashedPassword) => {
-                if (err) throw err;
+              hashedPassword = new Buffer(hashedPassword).toString('hex');
 
-                hashedPassword = new Buffer(hashedPassword).toString('hex');
+              db.one(
+                'INSERT INTO WoopaUser(email, username, salt, password) VALUES($1, $2, $3, $4) RETURNING *',
+                [req.body.email, username, salt, hashedPassword])
+                .then(user => {return done(null, user)})
+                .catch(err => {throw err});
+            })
+          });
 
-                db.one(
-                  'INSERT INTO WoopaUser(email, username, salt, password) VALUES($1, $2, $3) RETURNING userID',
-                  [req.body.email, username, salt, hashedPassword])
-                  .then(user => {return done(null, user)})
-                  .catch(err => {throw err});
-              })
-            });
+        }
+      })
+      .catch(err => {return done(err)});
+    }));
 
+    // =========================================================================
+    // LOCAL LOGIN =============================================================
+    // =========================================================================
+    // we are using named strategies since we have one for login and one for signup
+    // by default, if there was no name, it would just be called 'local'
+
+    passport.use('local-login', new LocalStrategy({
+        passReqToCallback : true // allows us to pass back the entire request to the callback
+    }, function(req, email, password, done) { // callback with email and password from our form
+      db.oneOrNone("SELECT * FROM WoopaUser WHERE username = $1", username)
+      .then(user => {
+        if (user) {
+          crypto.pbkdf2(password, user.salt, 10000, 512), (err, hash) => {
+            if (hash == user.password) {
+              return done(null, user);
+            } else {
+              return done(null, false, req.flash('loginMessage', 'Incorrect password.'))
+            }
           }
-        })
-        .catch(err => {return done(err)});
+        } else {
+          return done(null, false, req.flash('loginMessage', 'No user found.'));
+        }
+      })
+      .catch(err => {return done(err)});
     }));
 
 };
