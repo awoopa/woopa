@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "dbinit": "node config/dbinit.js"
+    "dbinit": "node config/dbinit.js",
+    "dbpopulate": "node config/dbpopulate.js"
   },
   "dependencies": {
     "better-console": "^0.2.4",
