@@ -21,15 +21,5 @@ module.exports = function (app, passport) {
         })
       })
   });
-
-  router.get('/signup', function (req, res, next) {
-    res.render('signup', {message: req.flash('signupMessage')});
-  });
-
-  router.post('/signup', passport.authenticate('local-signup', {
-    successRedirect: '/',
-    failureRedirect: '/signup',
-    failureFlash: true
-  }));
 };
 
