@@ -11,3 +11,11 @@ World Online Organization of Pictures and Art
   WARNING: This WILL delete all existing tables.
 - run ```npm run dbpopulate``` to populate the tables with sample data.
 - run ```npm start``` to start the server.
+
+For syntax highlighting for Nunjucks in Sublime:
+- Ensure Package Control is installed
+- Open Command Palette, and select ```Package Control: Add Repository```
+- Paste in ```https://github.com/andres-risso/sublime-nunjucks.git```
+- Open Command Paletter, and select ```Package Control: Install Package```
+- Select ```sublime-nunjucks```
+- Open a ```.nunjucks``` file and choose View -> Syntax -> Open all with current extension as... -> Nunjucks

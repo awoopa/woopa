@@ -7,10 +7,18 @@ module.exports = function (app) {
 };
 
 router.get('/', function (req, res, next) {
-  db.Article.findAll().then(function (articles) {
-    res.render('index', {
-      title: 'Generator-Express MVC',
-      articles: articles
-    });
-  });
+  db.any("SELECT * FROM WoopaUser", true)
+    .then(users => {
+      console.log(users);
+      res.render('index', {
+        title: 'Index',
+        users: users
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      res.render('error', {
+        message: err
+      })
+    })
 });
