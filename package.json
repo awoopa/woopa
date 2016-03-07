@@ -46,7 +46,6 @@
     "pg-promise": "^3.3.0",
     "require-dot-file": "^0.4.0",
     "run-sequence": "^1.1.5",
-    "semantic-ui": "^2.1.8",
     "serve-favicon": "^2.3.0",
     "yamljs": "^0.2.6"
   },
