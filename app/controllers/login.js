@@ -10,4 +10,10 @@ module.exports = function (app, passport) {
       failureRedirect: '/login',
       failureFlash: true
     }));
+
+  app.route('/logout')
+    .get((req, res, next) => {
+    	req.logout();
+    	res.redirect('/');
+    })
 };

@@ -11,7 +11,8 @@ module.exports = function (app, passport) {
         console.log(users);
         res.render('index', {
           title: 'Index',
-          users: users
+          users: users,
+          user: req.user
         });
       })
       .catch(err => {
