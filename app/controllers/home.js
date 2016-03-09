@@ -4,6 +4,24 @@ var express = require('express'),
 
 module.exports = function (app, passport) {
   app.use('/', router);
+  router.get('/', function (req, res, next) {
+    db.any("SELECT * FROM Media", true)
+      .then(media => {
+        console.log(media);
+        res.render('index', {
+          title: 'Index',
+          media: media,
+          loggedInUser: req.user
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        res.render('error', {
+          message: err
+        })
+      })
+  });
+};
 
   router.get('/', function (req, res, next) {
     db.any("SELECT * FROM WoopaUser", true)
@@ -11,7 +29,8 @@ module.exports = function (app, passport) {
         console.log(users);
         res.render('index', {
           title: 'Index',
-          users: users
+          users: users,
+          user: req.user
         });
       })
       .catch(err => {
