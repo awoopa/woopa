@@ -9,6 +9,10 @@ var compress = require('compression');
 var methodOverride = require('method-override');
 var nunjucks = require('nunjucks');
 
+var session = require('express-session');
+var passport = require('passport');
+var flash = require("connect-flash");
+
 module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
   app.locals.ENV = env;
@@ -39,9 +43,17 @@ module.exports = function(app, config) {
   app.use(express.static(config.root + '/public'));
   app.use(methodOverride());
 
+  require('./passport')(passport);
+
+  app.use(session({ secret: "thisisareallybadsecret" }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(flash());
+
   var controllers = glob.sync(config.root + '/app/controllers/*.js');
   controllers.forEach(function (controller) {
-    require(controller)(app);
+    require(controller)(app, passport);
+    //require(controller)(app);
   });
 
   app.use(function (req, res, next) {

@@ -21,8 +21,9 @@ db.tx(function() {
           userID    serial  UNIQUE NOT NULL,
           email     text    UNIQUE NOT NULL,
           username  text    UNIQUE NOT NULL,
+          salt      text    NOT NULL,
           password  text    NOT NULL,
-          isAdmin   boolean NOT NULL,
+          isAdmin   boolean NOT NULL DEFAULT FALSE,
           PRIMARY KEY (userID)
         );
       `),
