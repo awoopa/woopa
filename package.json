@@ -48,6 +48,7 @@
     "pg": "^4.4.1",
     "pg-hstore": "2.3.2",
     "pg-promise": "^3.3.0",
+    "pretty-ms": "^2.1.0",
     "require-dot-file": "^0.4.0",
     "run-sequence": "^1.1.5",
     "serve-favicon": "^2.3.0",

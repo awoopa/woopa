@@ -13,6 +13,8 @@ var session = require('express-session');
 var passport = require('passport');
 var flash = require("connect-flash");
 
+var prettyMs = require('pretty-ms');
+
 module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
   app.locals.ENV = env;
