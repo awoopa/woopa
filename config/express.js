@@ -20,6 +20,9 @@ module.exports = function(app, config) {
   
   app.set('views', config.root + '/app/views');
   app.set('view engine', 'nunjucks');
+
+  var crypto = require('crypto');
+
   nunjucks.configure(config.root + '/app/views', {
       autoescape: true,
       express: app
@@ -49,6 +52,11 @@ module.exports = function(app, config) {
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(flash());
+
+  app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
+    next();
+  });
 
   var controllers = glob.sync(config.root + '/app/controllers/*.js');
   controllers.forEach(function (controller) {
