@@ -19,6 +19,13 @@ module.exports = function(app, config) {
   nunjucks.configure(config.root + '/app/views', {
       autoescape: true,
       express: app
+  }).addFilter('gravatar', (str, size) => { // TODO: move this somewhere else
+    var s = '//www.gravatar.com/avatar/'
+    s += crypto.createHash('md5').update(str).digest('hex');
+    if (size) {s += '?s=' + size};
+    return s;
+  }).addFilter('approxtime', (str) => {
+    return prettyMs(new Date() - new Date(str), {compact: true}).slice(1);
   });
 
   // app.use(favicon(config.root + '/public/img/favicon.ico'));
