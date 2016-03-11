@@ -3,9 +3,9 @@ var pgp = require('pg-promise')({}),
     sqlCreateTables = sql('scripts/sql/dbinit.sql');
 
 
-db.any(sqlCreateTables)
-  .then(events => { 
-    if(events) console.log(events);
+db.none(sqlCreateTables)
+  .then(() => { 
+    console.log("DB initialized!");
     pgp.end();
   })
   .catch(err => { 
