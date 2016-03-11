@@ -21,7 +21,6 @@ module.exports = function (app, passport) {
         })
       })
   });
-};
 
   router.get('/', function (req, res, next) {
     db.any("SELECT * FROM WoopaUser", true)

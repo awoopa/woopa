@@ -8,6 +8,7 @@ db.tx(function() {
       this.none(`DROP TABLE IF EXISTS Actor CASCADE;`),
       this.none(`DROP TABLE IF EXISTS WoopaUser CASCADE;`),
       this.none(`DROP TABLE IF EXISTS Friends CASCADE;`),
+      this.none(`DROP TYPE IF EXISTS mediaType CASCADE`),
       this.none(`DROP TABLE IF EXISTS Media CASCADE;`),
       this.none(`DROP TABLE IF EXISTS Review_Writes_About CASCADE;`),
       this.none(`DROP TABLE IF EXISTS Watched CASCADE;`),
@@ -35,6 +36,9 @@ db.tx(function() {
         );
       `),
       this.none(`
+        CREATE TYPE mediaType AS ENUM ('movie', 'tvshow', 'video')
+      `),
+      this.none(`
         CREATE TABLE Media (
           mediaID     serial    UNIQUE NOT NULL,
           title       text      NOT NULL,
@@ -43,7 +47,7 @@ db.tx(function() {
           publishDate date      NOT NULL,
           rating      decimal,
           thumbnail   text,
-          type        integer   NOT NULL,
+          type        mediaType NOT NULL,
           runtime     integer   NULL,
           numSeasons  integer   NULL,
           numViews    integer   NULL,
@@ -53,11 +57,12 @@ db.tx(function() {
       `),
       this.none(`
         CREATE TABLE Review_Writes_About (
-          reviewID    serial  UNIQUE NOT NULL,
-          comment     text    NOT NULL,
-          rating      integer NOT NULL,
-          userID      integer NOT NULL REFERENCES WoopaUser (userID),
-          mediaID     integer NOT NULL REFERENCES Media (mediaID),
+          reviewID    serial    UNIQUE NOT NULL,
+          comment     text      NOT NULL,
+          rating      integer   NOT NULL CHECK (rating >= 0 AND rating <= 10),
+          userID      integer   NOT NULL REFERENCES WoopaUser (userID),
+          mediaID     integer   NOT NULL REFERENCES Media (mediaID),
+          timestamp   timestamp with time zone NOT NULL DEFAULT now(),
           PRIMARY KEY (reviewID)
         );
       `),
