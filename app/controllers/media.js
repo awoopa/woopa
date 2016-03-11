@@ -2,7 +2,7 @@ var db = require('../models');
 
 module.exports = function (app, passport) {
   app.route('/m/:id')
-    .get(function (req, res, next) {
+    .get((req, res, next) => {
 
       db.tx(t => {
         return t.batch([
