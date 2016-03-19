@@ -32,7 +32,8 @@ module.exports = function (app, passport) {
           res.render('media', {
             media: data[0],
             recommendations: data[1].count,
-            reviews: data[2]
+            reviews: data[2],
+            title: data[0].title
           });
         } else {
           res.render('error', {
