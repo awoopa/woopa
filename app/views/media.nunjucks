@@ -32,6 +32,14 @@
 					</div>
 				</div>
 		    <div class="extra">
+		    	<div class="inactive ui star rating">
+		    	{% for i in range(0, review.rating) -%}
+		    		<i class="icon active"></i>
+		    	{%- endfor %}
+		    	{% for i in range(review.rating, 10) -%}
+		    		<i class="icon"></i>
+		    	{%- endfor %}
+		    	</div>
 		    </div>
     	</div>
 		{% endfor %}
@@ -58,7 +66,7 @@
 </div>
 
 <script>
-$('.rating').rating({
+$('.new-review .rating').rating({
 	onRate: function(value) {
 		$('.new-review [name="rating"]').val(value);
 	}
