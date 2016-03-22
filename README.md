@@ -10,7 +10,7 @@ World Online Organization of Pictures and Art
 - run ```npm run dbinit``` to create all the tables.
   WARNING: This WILL delete all existing tables.
 - run ```npm run dbpopulate``` to populate the tables with sample data.
-- run ```npm start``` to start the server.
+- run ```gulp develop``` to start the server. The Gulpfile is setup with Nodemon and LiveReload.
 
 For syntax highlighting for Nunjucks in Sublime:
 - Ensure Package Control is installed
