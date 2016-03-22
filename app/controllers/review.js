@@ -3,14 +3,24 @@ var db = require('../models');
 module.exports = function (app, passport) {
 
   app.route('/r/')
+    // need to check for authentication
     .post((req, res, next) => {
+      console.log('POST review hit');
+      console.log(req.body.comment);
+      console.log(req.body.rating);
+      console.log(req.user.userid);
+      console.log(req.body.mediaID);
       db.tx(t => {
         return t.batch([
-          t.one(`INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values ($1, $2, $,3, $4)`,
-            [req.body.comment, req.body.rating, req.user, req.body.mediaID])
+          t.one(`INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values ($1, $2, $3, $4) RETURNING *`,
+            [req.body.comment, req.body.rating, req.user.userid, req.body.mediaID])
         ])
+      }).then(data => {
+        res.redirect(/m/ + req.body.mediaID);
+      }).catch(error => {
+        console.log(error);
       });
-    })
+    });
 
 
   app.route('/r/:id')

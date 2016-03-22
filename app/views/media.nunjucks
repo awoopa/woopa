@@ -32,18 +32,36 @@
 					</div>
 				</div>
 		    <div class="extra">
-		      Rating:
-		      <div class="ui star rating" data-rating="{{review.rating}}" data-max-rating="10"></div>
 		    </div>
     	</div>
 		{% endfor %}
+		{% if currentUser %}
+			<div class="card new-review">
+				<form action="/r/" method="post">
+					<div class="content">
+	    				Write a review
+						<div class="description">
+							<input class="hidden" name="rating" value="0" readonly />
+							<input class="hidden" name="mediaID" value="{{media.mediaid}}" readonly />
+							<textarea name="comment" id="comment"></textarea>
+						</div>
+					</div>
+			    <div class="extra">
+			      <div class="ui star rating" data-rating="5" data-max-rating="10"></div>
+			    </div>
+			    <button class="ui submit button" type="submit">Submit</button>
+		    </form>
+    	</div>
+  	{% endif %}
 		</div>
 	<div>
 </div>
 
 <script>
-$('.rating')
-  .rating('disable')
-;
+$('.rating').rating({
+	onRate: function(value) {
+		$('.new-review [name="rating"]').val(value);
+	}
+});
 </script>
 {% endblock %}
