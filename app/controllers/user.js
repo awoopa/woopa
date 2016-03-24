@@ -92,7 +92,7 @@ module.exports = function (app, passport) {
             return t.batch([
               t.any(`
                 INSERT INTO Friends 
-                (userer_userID, friend_userID) values($1, $2)`,
+                (user_userID, friend_userID) values($1, $2)`,
                 [req.user.userid, req.params.id])
             ]);
           }).then(data => {
