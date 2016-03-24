@@ -50,7 +50,7 @@ CREATE TABLE Media (
 CREATE TABLE Review_Writes_About (
   reviewID    serial    UNIQUE NOT NULL,
   comment     text      NOT NULL,
-  rating      integer   NOT NULL CHECK (rating >= 0 AND rating <= 10),
+  rating      integer   NOT NULL CHECK (rating >= 1 AND rating <= 10),
   userID      integer   NOT NULL REFERENCES WoopaUser (userID),
   mediaID     integer   NOT NULL REFERENCES Media (mediaID),
   timestamp   timestamp with time zone NOT NULL DEFAULT now(),
