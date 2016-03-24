@@ -42,7 +42,45 @@ module.exports = function (app, passport) {
           })
         }
       });
+    });
 
-
+  app.route('/u/:id/add')
+    .get((req, res, next) => {
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/login');
+      }
+    }, (req, res, next) => {
+      console.log('hit second function');
+      db.tx(t => {
+        return t.batch([
+          t.oneOrNone(`
+            SELECT * 
+            FROM Friends
+            WHERE user_userID = $1 AND
+                  friend_userID = $2`,
+            [req.user.userid, req.params.id])
+        ]);
+      }).then(data => {
+        console.log(data);
+        if (data[0]) {
+          res.redirect('/u/' + req.params.id);
+        } else {
+          db.tx(t => {
+            return t.batch([
+              t.any(`
+                INSERT INTO Friends 
+                (user_userID, friend_userID) values($1, $2)`,
+                [req.user.userid, req.params.id])
+            ]);
+          }).then(data => {
+            console.log(data);
+            res.redirect('/u/' + req.params.id);
+          }).error(err => {
+            console.log(error);
+          });
+        }
+      });
     });
 };
