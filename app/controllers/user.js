@@ -73,7 +73,6 @@ module.exports = function (app, passport) {
         res.redirect('/login');
       }
     }, (req, res, next) => {
-      console.log('hit second function');
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
@@ -84,7 +83,6 @@ module.exports = function (app, passport) {
             [req.user.userid, req.params.id])
         ]);
       }).then(data => {
-        console.log(data);
         if (data[0]) {
           res.redirect('/u/' + req.params.id);
         } else {
@@ -96,7 +94,6 @@ module.exports = function (app, passport) {
                 [req.user.userid, req.params.id])
             ]);
           }).then(data => {
-            console.log(data);
             res.redirect('/u/' + req.params.id);
           }).error(err => {
             console.log(error);
