@@ -22,6 +22,7 @@
               <i class="film icon"></i>
               {{ media.runtime }} minutes
             {% elif media.type == 'tvshow' %}
+              <i class="fa fa-television"></i>
               {{ media.numseasons }} seasons
             {% elif media.type == 'video' %}
               <i class="youtube play icon"></i>
