@@ -1,0 +1,60 @@
+{% extends 'layout.nunjucks' %}
+
+{% block content %}
+  <div class="ui container">
+    <div class="ui text menu">
+    Show only: 
+    <a class="ui labeled icon button" href="/m?type=movie">
+      <i class="film icon"></i>
+      Movies
+    </a>
+    <a class="ui labeled icon button" href="/m?type=tvshow">
+      <i class="icon fa fa-television" style=""><i class=""></i></i>
+      TV Shows
+    </a>
+    <a class="ui labeled icon button" href="/m?type=video">
+      <i class="youtube play icon"></i>
+      Videos
+    </a>
+    </div>
+    <div class="ui four link cards">
+      {% if medias %}
+        {% for media in medias %}
+          <a class="ui link card" href="/m/{{media.mediaid}}">
+            <div class="image">
+              <img src="https://placehold.it/150x150" />
+            </div>
+            <div class="content">
+              <div class="header">{{media.title}}</div>
+              <div class="meta">
+                {{media.genre}}
+              </div>
+              <div class="description">
+                <p>{{media.synopsis}}</p>
+              </div>
+            </div>
+            <div class="extra content">
+              <span>
+                {% if media.type == 'movie' %}
+                  <i class="film icon"></i>
+                  {{ media.runtime }} minutes
+                {% elif media.type == 'tvshow' %}
+                  <i class="fa fa-television"></i>
+                  {{ media.numseasons }} seasons
+                {% elif media.type == 'video' %}
+                  <i class="youtube play icon"></i>
+                  {{ media.numviews }} views
+                {% endif %}
+              </span>
+              <span class="right floated">
+                {{media.publishdate | date("MMM DD, YYYY") }}
+              </span>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        No media found.
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

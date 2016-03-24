@@ -14,6 +14,7 @@ var passport = require('passport');
 var flash = require("connect-flash");
 
 var prettyMs = require('pretty-ms');
+var dateFilter = require('nunjucks-date-filter');
 
 module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
@@ -35,7 +36,7 @@ module.exports = function(app, config) {
     return s;
   }).addFilter('approxtime', (str) => {
     return prettyMs(new Date() - new Date(str), {compact: true}).slice(1);
-  });
+  }).addFilter('date', dateFilter);
 
   // app.use(favicon(config.root + '/public/img/favicon.ico'));
   app.use(logger('dev'));

@@ -14,3 +14,10 @@ a {
 .inactive .icon {
   cursor: default !important;
 }
+
+/*
+dirty hack to prevent the Semantic UI icon class from changing the font
+*/
+.fa.icon {
+	font-family: FontAwesome;
+}

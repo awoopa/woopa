@@ -1,6 +1,42 @@
 var db = require('../models');
 
 module.exports = function (app, passport) {
+  app.route('/m/')
+    .get((req, res, next) => {
+      var type = req.query.type;
+
+      var query = "SELECT * FROM Media";
+      
+      switch (type) {
+        case "movie":
+          query += " WHERE type = 'movie'";
+          break;
+        case 'tvshow':
+          query += " WHERE type = 'tvshow'";
+          break;
+        case "video":
+          query += " WHERE type = 'video'";
+          break;
+        default:
+          break;
+      }
+
+      query += " ORDER BY rating DESC";
+
+      db.tx(t => {
+        return t.batch([
+          t.any(query)
+        ])
+      })
+      .then(data => {
+        res.render('media-listing', {
+          medias: data[0],
+          title: 'Browse'
+        });
+      })
+    });
+
+
   app.route('/m/:id')
     .get((req, res, next) => {
 

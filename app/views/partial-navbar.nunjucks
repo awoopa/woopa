@@ -1,6 +1,7 @@
 <div class="ui large menu inverted navbar page grid">
   
   <a href="/" class="brand item">Woopa</a>
+  <a href="/m/" class="item">Browse</a>
   <div class="right menu">
   {% if currentUser %}
   	<a href="/u/{{currentUser.userid}}" class="item"><img src="{{currentUser.email | gravatar(50)}}" class="ui avatar image" />{{ currentUser.username }}</a>
