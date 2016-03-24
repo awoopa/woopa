@@ -10,3 +10,7 @@ a {
 .hidden {
   display: none;
 }
+
+.inactive .icon {
+  cursor: default !important;
+}
