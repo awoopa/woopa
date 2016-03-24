@@ -2,12 +2,12 @@ var db = require('../models');
 
 module.exports = function (app, passport) {
   app.route('/u/:id')
-    .get(function (req, res, next) {
+    .get((req, res, next) => {
 
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
-            SELECT username, email
+            SELECT username, email, userid
             FROM WoopaUser
             WHERE userID = $1`, 
             req.params.id
