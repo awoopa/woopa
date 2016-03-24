@@ -21,6 +21,8 @@ module.exports = function (app, passport) {
           break;
       }
 
+      query += " ORDER BY rating DESC";
+
       db.tx(t => {
         return t.batch([
           t.any(query)
