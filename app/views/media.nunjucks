@@ -5,7 +5,7 @@
 	<div class="column">
 	  <h1>{{ media.title }}</h1>
 		
-	  <p>Published {{ media.publishdate }}</p>
+	  <p>Published {{ media.publishdate | date("MMM DD, YYYY") }}</p>
 	  <p>Synopsis: {{ media.synopsis }}</p>
 	  <p>Rating: {{ media.rating }}</p>
 	</div>
