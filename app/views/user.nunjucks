@@ -4,6 +4,10 @@
 <div class="ui four column doubling stackable grid container">
 	<div class="column">
 	  <h1>{{ user.username }}</h1>
+    <button class="ui labeled icon button">
+      <i class="add user icon"></i>
+      Add Friend
+    </button>
 	</div>
 	<div class="column">
 		<div class="ui statistic">
