@@ -5,7 +5,7 @@ module.exports = function (app, passport) {
     .get((req, res, next) => {
 
       db.tx(t => {
-        return t.batch([
+        var queries = [
           t.oneOrNone(`
             SELECT username, email, userid
             FROM WoopaUser
@@ -27,15 +27,36 @@ module.exports = function (app, passport) {
                   M.mediaID = RWA.mediaID`,
             req.params.id
           )
-        ])
-      })
-      .then(data => {
+        ];
+
+        if (req.user) {
+          queries.push(t.oneOrNone(`
+            SELECT *
+            FROM Friends
+            WHERE user_userID = $1 AND
+                  friend_userID = $2`,
+            [req.user.userid, req.params.id]));
+        }
+
+        console.log(queries);
+
+        return t.batch(queries);
+      }).then(data => {
+        console.log(data);
         if (data[0]) {
-          res.render('user', {
+          var values = {
             user: data[0],
             recommendations: data[1],
             reviews: data[2]
-          });
+          }
+
+          if (data[3]) {
+            values.are_friends = true;
+          } else {
+            values.are_friends = false;
+          }
+
+          res.render('user', values);
         } else {
           res.render('error', {
             message: "user not found"
@@ -71,7 +92,7 @@ module.exports = function (app, passport) {
             return t.batch([
               t.any(`
                 INSERT INTO Friends 
-                (user_userID, friend_userID) values($1, $2)`,
+                (userer_userID, friend_userID) values($1, $2)`,
                 [req.user.userid, req.params.id])
             ]);
           }).then(data => {
