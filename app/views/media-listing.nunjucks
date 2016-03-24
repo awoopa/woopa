@@ -1,0 +1,38 @@
+{% extends 'layout.nunjucks' %}
+
+{% block content %}
+  <div class="ui six link cards">
+    {% for media in medias %}
+      <a class="ui link card" href="/m/{{media.mediaid}}">
+        <div class="image">
+          <img src="https://placehold.it/150x150" />
+        </div>
+        <div class="content">
+          <div class="header">{{media.title}}</div>
+          <div class="meta">
+            {{media.genre}}
+          </div>
+          <div class="description">
+            <p>{{media.synopsis}}</p>
+          </div>
+        </div>
+        <div class="extra content">
+          <span>
+            {% if media.type == 'movie' %}
+              <i class="film icon"></i>
+              {{ media.runtime }} minutes
+            {% elif media.type == 'tvshow' %}
+              {{ media.numseasons }} seasons
+            {% elif media.type == 'video' %}
+              <i class="youtube play icon"></i>
+              {{ media.numviews }} views
+            {% endif %}
+          </span>
+          <span class="right floated">
+            {{media.publishdate | date("MMM DD, YYYY") }}
+          </span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+{% endblock %}

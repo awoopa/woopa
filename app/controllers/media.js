@@ -1,6 +1,24 @@
 var db = require('../models');
 
 module.exports = function (app, passport) {
+  app.route('/m/')
+    .get((req, res, next) => {
+      db.tx(t => {
+        return t.batch([
+          t.any(`
+            SELECT *
+            FROM Media
+          `)
+        ])
+      })
+      .then(data => {
+        res.render('media-listing', {
+          medias: data[0]
+        });
+      })
+    });
+
+
   app.route('/m/:id')
     .get((req, res, next) => {
 
