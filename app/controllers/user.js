@@ -26,7 +26,13 @@ module.exports = function (app, passport) {
             WHERE RWA.userID = $1 AND
                   M.mediaID = RWA.mediaID`,
             req.params.id
-          )
+          ),
+          t.any(`
+            SELECT M.mediaID, M.title
+            FROM Watched W, Media M
+            WHERE W.mediaID = M.mediaID AND
+                  W.userID = $1`,
+            req.params.id)
         ];
 
         if (req.user) {
@@ -47,10 +53,11 @@ module.exports = function (app, passport) {
           var values = {
             user: data[0],
             recommendations: data[1],
-            reviews: data[2]
+            reviews: data[2],
+            watched: data[3]
           }
 
-          if (data[3]) {
+          if (data[4]) {
             values.are_friends = true;
           } else {
             values.are_friends = false;
