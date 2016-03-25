@@ -26,7 +26,7 @@
             <div class="content">
               <div class="header">{{media.title}}</div>
               <div class="meta">
-                {{media.genre}}
+                {{media.genre}} &bull; {{media.rating}}
               </div>
               <div class="description">
                 <p>{{media.synopsis}}</p>
