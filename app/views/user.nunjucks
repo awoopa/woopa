@@ -9,7 +9,7 @@
 	      <i class="add user icon"></i>
 	      Add Friend
 	    </a>
-	{% elif currentUser and are_friends %}
+		{% elif currentUser and are_friends %}
 	    <button class="ui green labeled icon button">
 	      <i class="checkmark icon"></i>
 	      Friends
@@ -40,6 +40,26 @@
 		      Rating:
 		      <div class="ui star rating" data-rating="4"></div>
 		    </div>
+    	</div>
+		{% endfor %}
+		</div>
+	</div>
+	<div class="column">
+		<div class="ui statistic">
+		  <div class="value">
+		    {{ watched | length }}
+		  </div>
+		  <div class="label">
+		    Watched
+		  </div>
+		</div>
+		<div class="ui one cards">
+		{% for media in watched %}
+			<div class="card">
+				<div class="content">
+    			<div class="right floated meta"></div>
+    			{{ media.title }}
+				</div>
     	</div>
 		{% endfor %}
 		</div>
