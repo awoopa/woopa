@@ -85,7 +85,7 @@ CREATE TABLE Appears_In (
 CREATE TABLE Watched (
   userID    integer   NOT NULL REFERENCES WoopaUser (userID),
   mediaID   integer   NOT NULL REFERENCES Media (mediaID),
-  timestamp timestamp NOT NULL,
+  timestamp timestamp with time zone NOT NULL DEFAULT now(),
   PRIMARY KEY(userID, mediaID)
 );
 

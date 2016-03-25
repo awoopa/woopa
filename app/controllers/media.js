@@ -1,6 +1,8 @@
 var db = require('../models');
 
 module.exports = function (app, passport) {
+
+
   app.route('/m/')
     .get((req, res, next) => {
       var type = req.query.type;
@@ -36,12 +38,11 @@ module.exports = function (app, passport) {
       })
     });
 
-
   app.route('/m/:id')
     .get((req, res, next) => {
 
       db.tx(t => {
-        return t.batch([
+        var queries = [
           t.oneOrNone(`
             SELECT * 
             FROM Media
@@ -61,23 +62,79 @@ module.exports = function (app, passport) {
                   RWA.userID = U.userID`,
             req.params.id
           )
-        ])
+        ];
+
+        if (req.user) {
+          queries.push(t.oneOrNone(`
+            SELECT *
+            FROM Watched
+            WHERE userID = $1 AND
+                  mediaID = $2`,
+            [req.user.userid, req.params.id]));
+        }
+
+        return t.batch(queries);
       })
       .then(data => {
         if (data[0]) {
-          res.render('media', {
+          var values = {
             media: data[0],
             recommendations: data[1].count,
             reviews: data[2],
             title: data[0].title
-          });
+          }
+
+          if (data[3]) {
+            values.watched = true;
+          } else {
+            values.watched = false;
+          }
+          
+          res.render('media', values);
         } else {
           res.render('error', {
             message: 'media not found'
           })
         }
       });
+    });
 
-
+  app.route('/m/:id/watched')
+    .get((req, res, next) => {
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/login');
+      }
+    }, (req, res, next) => {
+      db.tx(t => {
+        return t.batch([
+          t.oneOrNone(`
+            SELECT * 
+            FROM Watched
+            WHERE userID = $1 AND
+                  mediaID = $2`,
+            [req.user.userid, req.params.id])
+        ]);
+      }).then(data => {
+        console.log(data);
+        if (data[0]) {
+          res.redirect('/m/' + req.params.id);
+        } else {
+          db.tx(t => {
+            return t.batch([
+              t.any(`
+                INSERT INTO Watched
+                (userID, mediaID) values($1, $2)`,
+                [req.user.userid, req.params.id])
+            ]);
+          }).then(data => {
+            console.log(data);
+            res.redirect('/m/' + req.params.id);
+          }).error(err => {
+            console.log(err);
+          });
+        }
+      });
     });
 };
