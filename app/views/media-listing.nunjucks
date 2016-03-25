@@ -19,7 +19,14 @@
     <div class="ui four link cards">
       {% if medias %}
         {% for media in medias %}
-          <a class="ui link card" href="/m/{{media.mediaid}}">
+          {% if media.type == 'movie' %}
+            {% set colour = "blue" %}
+          {% elif media.type == 'tvshow' %}
+            {% set colour = "green" %}
+          {% elif media.type == 'video' %}
+            {% set colour = "red" %}
+          {% endif %}
+          <a class="ui {{colour}} link card" href="/m/{{media.mediaid}}">
             <div class="image">
               <img src="https://placehold.it/150x150" />
             </div>
