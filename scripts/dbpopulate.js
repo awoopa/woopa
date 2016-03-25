@@ -13,7 +13,19 @@ db.tx(function(t) {
       ),
       t.none(
         `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews) values($1, $2, $3, $4 ,$5, $6, $7)`,
-        ["Zirconium", "Shikib Sings Zirconium", "Comedy", new Date(2012, 12, 12), 10, 'video', 265]
+        ["Zirconium", "Shikib Sings Zirconium", "Comedy", new Date(2012, 11, 12), 10, 'video', 265]
+      ),
+      t.none(
+        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews) values($1, $2, $3, $4 ,$5, $6, $7)`,
+        ["Asians + 1 Chat Simulator v1.0.0", "it took 11 months", "Comedy", new Date(2015, 5, 22), 10, 'video', 97]
+      ),
+      t.none(
+        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime) values($1, $2, $3, $4 ,$5, $6, $7)`,
+        ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), 8.4, 'movie', 108]
+      ),
+      t.none(
+        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons) values($1, $2, $3, $4 ,$5, $6, $7)`,
+        ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), 8.4, 'tvshow', 8]
       ),
       t.none(
         `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
