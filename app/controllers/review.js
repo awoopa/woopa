@@ -60,11 +60,10 @@ module.exports = function (app, passport) {
         }
       });
     })
-/*    .put((req, res, next) => {
-      db.tx(t => {
-        return t.batch({
-          t.one(`UPDATE `)
-        });
-      });
-    })*/;
+    .put((req, res, next) => {
+      // update review
+    })
+    .delete((req, res, next) => {
+      // delete review
+    });
 };
