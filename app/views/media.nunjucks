@@ -23,10 +23,17 @@
 			  <span class="text">Recommend To</span>
 			  <div class="menu">
 		  		{% for friend in friends %}
-		  			<a class="item" href="/u/{{friend.userid}}">
+	  				{# Use for when user has already recommended to friend.
+	  				<div class="item" href="/m/{{media.mediaid}}/recommend/{{friend.userid}}">
 				      <img class="ui avatar image" src="{{ friend.email | gravatar }}">
 				      {{ friend.username }}
-				    </a>
+	            	<i class="green checkmark icon"></i>
+				    </div>
+			  		#}
+		  			<a class="item" href="/m/{{media.mediaid}}/recommend/{{friend.userid}}">
+				      <img class="ui avatar image" src="{{ friend.email | gravatar }}">
+				      {{ friend.username }}
+				    </a>					    
 		    	{% endfor %}
 			  </div>
 			</div>
