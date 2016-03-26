@@ -1,0 +1,9 @@
+{% extends 'layout.nunjucks' %}
+
+{% block content %}
+<div class="ui four column doubling stackable grid container">
+	<div class="column">
+		
+	</div>
+</div>
+{% endblock %}
