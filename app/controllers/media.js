@@ -71,6 +71,13 @@ module.exports = function (app, passport) {
             WHERE userID = $1 AND
                   mediaID = $2`,
             [req.user.userid, req.params.id]));
+          // want to get people who have current user as friend
+          queries.push(t.any(`
+            SELECT U.userID, U.email, U.username
+            FROM Friends F, WoopaUser U
+            WHERE F.friend_userID = $1 AND
+                  F.user_userID = U.userID`, 
+            req.user.userid));
         }
 
         return t.batch(queries);
@@ -88,6 +95,10 @@ module.exports = function (app, passport) {
             values.watched = true;
           } else {
             values.watched = false;
+          }
+
+          if (data[4]) {
+            values.friends = data[4];
           }
           
           res.render('media', values);
@@ -135,6 +146,43 @@ module.exports = function (app, passport) {
             console.log(err);
           });
         }
+      });
+    });
+
+  app.route('/m/:id/recommend/:u')
+    .get((req, res, next) => {
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/login');
+      }
+    }, (req, res, next) => {
+      db.tx(t => {
+        return t.batch([
+          t.oneOrNone(`
+            SELECT *
+            FROM Recommends_To
+            WHERE mediaID = $1 AND
+                  recommenderID = $2 AND
+                  recommendeeID = $3`,
+            [req.params.id, req.user.userid, req.params.u])
+        ]).then(data => {
+          if (data[0]) {
+            res.redirect('/m/' + req.params.id);
+          } else {
+            db.tx(t => {
+              return t.batch([
+                t.none(`
+                  INSERT INTO Recommends_To
+                  values($1, $2, $3)`,
+                  [req.params.id, req.user.userid, req.params.u])
+              ]);
+            }).then(() => {
+                res.redirect('/m/' + req.params.id);
+              }
+            );
+          }
+        });
       });
     });
 };
