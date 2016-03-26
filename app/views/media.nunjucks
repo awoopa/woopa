@@ -18,7 +18,7 @@
     {% endif %}
 	  
     {% if friends %}
-	    <div class="ui floating labeled icon dropdown button">
+	    <div class="ui labeled icon dropdown button">
 			  <i class="thumbs up icon"></i>
 			  <span class="text">Recommend To</span>
 			  <div class="menu">
