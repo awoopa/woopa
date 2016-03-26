@@ -71,6 +71,13 @@ module.exports = function (app, passport) {
             WHERE userID = $1 AND
                   mediaID = $2`,
             [req.user.userid, req.params.id]));
+          // want to get people who have current user as friend
+          queries.push(t.any(`
+            SELECT U.userID, U.email, U.username
+            FROM Friends F, WoopaUser U
+            WHERE F.friend_userID = $1 AND
+                  F.user_userID = U.userID`, 
+            req.user.userid));
         }
 
         return t.batch(queries);
@@ -88,6 +95,10 @@ module.exports = function (app, passport) {
             values.watched = true;
           } else {
             values.watched = false;
+          }
+
+          if (data[4]) {
+            values.friends = data[4];
           }
           
           res.render('media', values);

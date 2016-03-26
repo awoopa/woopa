@@ -17,6 +17,22 @@
 	    </button>
     {% endif %}
 	  
+    {% if friends %}
+	    <div class="ui floating labeled icon dropdown button">
+			  <i class="thumbs up icon"></i>
+			  <span class="text">Recommend To</span>
+			  <div class="menu">
+		  		{% for friend in friends %}
+		  			<a class="item" href="/u/{{friend.userid}}">
+				      <img class="ui avatar image" src="{{ friend.email | gravatar }}">
+				      {{ friend.username }}
+				    </a>
+		    	{% endfor %}
+			  </div>
+			</div>
+		{% endif %}
+
+
 	  <p>Published {{ media.publishdate | date("MMM DD, YYYY") }}</p>
 	  <p>Synopsis: {{ media.synopsis }}</p>
 	  <p>Rating: {{ media.rating }}</p>
@@ -82,6 +98,10 @@ $('.new-review .rating').rating({
 	onRate: function(value) {
 		$('.new-review [name="rating"]').val(value);
 	}
+});
+
+$('.dropdown').dropdown({
+    action: 'hide'
 });
 </script>
 {% endblock %}
