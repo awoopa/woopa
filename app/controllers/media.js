@@ -61,6 +61,12 @@ module.exports = function (app, passport) {
             WHERE RWA.mediaID = $1 AND
                   RWA.userID = U.userID`,
             req.params.id
+          ),
+          t.any(`
+            SELECT actorName, dob
+            FROM Appears_In
+            WHERE mediaID = $1`,
+            req.params.id
           )
         ];
 
@@ -88,17 +94,18 @@ module.exports = function (app, passport) {
             media: data[0],
             recommendations: data[1].count,
             reviews: data[2],
+            actors: data[3],
             title: data[0].title
           }
 
-          if (data[3]) {
+          if (data[4]) {
             values.watched = true;
           } else {
             values.watched = false;
           }
 
-          if (data[4]) {
-            values.friends = data[4];
+          if (data[5]) {
+            values.friends = data[5];
           }
           
           res.render('media', values);
