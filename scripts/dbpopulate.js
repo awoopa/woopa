@@ -21,7 +21,7 @@ db.tx(function(t) {
       ),
       t.none(
         `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews) values($1, $2, $3, $4 ,$5, $6, $7)`,
-        ["Zirconium", "Shikib Sings Zirconium", "History", new Date(2012, 12, 12), 2, 'video', 265]
+        ["Zirconium", "Shikib Sings Zirconium", "History", new Date(2012, 11, 12), 2, 'video', 265]
       ),
       t.none(
         `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews) values($1, $2, $3, $4 ,$5, $6, $7)`,
