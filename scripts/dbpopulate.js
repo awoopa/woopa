@@ -28,16 +28,16 @@ db.tx(function(t) {
         ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 08, 17), 1, 'video', 5201]
       ),
       t.none(
-        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews) values($1, $2, $3, $4 ,$5, $6, $7)`,
-        ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 05, 09), 7, 'tvshow', 852]
+        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons) values($1, $2, $3, $4 ,$5, $6, $7)`,
+        ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 05, 09), 7, 'tvshow', 8]
       ),
       t.none(
-        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews) values($1, $2, $3, $4 ,$5, $6, $7)`,
-        ["Kyle and Abrar Go To White Castle", "First installment in the Kyle and Abrar series", "Comedy", new Date(2004, 07, 30), 9, 'movie', 1024]
+        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime) values($1, $2, $3, $4 ,$5, $6, $7)`,
+        ["Kyle and Abrar Go To White Castle", "First installment in the Kyle and Abrar series", "Comedy", new Date(2004, 07, 30), 9, 'movie', 92]
       ),
       t.none(
-        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews) values($1, $2, $3, $4 ,$5, $6, $7)`,
-        ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 04, 25), 8, 'movie', 2048]
+        `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime) values($1, $2, $3, $4 ,$5, $6, $7)`,
+        ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 04, 25), 8, 'movie', 106]
       ),
       t.none(
         `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
