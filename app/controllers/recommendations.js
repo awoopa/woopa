@@ -10,9 +10,8 @@ module.exports = function (app, passport) {
       }
     }, (req, res, next) => {
 
-      var query = "SELECT * FROM Media";
-
       db.tx(t => {
+        console.log("test test!!!");
         return t.batch([
           t.any(`
             SELECT *
@@ -24,12 +23,14 @@ module.exports = function (app, passport) {
         ])
       })
       .then(data => {
-        res.render('recommendations', {
-          recommendations: data[0],
-          title: 'Recommendations'
-        });
+        if (data[0]) {
+          var values = {
+            recommendations: data[0],
+            title: 'Recommendations'
+          }   
+
+        res.render('recommendations', values);
+      }
       })
     });
-
- 
 };

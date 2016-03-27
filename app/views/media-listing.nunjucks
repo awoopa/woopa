@@ -16,6 +16,19 @@
         </a>
       </div>
     </div>
+     <div class="ui one cards">
+    <div class="card new-review">
+        <form action="/m/search" method="post">
+          <div class="content">
+            Search for Media by Title:
+              <div class="description">
+              <input tyoe="text" name="comment" id="comment"/>
+            </div>
+          </div>
+          <button class="ui submit button" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
     <div class="ui four link cards">
       {% if medias %}
         {% for media in medias %}
