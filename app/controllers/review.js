@@ -22,7 +22,8 @@ module.exports = function (app, passport) {
           db.tx(t => {
             return t.batch([
               t.one(`INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values ($1, $2, $3, $4) RETURNING *`,
-                [req.body.comment, req.body.rating, req.user.userid, req.body.mediaID])
+                [req.body.comment, req.body.rating, req.user.userid, req.body.mediaID]),
+              t.none(`UPDATE Media SET rating=(SELECT AVG(rating) FROM Review_Writes_About WHERE mediaID=$1 GROUP BY mediaID) WHERE mediaID=$1`, [req.body.mediaID])
             ])
           }).then(data => {
             res.redirect(/m/ + req.body.mediaID);
