@@ -101,4 +101,42 @@ module.exports = function (app, passport) {
         }
       });
     });
+
+  app.route('/u/:id/remove')
+    .get((req, res, next) => {
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/login');
+      }
+    }, (req, res, next) => {
+      db.tx(t => {
+        return t.batch([
+          t.oneOrNone(`
+            SELECT * 
+            FROM Friends
+            WHERE user_userID = $1 AND
+                  friend_userID = $2`,
+            [req.user.userid, req.params.id])
+        ]);
+      }).then(data => {
+        if (data[0]) {
+          db.tx(t => {
+            return t.batch([
+              t.any(`
+                DELETE FROM Friends
+                WHERE user_userID = $1 AND
+                      friend_userID = $2`,
+                [req.user.userid, req.params.id])
+            ]);
+          }).then(data => {
+            res.redirect('/u/' + req.params.id);
+          }).error(err => {
+            console.log(err);
+          });
+        } else {
+          res.redirect('/u/' + req.params.id);
+        }
+      });
+    });
 };
