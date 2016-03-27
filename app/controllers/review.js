@@ -42,6 +42,12 @@ module.exports = function (app, passport) {
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
+            SELECT username, email, userid
+            FROM WoopaUser
+            WHERE userID = $1`, 
+            req.user.userid
+          ),
+          t.oneOrNone(`
             SELECT * 
             FROM Review_Writes_About
             WHERE reviewID = $1`, 
@@ -52,7 +58,8 @@ module.exports = function (app, passport) {
       .then(data => {
         if (data[0]) {
           res.render('review', {
-            review: data[0]
+            user: data[0],
+            review: data[1]
           });
         } else {
           res.render('error', {
