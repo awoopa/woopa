@@ -114,7 +114,23 @@ db.tx(function(t) {
       t.none(
         `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
         [4, 4, 3]
-      )
+      ),
+      t.none(
+        `INSERT INTO Actor (actorName, dob) values($1, $2)`,
+        ["Abrar Patel", new Date(1989, 5, 12)]
+      ),
+      t.none(
+        `INSERT INTO Actor (actorName, dob) values($1, $2)`,
+        ["Kyle Cho", new Date(1991, 4, 18)]
+      ),
+      t.none(
+        `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+        [4, "Abrar Patel", new Date(1989, 5, 12)]
+      ),     
+      t.none(
+        `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+        [4, "Kyle Cho", new Date(1991, 4, 18)]
+      )                
     ])
   })
   .then(events => { 
