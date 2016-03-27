@@ -10,7 +10,6 @@ module.exports = function (app, passport) {
       }
     }, (req, res, next) => {
 
-      var query = "SELECT * FROM Media";
 
       db.tx(t => {
         return t.batch([
@@ -24,10 +23,45 @@ module.exports = function (app, passport) {
         ])
       })
       .then(data => {
-        res.render('recommendations', {
-          recommendations: data[0],
+
+        var results = data[0];
+
+        var recs = [];
+        for (var i = 0; i < results.length; i++) {
+          var seen = false;
+          for (var j = 0; j < recs.length; j++) {
+            if (results[i].mediaid == recs[j].mediaid) {
+              recs[j].recomenders.push({email: results[i].email, username: results[i].username});
+              seen = true;
+            }
+          }
+
+          if (!seen) {
+            recs.push({
+              mediaid: results[i].mediaid,
+              title: results[i].title,
+              synopsis: results[i].synopsis,
+              genre: results[i].genre,
+              publishdate: results[i].publishdate,
+              rating: results[i].rating,
+              thumbnail: results[i].thumbnail,
+              type: results[i].type,
+              runtime: results[i].runtime,
+              numseasons: results[i].numseasons,
+              numviews: results[i].numviews,
+              channel: results[i].channel,
+              recomenders: [{email: results[i].email, username: results[i].username}]
+            });
+          }
+          
+          }
+
+        var values = {
+          recommendations: recs,
           title: 'Recommendations'
-        });
+        }
+
+        res.render('recommendations', values);
       })
     });
 
