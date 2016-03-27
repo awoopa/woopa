@@ -137,4 +137,26 @@ module.exports = function (app, passport) {
         }
       });
     });
-};
+
+    app.route('/m/:id/unwatched')
+    .get((req, res, next) => {
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/login');
+      }
+    }, (req, res, next) => {
+      db.tx(t => {
+        return t.batch([
+          t.none(`
+            DELETE 
+            FROM Watched
+            WHERE userID = $1 AND
+            mediaID = $2`,
+            [req.user.userid, req.params.id])
+          ]);
+      }).then(data => {
+        res.redirect('/m/' + req.params.id);
+      });
+    });
+  }
