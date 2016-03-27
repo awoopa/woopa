@@ -1,0 +1,10 @@
+{% extends 'layout.nunjucks' %}
+
+{% block content %}
+<div class="ui four column doubling stackable grid container">
+	<div class="column">
+	  <h1>{{ review.reviewID }}</h1>
+		
+	</div>
+</div>
+{% endblock %}
