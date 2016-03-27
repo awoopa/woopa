@@ -9,9 +9,6 @@ module.exports = function (app, passport) {
         res.redirect('/login');
       }
     }, (req, res, next) => {
-
-      var query = "SELECT * FROM Media";
-
       db.tx(t => {
         return t.batch([
           t.any(`
@@ -21,15 +18,16 @@ module.exports = function (app, passport) {
                   RT.mediaID = M.mediaID AND
                   U.userID = RT.recommenderID`,
             [req.user.userid])
-        ])
+        ]);
       })
       .then(data => {
-        res.render('recommendations', {
-          recommendations: data[0],
-          title: 'Recommendations'
-        });
-      })
+        if (data[0]) {
+          var values = {
+            recommendations: data[0],
+            title: 'Recommendations'
+          };
+          res.render('recommendations', values);
+        }
+      });
     });
-
- 
 };

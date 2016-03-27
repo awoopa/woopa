@@ -16,6 +16,13 @@
         </a>
       </div>
     </div>
+    <form action="/m/search" method="post">
+    <div class="ui fluid action input">
+  <input type="text" name="comment" id="comment" placeholder="Search by Title...">
+  <button class="ui button">Search</button>
+</div>
+</form>
+
     <div class="ui four link cards">
       {% if medias %}
         {% for media in medias %}

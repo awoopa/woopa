@@ -38,6 +38,39 @@ module.exports = function (app, passport) {
       })
     });
 
+
+  app.route('/m/search')
+    .post((req, res, next) => {
+
+      db.tx(t => {
+        return t.batch([
+          t.any(`
+            SELECT *
+            FROM Media
+            WHERE LOWER(title) LIKE LOWER($1)`,
+            [`%${req.body.comment}%`])
+        ]);
+      }).then(data => {
+
+        console.log(data);
+
+        if (data[0]) {
+          var values = {
+          medias: data[0],
+          title: 'Search for' + req.body.comment
+          }
+
+          res.render('media-listing', values);
+        } else {
+          res.render('error', {
+            message: "user not found"
+          })
+        }
+      }).catch(error => {
+        console.log(error);
+      });
+    });
+
   app.route('/m/:id')
     .get((req, res, next) => {
 
