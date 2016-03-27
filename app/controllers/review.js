@@ -55,6 +55,7 @@ module.exports = function (app, passport) {
           });
         } else {
           res.render('error', {
+            status: 404,
             message: 'media not found'
           })
         }

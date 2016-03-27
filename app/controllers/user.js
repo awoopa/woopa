@@ -79,6 +79,7 @@ module.exports = function (app, passport) {
           res.render('user', values);
         } else {
           res.render('error', {
+            status: 404,
             message: "user not found"
           })
         }

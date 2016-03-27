@@ -17,6 +17,7 @@ module.exports = function (app, passport) {
       .catch(err => {
         console.log(err);
         res.render('error', {
+          status: 500,
           message: err
         })
       })
@@ -35,6 +36,7 @@ module.exports = function (app, passport) {
       .catch(err => {
         console.log(err);
         res.render('error', {
+          status: 500,
           message: err
         })
       })

@@ -111,6 +111,7 @@ module.exports = function (app, passport) {
           res.render('media', values);
         } else {
           res.render('error', {
+            status: 404,
             message: 'media not found'
           })
         }
@@ -128,7 +129,7 @@ module.exports = function (app, passport) {
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
-            SELECT * 
+            SELECT *
             FROM Watched
             WHERE userID = $1 AND
                   mediaID = $2`,
@@ -150,7 +151,11 @@ module.exports = function (app, passport) {
             console.log(data);
             res.redirect('/m/' + req.params.id);
           }).error(err => {
-            console.log(err);
+            res.render('error', {
+              status: 500,
+              message: err
+            });
+            console.error(err);
           });
         }
       });
