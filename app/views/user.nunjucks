@@ -64,5 +64,25 @@
 		{% endfor %}
 		</div>
 	</div>
+	<div class="column">
+		<div class="ui statistic">
+		  <div class="value">
+		    {{ friends | length }}
+		  </div>
+		  <div class="label">
+		    Friends
+		  </div>
+		</div>
+		<div class="ui one cards">
+		{% for f in friends %}
+			<div class="card">
+				<div class="content">
+    			<div class="right floated meta"></div>
+    			<img class="ui avatar image" src="{{ f.email | gravatar }}"> {{ f.username }}
+				</div>
+    	</div>
+		{% endfor %}
+		</div>
+	</div>
 </div>
 {% endblock %}

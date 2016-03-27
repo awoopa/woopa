@@ -32,6 +32,13 @@ module.exports = function (app, passport) {
             FROM Watched W, Media M
             WHERE W.mediaID = M.mediaID AND
                   W.userID = $1`,
+            req.params.id
+          ),
+          t.any(`
+            SELECT * 
+            FROM Friends F, WoopaUser W 
+            WHERE F.user_userID=$1 AND 
+                  F.friend_userID = W.userID`,
             req.params.id)
         ];
 
@@ -54,10 +61,11 @@ module.exports = function (app, passport) {
             user: data[0],
             recommendations: data[1],
             reviews: data[2],
-            watched: data[3]
+            watched: data[3],
+            friends: data[4]
           }
 
-          if (data[4]) {
+          if (data[5]) {
             values.are_friends = true;
           } else {
             values.are_friends = false;
