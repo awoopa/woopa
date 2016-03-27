@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node app.js",
     "dbinit": "node scripts/dbinit.js",
-    "dbpopulate": "node scripts/dbpopulate.js"
+    "dbpopulate": "node scripts/dbpopulate.js",
+    "heroku-postbuild": "npm run dbinit && npm run dbpopulate"
   },
   "dependencies": {
     "better-console": "^0.2.4",

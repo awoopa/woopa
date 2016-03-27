@@ -2,8 +2,15 @@
   
   <a href="/" class="brand item">Woopa</a>
   <a href="/m/" class="item">Browse</a>
+  {% if currentUser %}
+    <a href="/recommendations" class="item">Recommendations</a>
+  {% endif %}
+
   <div class="right menu">
   {% if currentUser %}
+    {% if currentUser.isadmin %}
+    <a href="/admin" class="item">Admin</a>
+    {% endif %}
   	<a href="/u/{{currentUser.userid}}" class="item"><img src="{{currentUser.email | gravatar(50)}}" class="ui avatar image" />{{ currentUser.username }}</a>
   	<a href="/logout" class="item">Log out</a>
   {% else %}

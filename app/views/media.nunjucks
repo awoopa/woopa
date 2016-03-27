@@ -4,10 +4,53 @@
 <div class="ui four column doubling stackable grid container">
 	<div class="column">
 	  <h1>{{ media.title }}</h1>
-		
+
+  	{% if currentUser and not watched %}
+	    <a class="ui labeled icon button" href="/m/{{media.mediaid}}/watched">
+	      <i class="unhide icon"></i>
+	      Mark as Watched
+	    </a>
+		{% elif currentUser and watched %}
+	    <button class="ui green labeled icon button">
+	      <i class="checkmark icon"></i>
+	      Watched
+	    </button>
+    {% endif %}
+	  
+    {% if friends %}
+	    <div class="ui labeled icon dropdown button">
+			  <i class="thumbs up icon"></i>
+			  <span class="text">Recommend To</span>
+			  <div class="menu">
+		  		{% for friend in friends %}
+	  				{# Use for when user has already recommended to friend.
+	  				<div class="item" href="/m/{{media.mediaid}}/recommend/{{friend.userid}}">
+				      <img class="ui avatar image" src="{{ friend.email | gravatar }}">
+				      {{ friend.username }}
+	            	<i class="green checkmark icon"></i>
+				    </div>
+			  		#}
+		  			<a class="item" href="/m/{{media.mediaid}}/recommend/{{friend.userid}}">
+				      <img class="ui avatar image" src="{{ friend.email | gravatar }}">
+				      {{ friend.username }}
+				    </a>					    
+		    	{% endfor %}
+			  </div>
+			</div>
+		{% endif %}
+
+
 	  <p>Published {{ media.publishdate | date("MMM DD, YYYY") }}</p>
 	  <p>Synopsis: {{ media.synopsis }}</p>
 	  <p>Rating: {{ media.rating }}</p>
+    <br/>
+    <br/>
+    <div class="column">
+      <h3>Actors:</h3>
+      {% for actor in actors %}
+        <p>{{ actor.actorname }}</p>
+      {% endfor %}
+    </div>
 	</div>
 	<div class="column">
 		<div class="ui statistic">
@@ -70,6 +113,10 @@ $('.new-review .rating').rating({
 	onRate: function(value) {
 		$('.new-review [name="rating"]').val(value);
 	}
+});
+
+$('.dropdown').dropdown({
+    action: 'hide'
 });
 </script>
 {% endblock %}

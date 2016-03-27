@@ -36,6 +36,8 @@ module.exports = function(passport) {
     passport.use('local-signup', new LocalStrategy({
         passReqToCallback : true // allows us to pass back the entire request to the callback
     }, (req, username, password, done) => {
+      username = username.trim();
+      password = password.trim();
       db.oneOrNone("SELECT * FROM WoopaUser WHERE username = $1", username)
       .then(user => {
         if (user) {
@@ -73,6 +75,8 @@ module.exports = function(passport) {
     passport.use('local-login', new LocalStrategy({
         passReqToCallback : true // allows us to pass back the entire request to the callback
     }, (req, username, password, done) => { // callback with username and password from our form
+      username = username.trim();
+      password = password.trim();
       db.oneOrNone("SELECT * FROM WoopaUser WHERE username = $1", username)
       .then(user => {
         if (user) {

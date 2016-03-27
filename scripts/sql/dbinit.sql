@@ -35,7 +35,7 @@ CREATE TABLE Media (
   title       text      NOT NULL,
   synopsis    text      NOT NULL,
   genre       text      NOT NULL,
-  publishDate date      NOT NULL,
+  publishDate timestamptz      NOT NULL,
   rating      decimal,
   thumbnail   text,
   type        mediaType NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE Recommends_To (
 
 CREATE TABLE Actor (
   actorName text NOT NULL,
-  dob       date NOT NULL,
+  dob       timestamptz NOT NULL,
   PRIMARY KEY (actorName, dob)
 );
 
@@ -76,7 +76,7 @@ CREATE TABLE Actor (
 CREATE TABLE Appears_In (
   mediaID   integer NOT NULL REFERENCES Media (mediaID),
   actorName text    NOT NULL,
-  dob       date    NOT NULL,
+  dob       timestamptz    NOT NULL,
   FOREIGN KEY (actorName, dob) REFERENCES Actor,
   PRIMARY KEY(mediaID, actorName, dob)
 );
@@ -85,7 +85,7 @@ CREATE TABLE Appears_In (
 CREATE TABLE Watched (
   userID    integer   NOT NULL REFERENCES WoopaUser (userID),
   mediaID   integer   NOT NULL REFERENCES Media (mediaID),
-  timestamp timestamp NOT NULL,
+  timestamp timestamp with time zone NOT NULL DEFAULT now(),
   PRIMARY KEY(userID, mediaID)
 );
 

@@ -3,31 +3,37 @@
 {% block content %}
   <div class="ui container">
     <div class="ui text menu">
-    Show only: 
-    <a class="ui labeled icon button" href="/m?type=movie">
-      <i class="film icon"></i>
-      Movies
-    </a>
-    <a class="ui labeled icon button" href="/m?type=tvshow">
-      <i class="icon fa fa-television" style=""><i class=""></i></i>
-      TV Shows
-    </a>
-    <a class="ui labeled icon button" href="/m?type=video">
-      <i class="youtube play icon"></i>
-      Videos
-    </a>
+      Show only: 
+      <div class="ui icon buttons">
+        <a class="ui icon button" href="/m?type=movie" title="Movies">
+          <i class="film icon"></i>
+        </a>
+        <a class="ui icon button" href="/m?type=tvshow" title="TV Shows">
+          <i class="icon fa fa-television" style=""><i class=""></i></i>
+        </a>
+        <a class="ui icon button" href="/m?type=video" title="Videos">
+          <i class="youtube play icon"></i>
+        </a>
+      </div>
     </div>
     <div class="ui four link cards">
       {% if medias %}
         {% for media in medias %}
-          <a class="ui link card" href="/m/{{media.mediaid}}">
+          {% if media.type == 'movie' %}
+            {% set colour = "blue" %}
+          {% elif media.type == 'tvshow' %}
+            {% set colour = "green" %}
+          {% elif media.type == 'video' %}
+            {% set colour = "red" %}
+          {% endif %}
+          <a class="ui {{colour}} link card" href="/m/{{media.mediaid}}">
             <div class="image">
               <img src="https://placehold.it/150x150" />
             </div>
             <div class="content">
               <div class="header">{{media.title}}</div>
               <div class="meta">
-                {{media.genre}}
+                {{media.genre}} &bull; {{media.rating}}
               </div>
               <div class="description">
                 <p>{{media.synopsis}}</p>

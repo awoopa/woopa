@@ -1,0 +1,53 @@
+{% extends 'layout.nunjucks' %}
+
+{% block content %}
+  <div class="ui container">
+    <div class="ui four link cards">
+      {% if recommendations %}
+        {% for rec in recommendations %}
+          {% if rec.type == 'movie' %}
+            {% set colour = "blue" %}
+          {% elif rec.type == 'tvshow' %}
+            {% set colour = "green" %}
+          {% elif rec.type == 'video' %}
+            {% set colour = "red" %}
+          {% endif %}
+          <a class="ui {{colour}} link card" href="/m/{{rec.mediaid}}">
+            <div class="image">
+              <img src="https://placehold.it/150x150" />
+            </div>
+            <div class="content">
+              <div class="header">{{rec.title}}</div> 
+              <div class="meta">
+                {{rec.genre}} &bull; {{rec.rating}}
+              </div>
+              <div class="description">
+                <p>Recommended by <img class="ui avatar image" src="{{ rec.email | gravatar(28) }}"/> {{rec.username}}</p>
+                <p>{{rec.synopsis}}</p>
+              </div>
+            </div>
+            <div class="extra content">
+              <span>
+                {% if rec.type == 'movie' %}
+                  <i class="film icon"></i>
+                  {{ rec.runtime }} minutes
+                {% elif rec.type == 'tvshow' %}
+                  <i class="fa fa-television"></i>
+                  {{ rec.numseasons }} seasons
+                {% elif rec.type == 'video' %}
+                  <i class="youtube play icon"></i>
+                  {{ rec.numviews }} views
+                {% endif %}
+              </span>
+              <span class="right floated">
+                {{rec.publishdate | date("MMM DD, YYYY") }}
+              </span>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        No rec found.
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
