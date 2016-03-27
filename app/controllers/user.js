@@ -42,6 +42,11 @@ module.exports = function (app, passport) {
             WHERE user_userID = $1 AND
                   friend_userID = $2`,
             [req.user.userid, req.params.id]));
+          queries.push(t.oneOrNone(`
+            SELECT userid
+            FROM WoopaUser
+            WHERE userID = $1`,
+            [req.user.userid, req.params.id]));
         }
 
         console.log(queries);
@@ -61,6 +66,14 @@ module.exports = function (app, passport) {
             values.are_friends = true;
           } else {
             values.are_friends = false;
+          }
+
+          if (data[5]) {
+            if (values.user.userid == data[5].userid) {
+              values.is_self = true;
+            } else {
+              values.is_self = false;
+            }
           }
 
           res.render('user', values);

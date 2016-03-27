@@ -4,17 +4,19 @@
 <div class="ui four column doubling stackable grid container">
 	<div class="column">
 	  <h1>{{ user.username }}</h1>
-  	{% if currentUser and not are_friends%}
-	    <a class="ui labeled icon button" href="/u/{{user.userid}}/add">
-	      <i class="add user icon"></i>
-	      Add Friend
-	    </a>
-		{% elif currentUser and are_friends %}
-	    <button class="ui green labeled icon button">
-	      <i class="checkmark icon"></i>
-	      Friends
-	    </button>
-	    <a href="#" id="remove">Remove friend</a>
+    {% if not is_self %}
+    	{% if currentUser and not are_friends%}
+  	    <a class="ui labeled icon button" href="/u/{{user.userid}}/add">
+  	      <i class="add user icon"></i>
+  	      Add Friend
+  	    </a>
+  		{% elif currentUser and are_friends %}
+  	    <button class="ui green labeled icon button">
+  	      <i class="checkmark icon"></i>
+  	      Friends
+  	    </button>
+        <a href="#" id="remove">Remove friend</a>
+      {% endif %}
     {% endif %}
 	</div>
 	<div class="column">
