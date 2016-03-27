@@ -15,6 +15,19 @@
 	      Friends
 	    </button>
     {% endif %}
+    <div class="ui one cards">
+    <div class="card new-review">
+				<form action="/u/search" method="post">
+					<div class="content">
+						Find Users:
+	    				<div class="description">
+							<input tyoe="text" name="comment" id="comment"/>
+						</div>
+					</div>
+			    <button class="ui submit button" type="submit">Submit</button>
+		    </form>
+    	</div>
+    </div>
 	</div>
 	<div class="column">
 		<div class="ui statistic">
@@ -78,7 +91,7 @@
 			<div class="card">
 				<div class="content">
     			<div class="right floated meta"></div>
-    			<img class="ui avatar image" src="{{ f.email | gravatar }}"> {{ f.username }}
+    			<a href="/u/{{f.userid}}"><img class="ui avatar image" src="{{ f.email | gravatar }}"> {{ f.username }}</a>
 				</div>
     	</div>
 		{% endfor %}

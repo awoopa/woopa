@@ -15,7 +15,7 @@
 				</div>
 		    <div class="extra">
 		      Rating:
-		      <div class="ui star rating" data-rating="4"></div>
+		      <div class="ui star rating" data-rating="{{ review.rating }}"></div>
 		    </div>
     	</div>
 	</div>	

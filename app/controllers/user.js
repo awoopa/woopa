@@ -80,6 +80,39 @@ module.exports = function (app, passport) {
       });
     });
 
+
+app.route('/u/search')
+    .post((req, res, next) => {
+
+      db.tx(t => {
+        return t.batch([
+          t.any(`
+            SELECT *
+            FROM WoopaUser
+            WHERE username LIKE  $1`, 
+            ['%'+ req.body.comment +'%'])
+        ]);
+      }).then(data => {
+
+        console.log(data);
+
+        if (data[0]) {
+          var values = {
+            results: data[0],
+            searchString: req.body.comment
+          }
+
+          res.render('search', values);
+        } else {
+          res.render('error', {
+            message: "user not found"
+          })
+        }
+      }).catch(error => {
+        console.log(error);
+      });
+    });
+
   app.route('/u/:id/add')
     .get((req, res, next) => {
       if (req.user) {
