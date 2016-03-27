@@ -22,7 +22,7 @@
                 {{rec.genre}} &bull; {{rec.rating}}
               </div>
               <div class="description">
-                <p>Recommended by <img class="ui avatar image" src="{{ rec.email | gravatar(28) }}"/> {{rec.username}}</p>
+                
                 <p>{{rec.synopsis}}</p>
               </div>
             </div>
@@ -42,6 +42,12 @@
               <span class="right floated">
                 {{rec.publishdate | date("MMM DD, YYYY") }}
               </span>
+            </div>
+            <div class="extra content">
+              <p>Recommended by: </p>
+                  {% for user in rec.recomenders %}
+                  <span class="recommender"><img class="ui avatar image" src="{{ user.email | gravatar(28) }}"/> {{user.username}}</span>
+                  {% endfor %}
             </div>
           </a>
         {% endfor %}
