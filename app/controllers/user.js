@@ -9,7 +9,7 @@ module.exports = function (app, passport) {
           t.oneOrNone(`
             SELECT username, email, userid
             FROM WoopaUser
-            WHERE userID = $1`, 
+            WHERE userID = $1`,
             req.params.id
           ),
           t.any(`
@@ -35,9 +35,9 @@ module.exports = function (app, passport) {
             req.params.id
           ),
           t.any(`
-            SELECT * 
-            FROM Friends F, WoopaUser W 
-            WHERE F.user_userID=$1 AND 
+            SELECT *
+            FROM Friends F, WoopaUser W
+            WHERE F.user_userID=$1 AND
                   F.friend_userID = W.userID`,
             req.params.id)
         ];
@@ -63,7 +63,7 @@ module.exports = function (app, passport) {
             reviews: data[2],
             watched: data[3],
             friends: data[4]
-          }
+          };
 
           if (data[5]) {
             values.are_friends = true;
@@ -75,22 +75,21 @@ module.exports = function (app, passport) {
         } else {
           res.render('error', {
             message: "user not found"
-          })
+          });
         }
       });
     });
 
 
-app.route('/u/search')
+  app.route('/u/search')
     .post((req, res, next) => {
-
       db.tx(t => {
         return t.batch([
           t.any(`
             SELECT *
             FROM WoopaUser
-            WHERE username LIKE  $1`, 
-            ['%'+ req.body.comment +'%'])
+            WHERE username LIKE $1`,
+            [`%${req.body.comment}%`])
         ]);
       }).then(data => {
 
@@ -100,12 +99,12 @@ app.route('/u/search')
           var values = {
             results: data[0],
             searchString: req.body.comment
-          }
+          };
 
           res.render('search', values);
         } else {
           res.render('error', {
-            message: "user not found"
+            message: 'user not found'
           })
         }
       }).catch(error => {
@@ -124,7 +123,7 @@ app.route('/u/search')
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
-            SELECT * 
+            SELECT *
             FROM Friends
             WHERE user_userID = $1 AND
                   friend_userID = $2`,
@@ -132,17 +131,17 @@ app.route('/u/search')
         ]);
       }).then(data => {
         if (data[0]) {
-          res.redirect('/u/' + req.params.id);
+          res.redirect(`/u/${req.params.id}`);
         } else {
           db.tx(t => {
             return t.batch([
               t.any(`
-                INSERT INTO Friends 
+                INSERT INTO Friends
                 (user_userID, friend_userID) values($1, $2)`,
                 [req.user.userid, req.params.id])
             ]);
           }).then(data => {
-            res.redirect('/u/' + req.params.id);
+            res.redirect(`/u/${req.params.id}`);
           }).error(err => {
             console.log(error);
           });

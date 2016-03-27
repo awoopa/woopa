@@ -39,7 +39,7 @@ module.exports = function (app, passport) {
     });
 
 
-    app.route('/m/search')
+  app.route('/m/search')
     .post((req, res, next) => {
 
       db.tx(t => {
@@ -47,8 +47,8 @@ module.exports = function (app, passport) {
           t.any(`
             SELECT *
             FROM Media
-            WHERE LOWER(title) LIKE  LOWER($1)`, 
-            ['%'+ req.body.comment +'%'])
+            WHERE LOWER(title) LIKE LOWER($1)`,
+            [`%${req.body.comment}%`])
         ]);
       }).then(data => {
 
