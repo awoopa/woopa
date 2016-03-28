@@ -2,6 +2,10 @@
   "name": "woopa",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": "4.2.1",
+    "npm": "3.8.x"
+  },
   "scripts": {
     "start": "node app.js",
     "dbinit": "node scripts/dbinit.js",
