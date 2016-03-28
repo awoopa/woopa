@@ -64,7 +64,6 @@ module.exports = function (app, passport) {
             [req.user.userid, req.params.id]));
         }
 
-        console.log(queries);
 
         return t.batch(queries);
       }).then(data => {
