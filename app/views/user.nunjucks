@@ -29,7 +29,7 @@
 			<div class="card">
 				<div class="content">
     			<div class="right floated meta"></div>
-    			<a href="/m/{{w.mediaid}}"><img class="ui avatar image" src="{{media.img}}"> {{ w.title }}</a>
+    			<a href="/m/{{w.mediaid}}"><img class="ui avatar image" src="{{w.img}}"> {{ w.title }}</a>
 				</div>
     	</div>
 		{% endfor %}
