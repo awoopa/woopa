@@ -10,7 +10,9 @@ const pass = "9ae3e38433336f3eb933f8eae355a4a42ee0cd99bec0449df0255933002a2ffe46
 Promise.all([
   fsp.readFile('scripts/assets/sailormoonkib.jpg'),
   fsp.readFile('scripts/assets/zirconium.jpg'),
-  fsp.readFile('scripts/assets/william.jpg')
+  fsp.readFile('scripts/assets/william.jpg'),
+  fsp.readFile('scripts/assets/psych.jpg'),
+  fsp.readFile('scripts/assets/zootopia.jpg'),
 ]).then(values => {
   values.map((imgData, i, arr) => {
     arr[i] = db.none(`INSERT INTO Image values ($1, $2)`, [i+1, imgData]);
@@ -50,12 +52,20 @@ Promise.all([
           ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 05, 09), 7, 'tvshow', 8, 1]
         ),
         t.none(
+          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), 8.4, 'tvshow', 8, 4]
+        ),
+        t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
           ["Kyle and Abrar Go To White Castle", "First installment in the Kyle and Abrar series", "Comedy", new Date(2004, 07, 30), 9, 'movie', 92, 1]
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
           ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 04, 25), 8, 'movie', 106, 1]
+        ),
+        t.none(
+          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), 9.9, 'movie', 108, 5]
         ),
         t.none(
           `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
