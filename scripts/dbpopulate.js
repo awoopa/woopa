@@ -9,7 +9,8 @@ const pass = "9ae3e38433336f3eb933f8eae355a4a42ee0cd99bec0449df0255933002a2ffe46
 
 Promise.all([
   fsp.readFile('scripts/assets/sailormoonkib.jpg'),
-  fsp.readFile('scripts/assets/zirconium.jpg')
+  fsp.readFile('scripts/assets/zirconium.jpg'),
+  fsp.readFile('scripts/assets/william.jpg')
 ]).then(values => {
   values.map((imgData, i, arr) => {
     arr[i] = db.none(`INSERT INTO Image values ($1, $2)`, [i+1, imgData]);
@@ -42,7 +43,7 @@ Promise.all([
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 08, 17), 1, 'video', 5201, 1]
+          ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 08, 17), 1, 'video', 5201, 3]
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
