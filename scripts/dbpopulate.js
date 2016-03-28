@@ -45,7 +45,7 @@ Promise.all([
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 08, 17), 1, 'video', 5201, 3]
+          ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 8, 17), 1, 'video', 5201, 3]
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
