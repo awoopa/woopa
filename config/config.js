@@ -1,6 +1,6 @@
-var path = require('path'),
-    rootPath = path.normalize(__dirname + '/..'),
-    env = process.env.NODE_ENV || 'development';
+var path = require('path');
+var rootPath = path.normalize(path.join(__dirname, '..'));
+var env = process.env.NODE_ENV || 'development';
 
 var config = {
   development: {
@@ -9,7 +9,7 @@ var config = {
       name: 'woopa'
     },
     port: 3000,
-    db: 'postgres://localhost/woopa-development'
+    db: 'postgres://woopa:woopa-development@localhost:5432/woopa-development'
   },
 
   test: {
