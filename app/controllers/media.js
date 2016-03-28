@@ -99,53 +99,27 @@ module.exports = function (app, passport) {
       });
     });
 
-  app.route('/m/:id/watched')
-    .get((req, res, next) => {
-      if (req.user) {
-        next();
-      } else {
-        res.redirect('/login');
-      }
-    }, (req, res, next) => {
-      db.tx(t => {
-        return t.batch([
-          t.oneOrNone(`
-            SELECT * 
-            FROM Watched
-            WHERE userID = $1 AND
-                  mediaID = $2`,
-            [req.user.userid, req.params.id])
-        ]);
-      }).then(data => {
-        console.log(data);
-        if (data[0]) {
-          res.redirect('/m/' + req.params.id);
-        } else {
-          db.tx(t => {
-            return t.batch([
-              t.any(`
-                INSERT INTO Watched
-                (userID, mediaID) values($1, $2)`,
-                [req.user.userid, req.params.id])
-            ]);
-          }).then(data => {
-            console.log(data);
-            res.redirect('/m/' + req.params.id);
-          }).error(err => {
-            console.log(err);
-          });
-        }
-      });
-    });
+app.route('/m/:id/watched')
+.get((req, res, next) => {
+  if (req.user) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+}, (req, res, next) => {
+  db.tx(t => {
+    return t.batch([
+      t.oneOrNone(`
+        SELECT * 
+        FROM Watched
+        WHERE userID = $1 AND
+        mediaID = $2`,
+        [req.user.userid, req.params.id])
+      ]);
+  }).then(data => {
+    console.log(data);
 
-    app.route('/m/:id/unwatched')
-    .get((req, res, next) => {
-      if (req.user) {
-        next();
-      } else {
-        res.redirect('/login');
-      }
-    }, (req, res, next) => {
+    if (data[0]) {
       db.tx(t => {
         return t.batch([
           t.none(`
@@ -155,8 +129,27 @@ module.exports = function (app, passport) {
             mediaID = $2`,
             [req.user.userid, req.params.id])
           ]);
-      }).then(data => {
+      }).then ( data => {
         res.redirect('/m/' + req.params.id);
+      }
+      );
+    } else {
+      db.tx(t => {
+        return t.batch([
+          t.any(`
+            INSERT INTO Watched
+            (userID, mediaID) values($1, $2)`,
+            [req.user.userid, req.params.id])
+          ]);
+      }).then(data => {
+        console.log(data);
+        res.redirect('/m/' + req.params.id);
+      }).error(err => {
+        console.log(err);
       });
-    });
-  }
+    }
+  });
+});
+
+
+}

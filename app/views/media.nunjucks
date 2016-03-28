@@ -11,7 +11,7 @@
 	      Mark as Watched
 	    </a>
 		{% elif currentUser and watched %}
-	    <a class="ui green labeled icon button" href="/m/{{media.mediaid}}/unwatched">
+	    <a class="ui green labeled icon button" href="/m/{{media.mediaid}}/watched">
 	      <i class="checkmark icon"></i>
 	      Watched
 	    </a>
