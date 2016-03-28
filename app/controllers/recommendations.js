@@ -18,7 +18,24 @@ module.exports = function(app) {
                   RT.mediaID = M.mediaID AND
                   U.userID = RT.recommenderID AND
                   M.imageID = I.ImageID`,
-            [req.user.userid])
+            [req.user.userid]),
+          t.any(`
+            SELECT *
+            FROM Media M, Image I, 
+              (SELECT D.mediaID FROM
+                (SELECT M.type as type,  max(C.avg) AS mx 
+                 FROM  Media M, (SELECT M.mediaid AS mediaid, avg(RWA.rating) as avg, M.title as title, M.type as type  
+                                 FROM Review_Writes_About RWA, Media M 
+                                 WHERE RWA.mediaid = M.mediaid GROUP BY M.mediaid) as C 
+                 WHERE C.mediaid = M.mediaid
+                 GROUP BY M.type) 
+              AS A JOIN (SELECT M.mediaid AS mediaid, avg(RWA.rating) as avg, M.title as title, M.type as type  
+                                             FROM Review_Writes_About RWA, Media M 
+                                             WHERE RWA.mediaid = M.mediaid GROUP BY M.mediaid) as D
+              ON A.type = D.type AND A.mx = D.avg) as TRM
+            WHERE M.imageID = I.ImageID AND
+                  TRM.mediaID = M.mediaID`,
+          [req.user.userid])
         ]);
       })
       .then(data => {
