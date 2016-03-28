@@ -91,7 +91,7 @@ module.exports = function (app, passport) {
             values.are_friends = false;
           }
 
-          if (req.user.userid == req.params.id){
+          if (req.user && req.user.userid == req.params.id){
               values.is_self = true;
             } else {
               values.is_self = false;
