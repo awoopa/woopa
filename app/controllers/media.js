@@ -2,7 +2,6 @@ var db = require('../models');
 
 module.exports = function (app, passport) {
 
-
   app.route('/m/')
     .get((req, res, next) => {
       var type = req.query.type;
@@ -43,7 +42,6 @@ module.exports = function (app, passport) {
         });
       })
     });
-
 
   app.route('/m/search')
     .post((req, res, next) => {
@@ -170,13 +168,25 @@ module.exports = function (app, passport) {
             SELECT * 
             FROM Watched
             WHERE userID = $1 AND
-                  mediaID = $2`,
+            mediaID = $2`,
             [req.user.userid, req.params.id])
-        ]);
+          ]);
       }).then(data => {
         console.log(data);
+
         if (data[0]) {
-          res.redirect('/m/' + req.params.id);
+          db.tx(t => {
+            return t.batch([
+              t.none(`
+                DELETE 
+                FROM Watched
+                WHERE userID = $1 AND
+                mediaID = $2`,
+                [req.user.userid, req.params.id])
+            ]);
+          }).then(data => {
+            res.redirect('/m/' + req.params.id);
+          });
         } else {
           db.tx(t => {
             return t.batch([
@@ -184,7 +194,7 @@ module.exports = function (app, passport) {
                 INSERT INTO Watched
                 (userID, mediaID) values($1, $2)`,
                 [req.user.userid, req.params.id])
-            ]);
+              ]);
           }).then(data => {
             console.log(data);
             res.redirect('/m/' + req.params.id);
