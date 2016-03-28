@@ -9,7 +9,7 @@ var config = {
       name: 'woopa'
     },
     port: 3000,
-    db: 'postgres://woopa:woopa-development@localhost:5432/woopa-development'
+    db: 'postgres://localhost/woopa-development'
   },
 
   test: {
