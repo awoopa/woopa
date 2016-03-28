@@ -83,15 +83,15 @@ module.exports = function(app) {
           };
 
           if (data[6]) {
-            values.are_friends = true;
+            values.areFriends = true;
           } else {
-            values.are_friends = false;
+            values.areFriends = false;
           }
 
           if (req.user && req.user.userid === req.params.id) {
-            values.is_self = true;
+            values.isSelf = true;
           } else {
-            values.is_self = false;
+            values.isSelf = false;
           }
 
           res.render('user', values);
