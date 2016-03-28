@@ -87,7 +87,7 @@
 			<form action="/ur/" method="post">
 				<div class="content">
 					<input class="hidden" name="mediaID" value="{{media.mediaid}}" readonly />
-					<textarea placeholder="Enter details..." type="text" id="details" name="details" style="width:100%"></textarea>
+					<textarea placeholder="Enter details..." id="details" name="details" style="width:100%;font-size:14px"></textarea>
 				</div>
 				<button class="ui submit button" type="submit">Submit</button>
 			</form>
