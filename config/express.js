@@ -19,22 +19,25 @@ var dateFilter = require('nunjucks-date-filter');
 module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
   app.locals.ENV = env;
-  app.locals.ENV_DEVELOPMENT = env == 'development';
-  
+  app.locals.ENV_DEVELOPMENT = env === 'development';
+
   app.set('views', config.root + '/app/views');
   app.set('view engine', 'nunjucks');
 
   var crypto = require('crypto');
 
   nunjucks.configure(config.root + '/app/views', {
-      autoescape: true,
-      express: app
+    autoescape: true,
+    express: app
   }).addFilter('gravatar', (str, size) => { // TODO: move this somewhere else
-    var s = '//www.gravatar.com/avatar/'
-    s += crypto.createHash('md5').update(str).digest('hex');
-    if (size) {s += '?s=' + size};
+    var s = `//www.gravatar.com/avatar/${
+      crypto.createHash('md5').update(str).digest('hex')
+    }`;
+    if (size) {
+      s += '?s=' + size;
+    }
     return s;
-  }).addFilter('approxtime', (str) => {
+  }).addFilter('approxtime', str => {
     return prettyMs(new Date() - new Date(str), {compact: true}).slice(1);
   }).addFilter('date', dateFilter);
 
@@ -51,7 +54,7 @@ module.exports = function(app, config) {
 
   require('./passport')(passport);
 
-  app.use(session({ secret: "thisisareallybadsecret" }));
+  app.use(session({secret: "thisisareallybadsecret"}));
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(flash());
@@ -62,19 +65,19 @@ module.exports = function(app, config) {
   });
 
   var controllers = glob.sync(config.root + '/app/controllers/*.js');
-  controllers.forEach(function (controller) {
+  controllers.forEach(controller => {
     require(controller)(app, passport);
-    //require(controller)(app);
+    // require(controller)(app);
   });
 
-  app.use(function (req, res, next) {
+  app.use((req, res, next) => {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
   });
-  
-  if(app.get('env') === 'development'){
-    app.use(function (err, req, res, next) {
+
+  if (app.get('env') === 'development') {
+    app.use((err, req, res) => {
       res.status(err.status || 500);
       res.render('error', {
         message: err.message,
@@ -84,13 +87,12 @@ module.exports = function(app, config) {
     });
   }
 
-  app.use(function (err, req, res, next) {
+  app.use((err, req, res) => {
     res.status(err.status || 500);
-      res.render('error', {
-        message: err.message,
-        error: {},
-        title: 'error'
-      });
+    res.render('error', {
+      message: err.message,
+      error: {},
+      title: 'error'
+    });
   });
-
 };

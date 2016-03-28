@@ -12,10 +12,10 @@ Promise.all([
   fsp.readFile('scripts/assets/zirconium.jpg'),
   fsp.readFile('scripts/assets/william.jpg'),
   fsp.readFile('scripts/assets/psych.jpg'),
-  fsp.readFile('scripts/assets/zootopia.jpg'),
+  fsp.readFile('scripts/assets/zootopia.jpg')
 ]).then(values => {
   values.map((imgData, i, arr) => {
-    arr[i] = db.none(`INSERT INTO Image values ($1, $2)`, [i+1, imgData]);
+    arr[i] = db.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
   });
   Promise.all(values).then(val => {
     console.log(val);
@@ -45,11 +45,11 @@ Promise.all([
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 08, 17), 1, 'video', 5201, 3]
+          ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 8, 17), 1, 'video', 5201, 3]
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 05, 09), 7, 'tvshow', 8, 1]
+          ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 5, 9), 7, 'tvshow', 8, 1]
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
@@ -57,11 +57,11 @@ Promise.all([
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Kyle and Abrar Go To White Castle", "First installment in the Kyle and Abrar series", "Comedy", new Date(2004, 07, 30), 9, 'movie', 92, 1]
+          ["Kyle and Abrar Go To White Castle", "First installment in the Kyle and Abrar series", "Comedy", new Date(2004, 7, 30), 9, 'movie', 92, 1]
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 04, 25), 8, 'movie', 106, 1]
+          ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 4, 25), 8, 'movie', 106, 1]
         ),
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
@@ -94,11 +94,11 @@ Promise.all([
         t.none(
           `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
           ["wow this movie is so good!", 9, 2, 4]
-        ),     
+        ),
         t.none(
           `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
           ["this movie is definitely not a rip off of harold and kumar!", 9, 3, 4]
-        ),    
+        ),
         t.none(
           `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
           [1, 1, 2]
@@ -142,17 +142,21 @@ Promise.all([
         t.none(
           `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
           [4, 4, 3]
-        )         
-      ])
+        )
+      ]);
     })
-    .then(events => {
+    .then(() => {
       console.log("Data populated successfully!");
       pgp.end();
     })
-    .catch(err => { 
-      if(err) console.log(error);
+    .catch(err => {
+      if (err) {
+        console.log(err);
+      }
       pgp.end();
     });
-  }).catch(err => { console.error('Image population failed: ', err)})
-})
-      
+  }).catch(err => {
+    console.error('Image population failed: ', err);
+  });
+});
+

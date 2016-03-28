@@ -1,8 +1,6 @@
-var db = require('../models');
-
-module.exports = function (app, passport) {
+module.exports = function(app, passport) {
   app.route('/signup')
-    .get(function (req, res, next) {
+    .get((req, res) => {
       res.render('signup', {message: req.flash('signupMessage')});
     })
     .post(passport.authenticate('local-signup', {
