@@ -184,7 +184,7 @@ module.exports = function (app, passport) {
                 mediaID = $2`,
                 [req.user.userid, req.params.id])
             ]);
-          }).then(data => {
+          }).then(() => {
             res.redirect('/m/' + req.params.id);
           });
         } else {
@@ -232,6 +232,57 @@ module.exports = function (app, passport) {
                   INSERT INTO Recommends_To
                   values($1, $2, $3)`,
                   [req.params.id, req.user.userid, req.params.u])
+              ]);
+            }).then(() => {
+                res.redirect('/m/' + req.params.id);
+              }
+            );
+          }
+        });
+      });
+    });
+
+// recommender and recomendee have the same id - recommend to self = watchlist
+  app.route('/m/:id/watchlist')
+    .get((req, res, next) => {
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/login');
+      }
+    }, (req, res, next) => {
+      db.tx(t => {
+        return t.batch([
+          t.oneOrNone(`
+            SELECT *
+            FROM Recommends_To
+            WHERE mediaID = $1 AND
+                  recommenderID = $2 AND
+                  recommendeeID = $2`,
+            [req.params.id, req.user.userid])
+        ]).then(data => {
+          if (data[0]) {
+            // if it is already there remove (remove from watchlist)
+          db.tx(t => {
+            return t.batch([
+              t.none(`
+                DELETE 
+                FROM Recommends_To
+                WHERE mediaID = $1 AND
+                recommenderID = $2 AND
+                recommendeeID = $2`,
+                [req.params.id, req.user.userid])
+            ]);
+          }).then(() => {
+            res.redirect('/m/' + req.params.id);
+          });
+        } else {
+            db.tx(t => {
+              return t.batch([
+                t.none(`
+                  INSERT INTO Recommends_To
+                  values($1, $2, $2)`,
+                  [req.params.id, req.user.userid])
               ]);
             }).then(() => {
                 res.redirect('/m/' + req.params.id);

@@ -22,6 +22,9 @@
 			  <i class="thumbs up icon"></i>
 			  <span class="text">Recommend To</span>
 			  <div class="menu">
+			  	<a class="item" href="/m/{{media.mediaid}}/watchlist">
+				      Add to Watchlist
+				    </a>
 		  		{% for friend in friends %}
 	  				{# Use for when user has already recommended to friend.
 	  				<div class="item" href="/m/{{media.mediaid}}/recommend/{{friend.userid}}">

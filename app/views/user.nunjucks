@@ -18,12 +18,22 @@
         <a href="#" id="remove">Remove friend</a>
       {% endif %}
     {% endif %}
-     <form action="/u/search" method="post">
-    <div class="ui action input">
-  <input type="text" name="comment" id="comment" placeholder="Search by Username...">
-  <button class="ui icon button"><i class="search icon"></i></button>
-</div>
-</form>
+
+<div class="ui statistic">
+		  <div class="label">
+		    Watch List:
+		  </div>
+		</div>
+		<div class="ui one cards">
+		{% for w in watchlist %}
+			<div class="card">
+				<div class="content">
+    			<div class="right floated meta"></div>
+    			<a href="/m/{{w.mediaid}}"><img class="ui avatar image" src="{{media.img}}"> {{ w.title }}</a>
+				</div>
+    	</div>
+		{% endfor %}
+		</div>
 	</div>
 	<div class="column">
 		<div class="ui statistic">
@@ -101,6 +111,12 @@
     	</div>
 		{% endfor %}
 		</div>
+		     <form action="/u/search" method="post">
+    <div class="ui action input">
+  <input type="text" name="comment" id="comment" placeholder="Search by Username...">
+  <button class="ui icon button"><i class="search icon"></i></button>
+</div>
+</form>
 	</div>
 </div>
 
