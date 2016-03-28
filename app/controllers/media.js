@@ -149,8 +149,6 @@ module.exports = function (app, passport) {
           base64String = "data:image/png;base64," + base64String;
           data[0].img = base64String;
 
-                  console.log(data[0]);
-
           var values = {
             media: data[0],
             recommendations: data[1].count,
