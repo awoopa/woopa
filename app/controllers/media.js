@@ -10,13 +10,13 @@ module.exports = function (app, passport) {
       
       switch (type) {
         case "movie":
-          query += " WHERE type = 'movie'";
+          query += " AND type = 'movie'";
           break;
         case 'tvshow':
-          query += " WHERE type = 'tvshow'";
+          query += " AND type = 'tvshow'";
           break;
         case "video":
-          query += " WHERE type = 'video'";
+          query += " AND type = 'video'";
           break;
         default:
           break;
