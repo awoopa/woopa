@@ -44,10 +44,14 @@
               </span>
             </div>
             <div class="extra content">
-              <p>Recommended by: </p>
-                  {% for user in rec.recomenders %}
-                  <div class="recommender"><img class="ui avatar image" src="{{ user.email | gravatar(28) }}"/> {{user.username}}</div>
+              {% if rec.selfRecommendation %}
+                <h2> Next on Watch List </h2>
+              {% else %}
+                <p>Recommended by: </p>
+                  {% for user in rec.recommenders %}
+                    <div class="recommender"><img class="ui avatar image" src="{{ user.email | gravatar(28) }}"/> {{user.username}}</div>
                   {% endfor %}
+              {% endif %}
             </div>
           </a>
         {% endfor %}

@@ -29,15 +29,26 @@ module.exports = function(app) {
           var seen = false;
           for (var j = 0; j < recs.length; j++) {
             if (results[i].mediaid === recs[j].mediaid) {
-              recs[j].recomenders.push({
+              recs[j].recommenders.push({
                 email: results[i].email,
                 username: results[i].username
               });
+
+              // check if user is recommending media to themself (e.g. watchlist)
+              if (results[i].email == req.user.email) {
+                recs[j].selfRecommendation = true;
+              }
               seen = true;
             }
           }
 
           if (!seen) {
+            // check if user is recommending media to themself (e.g. watchlist)
+            var selfRecommendation = false;
+            if (results[i].email == req.user.email) {
+              selfRecommendation = true;
+            }
+
             recs.push({
               mediaid: results[i].mediaid,
               title: results[i].title,
@@ -53,7 +64,8 @@ module.exports = function(app) {
               numseasons: results[i].numseasons,
               numviews: results[i].numviews,
               channel: results[i].channel,
-              recomenders: [{
+              selfRecommendation: selfRecommendation,
+              recommenders: [{
                 email: results[i].email,
                 username: results[i].username
               }]
