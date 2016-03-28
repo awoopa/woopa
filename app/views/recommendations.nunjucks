@@ -16,7 +16,7 @@
             <div class="image">
               {% if rec.selfRecommendation == 1 %}
                 <div class="ui green ribbon label">
-                  <i class="arrow right icon"></i> Next Up
+                  <i class="star icon"></i> Watchlisted
                 </div>
               {% elif rec.selfRecommendation == 2 %}
                 <div class="ui blue ribbon label">
