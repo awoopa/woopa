@@ -7,7 +7,7 @@ Promise.all([
   fsp.readFile('scripts/assets/zirconium.jpg')
 ]).then(values => {
   values.map((imgData, i, arr) => {
-    arr[i] = db.none(`INSERT INTO Image (img) values ($1)`, [imgData]);
+    arr[i] = db.none(`INSERT INTO Image values ($1, $2)`, [i+1, imgData]);
   });
   Promise.all(values).then(val => {
     console.log(val);
