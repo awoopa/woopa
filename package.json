@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "lint": "eslint .",
+    "lint": "eslint --ignore-path .gitignore .",
     "dbinit": "node scripts/dbinit.js",
     "dbpopulate": "node scripts/dbpopulate.js",
     "heroku-postbuild": "npm run dbinit && npm run dbpopulate"
