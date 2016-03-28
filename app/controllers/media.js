@@ -1,23 +1,24 @@
 var db = require('../models');
 
-module.exports = function (app, passport) {
-
-
+module.exports = function(app) {
   app.route('/m/')
-    .get((req, res, next) => {
+    .get((req, res) => {
       var type = req.query.type;
 
-      var query = "SELECT * FROM Media";
-      
+      var query = `
+      SELECT M.*, I.img
+      FROM Media M, Image I
+      WHERE M.imageID = I.imageID`;
+
       switch (type) {
         case "movie":
-          query += " WHERE type = 'movie'";
+          query += " AND type = 'movie'";
           break;
         case 'tvshow':
-          query += " WHERE type = 'tvshow'";
+          query += " AND type = 'tvshow'";
           break;
         case "video":
-          query += " WHERE type = 'video'";
+          query += " AND type = 'video'";
           break;
         default:
           break;
@@ -28,35 +29,77 @@ module.exports = function (app, passport) {
       db.tx(t => {
         return t.batch([
           t.any(query)
-        ])
+        ]);
       })
       .then(data => {
+        for (var i = 0; i < data[0].length; i++) {
+          data[0][i].img = `data:image/png;base64,${
+            new Buffer(data[0][i].img, 'hex').toString('base64')
+          }`;
+        }
+
         res.render('media-listing', {
           medias: data[0],
           title: 'Browse'
         });
-      })
+      });
+    });
+
+  app.route('/m/search')
+    .post((req, res) => {
+      db.tx(t => {
+        return t.batch([
+          t.any(`
+            SELECT M.*, I.img
+            FROM Media M, Image I
+            WHERE M.imageID = I.imageID AND
+            LOWER(title) LIKE LOWER($1)`,
+            [`%${req.body.comment}%`])
+        ]);
+      }).then(data => {
+        if (data[0]) {
+          for (var i = 0; i < data[0].length; i++) {
+            data[0][i].img = `data:image/png;base64,${
+              new Buffer(data[0][i].img, 'hex').toString('base64')
+            }`;
+          }
+
+          var values = {
+            medias: data[0],
+            title: 'Search for' + req.body.comment
+          };
+
+          res.render('media-listing', values);
+        } else {
+          res.render('error', {
+            message: "user not found"
+          });
+        }
+      }).catch(error => {
+        console.log(error);
+      });
     });
 
   app.route('/m/:id')
-    .get((req, res, next) => {
-
+    .get((req, res) => {
       db.tx(t => {
         var queries = [
           t.oneOrNone(`
-            SELECT * 
-            FROM Media
-            WHERE mediaID = $1`, 
+            SELECT M.*, I.img
+            FROM Media M, Image I
+            WHERE M.imageID = I.imageID AND
+            mediaID = $1`,
             req.params.id
           ),
           t.one(`
             SELECT count(*)
             FROM Recommends_To
             WHERE mediaID = $1`,
-            req.params.id 
+            req.params.id
           ),
           t.any(`
-            SELECT RWA.comment, RWA.rating, RWA.userID, RWA.timestamp, U.userID, U.username, U.email
+            SELECT RWA.comment, RWA.rating, RWA.userID, RWA.timestamp,
+                   U.userID, U.username, U.email
             FROM Review_Writes_About RWA, WoopaUser U
             WHERE RWA.mediaID = $1 AND
                   RWA.userID = U.userID`,
@@ -82,21 +125,33 @@ module.exports = function (app, passport) {
             SELECT U.userID, U.email, U.username
             FROM Friends F, WoopaUser U
             WHERE F.friend_userID = $1 AND
-                  F.user_userID = U.userID`, 
+                  F.user_userID = U.userID`,
             req.user.userid));
+
+          queries.push(t.oneOrNone(`
+            SELECT *
+            FROM Recommends_To
+            WHERE mediaID = $1 AND
+                  recommenderID = $2 AND
+                  recommendeeID = $2`,
+            [req.params.id, req.user.userid]));
         }
 
         return t.batch(queries);
       })
       .then(data => {
         if (data[0]) {
+          data[0].img = `data:image/png;base64,${
+            new Buffer(data[0].img, 'hex').toString('base64')
+          }`;
+
           var values = {
             media: data[0],
             recommendations: data[1].count,
             reviews: data[2],
             actors: data[3],
             title: data[0].title
-          }
+          };
 
           if (data[4]) {
             values.watched = true;
@@ -107,12 +162,18 @@ module.exports = function (app, passport) {
           if (data[5]) {
             values.friends = data[5];
           }
-          
+
+          if (data[6]) {
+            values.watchlisted = true;
+          } else {
+            values.watchlisted = false;
+          }
+
           res.render('media', values);
         } else {
           res.render('error', {
             message: 'media not found'
-          })
+          });
         }
       });
     });
@@ -124,20 +185,32 @@ module.exports = function (app, passport) {
       } else {
         res.redirect('/login');
       }
-    }, (req, res, next) => {
+    }, (req, res) => {
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
-            SELECT * 
+            SELECT *
             FROM Watched
             WHERE userID = $1 AND
-                  mediaID = $2`,
+            mediaID = $2`,
             [req.user.userid, req.params.id])
         ]);
       }).then(data => {
         console.log(data);
+
         if (data[0]) {
-          res.redirect('/m/' + req.params.id);
+          db.tx(t => {
+            return t.batch([
+              t.none(`
+                DELETE
+                FROM Watched
+                WHERE userID = $1 AND
+                mediaID = $2`,
+                [req.user.userid, req.params.id])
+            ]);
+          }).then(() => {
+            res.redirect('/m/' + req.params.id);
+          });
         } else {
           db.tx(t => {
             return t.batch([
@@ -163,7 +236,7 @@ module.exports = function (app, passport) {
       } else {
         res.redirect('/login');
       }
-    }, (req, res, next) => {
+    }, (req, res) => {
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
@@ -185,9 +258,58 @@ module.exports = function (app, passport) {
                   [req.params.id, req.user.userid, req.params.u])
               ]);
             }).then(() => {
-                res.redirect('/m/' + req.params.id);
-              }
-            );
+              res.redirect('/m/' + req.params.id);
+            });
+          }
+        });
+      });
+    });
+
+// recommender and recomendee have the same id - recommend to self = watchlist
+  app.route('/m/:id/watchlist')
+    .get((req, res, next) => {
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/login');
+      }
+    }, (req, res) => {
+      db.tx(t => {
+        return t.batch([
+          t.oneOrNone(`
+            SELECT *
+            FROM Recommends_To
+            WHERE mediaID = $1 AND
+                  recommenderID = $2 AND
+                  recommendeeID = $2`,
+            [req.params.id, req.user.userid])
+        ]).then(data => {
+          if (data[0]) {
+            // if it is already there remove (remove from watchlist)
+            db.tx(t => {
+              return t.batch([
+                t.none(`
+                  DELETE
+                  FROM Recommends_To
+                  WHERE mediaID = $1 AND
+                  recommenderID = $2 AND
+                  recommendeeID = $2`,
+                  [req.params.id, req.user.userid])
+              ]);
+            }).then(() => {
+              res.redirect('/m/' + req.params.id);
+            });
+          } else {
+            db.tx(t => {
+              return t.batch([
+                t.none(`
+                  INSERT INTO Recommends_To
+                  values($1, $2, $2)`,
+                  [req.params.id, req.user.userid])
+              ]);
+            }).then(() => {
+              res.redirect('/m/' + req.params.id);
+            });
           }
         });
       });

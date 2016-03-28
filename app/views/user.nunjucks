@@ -3,14 +3,18 @@
 {% block content %}
 <div class="ui four column doubling stackable grid container">
 	<div class="column">
-	  <h1>{{ user.username }}</h1>
-    {% if not is_self %}
-    	{% if currentUser and not are_friends%}
+		
+	  <h1 class="ui icon header">
+	  	<img class="ui small circular image" src="{{ user.email | gravatar }}"> 
+	  	<div class="content">{{ user.username }}</div></h1>
+
+    {% if not isSelf %}
+    	{% if currentUser and not areFriends%}
   	    <a class="ui labeled icon button" href="/u/{{user.userid}}/add">
   	      <i class="add user icon"></i>
   	      Add Friend
   	    </a>
-  		{% elif currentUser and are_friends %}
+  		{% elif currentUser and areFriends %}
   	    <button class="ui green labeled icon button">
   	      <i class="checkmark icon"></i>
   	      Friends
@@ -18,6 +22,20 @@
         <a href="#" id="remove">Remove friend</a>
       {% endif %}
     {% endif %}
+
+<div class="ui statistic">
+		  <h2 class="ui header"> WATCH LIST:</h2>
+		</div>
+<div class="ui relaxed middle aligned divided list">
+	{% for w in watchlist %}
+  <div class="item">
+    <img class="ui avatar image" src="{{w.img}}"> 
+    <div class="middle aligned content">
+      <a href="/m/{{w.mediaid}}"><div class="content">{{ w.title }}</div></a>
+    </div>
+  </div>
+{% endfor %}
+</div>
 	</div>
 	<div class="column">
 		<div class="ui statistic">
@@ -56,16 +74,16 @@
 		    Watched
 		  </div>
 		</div>
-		<div class="ui one cards">
-		{% for media in watched %}
-			<div class="card">
-				<div class="content">
-    			<div class="right floated meta"></div>
-    			{{ media.title }}
-				</div>
-    	</div>
-		{% endfor %}
-		</div>
+		<div class="ui relaxed middle aligned divided list">
+	{% for media in watched %}
+  <div class="item">
+    <div class="middle aligned content">
+      <div class="content">{{ media.title }}</div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
 	</div>
 	<div class="ui modal" id="confirm-remove">
 		<div class="content">
@@ -74,7 +92,35 @@
 		<div class="actions">
 			<a class="ui positive button" href="/u/{{user.userid}}/remove">Yes</a>
 			<div class="ui negative button">No</div>
+    </div>
+  </div>
+	<div class="column">
+		<div class="ui statistic">
+		  <div class="value">
+		    {{ friends | length }}
+		  </div>
+		  <div class="label">
+		    Friends
+		  </div>
 		</div>
+
+		<div class="ui relaxed middle aligned divided list">
+	{% for f in friends %}
+  <div class="item">
+    <img class="ui avatar image" src="{{ f.email | gravatar }}">
+    <div class="middle aligned content">
+      <a href="/u/{{f.userid}}"> {{ f.username }}</a>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+		     <form action="/u/search" method="post">
+    <div class="ui action input">
+  <input type="text" name="comment" id="comment" placeholder="Search by Username...">
+  <button class="ui icon button"><i class="search icon"></i></button>
+</div>
+</form>
 	</div>
 </div>
 

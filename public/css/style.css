@@ -21,3 +21,8 @@ dirty hack to prevent the Semantic UI icon class from changing the font
 .fa.icon {
 	font-family: FontAwesome;
 }
+
+.recommender { 
+  padding: 5px 10px 5px 0;
+  display: inline-block;
+}
