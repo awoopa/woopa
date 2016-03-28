@@ -76,7 +76,6 @@ module.exports = function (app, passport) {
           data[5][i].img = base64String;
         }
 
-        console.log(data[5]);
           var values = {
             user: data[0],
             recommendations: data[1],
@@ -92,13 +91,12 @@ module.exports = function (app, passport) {
             values.are_friends = false;
           }
 
-          if (data[6]) {
-            if (values.user.userid == data[5].userid) {
+          if (req.user.userid == req.params.id){
               values.is_self = true;
             } else {
               values.is_self = false;
             }
-          }
+        
 
           res.render('user', values);
         } else {

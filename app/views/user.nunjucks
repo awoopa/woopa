@@ -3,6 +3,7 @@
 {% block content %}
 <div class="ui four column doubling stackable grid container">
 	<div class="column">
+		<img class="ui tiny left floated circular image" src="{{ user.email | gravatar }}"> 
 	  <h1>{{ user.username }}</h1>
     {% if not is_self %}
     	{% if currentUser and not are_friends%}
