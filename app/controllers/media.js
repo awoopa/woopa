@@ -7,7 +7,7 @@ module.exports = function (app, passport) {
     .get((req, res, next) => {
       var type = req.query.type;
 
-      var query = "SELECT * FROM Media";
+      var query = "SELECT M.*, I.img FROM Media M, Image I WHERE M.imageID = I.imageID";
       
       switch (type) {
         case "movie":
@@ -31,6 +31,12 @@ module.exports = function (app, passport) {
         ])
       })
       .then(data => {
+        for (var i = 0; i < data[0].length; i++) {
+          var base64String = new Buffer(data[0][i].img, 'hex').toString('base64');
+          base64String = "data:image/png;base64," + base64String;
+          data[0][i].img = base64String;
+        }
+
         res.render('media-listing', {
           medias: data[0],
           title: 'Browse'
