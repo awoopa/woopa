@@ -128,11 +128,10 @@ app.route('/m/:id/watched')
             WHERE userID = $1 AND
             mediaID = $2`,
             [req.user.userid, req.params.id])
-          ]);
-      }).then ( data => {
+        ]);
+      }).then(data => {
         res.redirect('/m/' + req.params.id);
-      }
-      );
+      });
     } else {
       db.tx(t => {
         return t.batch([
