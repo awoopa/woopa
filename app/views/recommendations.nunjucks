@@ -44,13 +44,15 @@
               </span>
             </div>
             <div class="extra content">
-              {% if rec.selfRecommendation %}
-                <h2> Next on Watch List </h2>
-              {% else %}
+              {% if rec.selfRecommendation == 0 %}
                 <p>Recommended by: </p>
                   {% for user in rec.recommenders %}
                     <div class="recommender"><img class="ui avatar image" src="{{ user.email | gravatar(28) }}"/> {{user.username}}</div>
-                  {% endfor %}
+                  {% endfor %}               
+              {% elif rec.selfRecommendation == 1 %}
+                <h2> Next on Watch List </h2>
+              {% elif rec.selfRecommendation == 2 %}
+                <h3> Community Recommendation </h3>
               {% endif %}
             </div>
           </a>

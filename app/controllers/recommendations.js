@@ -20,7 +20,7 @@ module.exports = function(app) {
                   M.imageID = I.ImageID`,
             [req.user.userid]),
           t.any(`
-            SELECT *
+            SELECT M.*, I.*
             FROM Media M, Image I, 
               (SELECT D.mediaID FROM
                 (SELECT M.type as type,  max(C.avg) AS mx 
@@ -34,13 +34,20 @@ module.exports = function(app) {
                                              WHERE RWA.mediaid = M.mediaid GROUP BY M.mediaid) as D
               ON A.type = D.type AND A.mx = D.avg) as TRM
             WHERE M.imageID = I.ImageID AND
-                  TRM.mediaID = M.mediaID`,
-          [req.user.userid])
+                  TRM.mediaID = M.mediaID
+            EXCEPT
+            SELECT M.*, I.*
+            FROM Recommends_To RT, Media M, WoopaUser U, Image I
+            WHERE RT.recommendeeID = 1 AND
+                  RT.mediaID = M.mediaID AND
+                  U.userID = RT.recommenderID AND
+                  M.imageID = I.ImageID`,
+            [req.user.userid])
         ]);
       })
       .then(data => {
+        // populate external recommendations
         var results = data[0];
-
         var recs = [];
         for (var i = 0; i < results.length; i++) {
           var seen = false;
@@ -53,7 +60,7 @@ module.exports = function(app) {
 
               // check if user is recommending media to themself (e.g. watchlist)
               if (results[i].email == req.user.email) {
-                recs[j].selfRecommendation = true;
+                recs[j].selfRecommendation = 1;
               }
               seen = true;
             }
@@ -61,9 +68,9 @@ module.exports = function(app) {
 
           if (!seen) {
             // check if user is recommending media to themself (e.g. watchlist)
-            var selfRecommendation = false;
+            var selfRecommendation = 0;
             if (results[i].email == req.user.email) {
-              selfRecommendation = true;
+              selfRecommendation = 1;
             }
 
             recs.push({
@@ -88,6 +95,29 @@ module.exports = function(app) {
               }]
             });
           }
+        }
+
+        // populate system suggested media
+        var suggested = data[1];
+        for (var i = 0; i < suggested.length; i++) {
+          recs.push({
+            mediaid: suggested[i].mediaid,
+            title: suggested[i].title,
+            synopsis: suggested[i].synopsis,
+            genre: suggested[i].genre,
+            publishdate: suggested[i].publishdate,
+            rating: suggested[i].rating,
+            img: `data:image/png;base64,${
+              new Buffer(suggested[i].img, 'hex').toString('base64')
+            }`,
+            type: suggested[i].type,
+            runtime: suggested[i].runtime,
+            numseasons: suggested[i].numseasons,
+            numviews: suggested[i].numviews,
+            channel: suggested[i].channel,
+            selfRecommendation: 2,
+            recommenders: []            
+          })
         }
 
         var values = {
