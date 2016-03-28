@@ -10,13 +10,13 @@ module.exports = function (app, passport) {
       
       switch (type) {
         case "movie":
-          query += " WHERE type = 'movie'";
+          query += " AND type = 'movie'";
           break;
         case 'tvshow':
-          query += " WHERE type = 'tvshow'";
+          query += " AND type = 'tvshow'";
           break;
         case "video":
-          query += " WHERE type = 'video'";
+          query += " AND type = 'video'";
           break;
         default:
           break;
@@ -49,9 +49,10 @@ module.exports = function (app, passport) {
       db.tx(t => {
         return t.batch([
           t.any(`
-            SELECT *
-            FROM Media
-            WHERE LOWER(title) LIKE LOWER($1)`,
+            SELECT M.*, I.img 
+            FROM Media M, Image I 
+            WHERE M.imageID = I.imageID AND 
+            LOWER(title) LIKE LOWER($1)`,
             [`%${req.body.comment}%`])
         ]);
       }).then(data => {
@@ -59,6 +60,13 @@ module.exports = function (app, passport) {
         console.log(data);
 
         if (data[0]) {
+
+          for (var i = 0; i < data[0].length; i++) {
+          var base64String = new Buffer(data[0][i].img, 'hex').toString('base64');
+          base64String = "data:image/png;base64," + base64String;
+          data[0][i].img = base64String;
+        }
+
           var values = {
           medias: data[0],
           title: 'Search for' + req.body.comment
@@ -81,9 +89,10 @@ module.exports = function (app, passport) {
       db.tx(t => {
         var queries = [
           t.oneOrNone(`
-            SELECT * 
-            FROM Media
-            WHERE mediaID = $1`, 
+            SELECT M.*, I.img 
+            FROM Media M, Image I 
+            WHERE M.imageID = I.imageID AND
+            mediaID = $1`, 
             req.params.id
           ),
           t.one(`
@@ -121,12 +130,25 @@ module.exports = function (app, passport) {
             WHERE F.friend_userID = $1 AND
                   F.user_userID = U.userID`, 
             req.user.userid));
+
+          queries.push(t.oneOrNone(`
+            SELECT *
+            FROM Recommends_To
+            WHERE mediaID = $1 AND
+                  recommenderID = $2 AND
+                  recommendeeID = $2`,
+            [req.params.id, req.user.userid]));
         }
 
         return t.batch(queries);
       })
       .then(data => {
         if (data[0]) {
+
+        var base64String = new Buffer(data[0].img, 'hex').toString('base64');
+          base64String = "data:image/png;base64," + base64String;
+          data[0].img = base64String;
+
           var values = {
             media: data[0],
             recommendations: data[1].count,
@@ -144,6 +166,14 @@ module.exports = function (app, passport) {
           if (data[5]) {
             values.friends = data[5];
           }
+
+          if (data[6]) {
+            values.watchlisted = true;
+          } else {
+            values.watchlisted = false;
+          }
+          console.log(data[6]);
+          console.log(values);
           
           res.render('media', values);
         } else {
@@ -184,7 +214,7 @@ module.exports = function (app, passport) {
                 mediaID = $2`,
                 [req.user.userid, req.params.id])
             ]);
-          }).then(data => {
+          }).then(() => {
             res.redirect('/m/' + req.params.id);
           });
         } else {
@@ -232,6 +262,57 @@ module.exports = function (app, passport) {
                   INSERT INTO Recommends_To
                   values($1, $2, $3)`,
                   [req.params.id, req.user.userid, req.params.u])
+              ]);
+            }).then(() => {
+                res.redirect('/m/' + req.params.id);
+              }
+            );
+          }
+        });
+      });
+    });
+
+// recommender and recomendee have the same id - recommend to self = watchlist
+  app.route('/m/:id/watchlist')
+    .get((req, res, next) => {
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/login');
+      }
+    }, (req, res, next) => {
+      db.tx(t => {
+        return t.batch([
+          t.oneOrNone(`
+            SELECT *
+            FROM Recommends_To
+            WHERE mediaID = $1 AND
+                  recommenderID = $2 AND
+                  recommendeeID = $2`,
+            [req.params.id, req.user.userid])
+        ]).then(data => {
+          if (data[0]) {
+            // if it is already there remove (remove from watchlist)
+          db.tx(t => {
+            return t.batch([
+              t.none(`
+                DELETE 
+                FROM Recommends_To
+                WHERE mediaID = $1 AND
+                recommenderID = $2 AND
+                recommendeeID = $2`,
+                [req.params.id, req.user.userid])
+            ]);
+          }).then(() => {
+            res.redirect('/m/' + req.params.id);
+          });
+        } else {
+            db.tx(t => {
+              return t.batch([
+                t.none(`
+                  INSERT INTO Recommends_To
+                  values($1, $2, $2)`,
+                  [req.params.id, req.user.userid])
               ]);
             }).then(() => {
                 res.redirect('/m/' + req.params.id);

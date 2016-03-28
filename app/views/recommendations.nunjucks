@@ -14,7 +14,7 @@
           {% endif %}
           <a class="ui {{colour}} link card" href="/m/{{rec.mediaid}}">
             <div class="image">
-              <img src="https://placehold.it/150x150" />
+              <img src={{rec.img}} />
             </div>
             <div class="content">
               <div class="header">{{rec.title}}</div> 

@@ -1,9 +1,36 @@
 {% extends 'layout.nunjucks' %}
 
 {% block content %}
-<div class="ui four column doubling stackable grid container">
+<div class="ui three column doubling stackable grid container">
 	<div class="column">
+		<div class="ui image fluid rounded">
+              <img src={{media.img}} />
+            </div>
 	  <h1>{{ media.title }}</h1>
+
+
+	  <p>Published {{ media.publishdate | date("MMM DD, YYYY") }}</p>
+	  <p>Synopsis: {{ media.synopsis }}</p>
+	  <p>Rating: {{ media.rating }}</p>
+    <br/>
+    <br/>
+    <div class="column">
+      <h3>Actors:</h3>
+      {% for actor in actors %}
+        <p>{{ actor.actorname }}</p>
+      {% endfor %}
+    </div>
+	</div>
+	<div class="column">
+		<div class="ui statistic">
+		  <div class="value">
+		    {{ recommendations }}
+		  </div>
+		  <div class="label">
+		    Recommendations
+		  </div>
+		</div><br>
+			  <div class="ui vertical buttons">
 
   	{% if currentUser and not watched %}
 	    <a class="ui labeled icon button" href="/m/{{media.mediaid}}/watched">
@@ -14,6 +41,18 @@
 	    <a class="ui green labeled icon button" href="/m/{{media.mediaid}}/watched">
 	      <i class="checkmark icon"></i>
 	      Watched
+	    </a>
+    {% endif %}
+
+    {% if currentUser and not watchlisted %}
+	    <a class="ui labeled icon button" href="/m/{{media.mediaid}}/watchlist">
+	      <i class="empty star icon"></i>
+	      Add to Watchlist
+	    </a>
+		{% elif currentUser and watchlisted %}
+	    <a class="ui green labeled icon button" href="/m/{{media.mediaid}}/watchlist">
+	      <i class="star icon"></i>
+	      Watchlisted
 	    </a>
     {% endif %}
 	  
@@ -38,28 +77,6 @@
 			  </div>
 			</div>
 		{% endif %}
-
-
-	  <p>Published {{ media.publishdate | date("MMM DD, YYYY") }}</p>
-	  <p>Synopsis: {{ media.synopsis }}</p>
-	  <p>Rating: {{ media.rating }}</p>
-    <br/>
-    <br/>
-    <div class="column">
-      <h3>Actors:</h3>
-      {% for actor in actors %}
-        <p>{{ actor.actorname }}</p>
-      {% endfor %}
-    </div>
-	</div>
-	<div class="column">
-		<div class="ui statistic">
-		  <div class="value">
-		    {{ recommendations }}
-		  </div>
-		  <div class="label">
-		    Recommendations
-		  </div>
 		</div>
 	</div>
 	<div class="column">

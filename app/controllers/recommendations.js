@@ -13,10 +13,11 @@ module.exports = function (app, passport) {
         return t.batch([
           t.any(`
             SELECT *
-            FROM Recommends_To RT, Media M, WoopaUser U
+            FROM Recommends_To RT, Media M, WoopaUser U, Image I
             WHERE RT.recommendeeID = $1 AND
                   RT.mediaID = M.mediaID AND
-                  U.userID = RT.recommenderID`,
+                  U.userID = RT.recommenderID AND
+                  M.imageID = I.ImageID`,
             [req.user.userid])
         ]);
       })
@@ -33,6 +34,9 @@ module.exports = function (app, passport) {
             }
           }
 
+          var base64String = new Buffer(results[i].img, 'hex').toString('base64');
+          base64String = "data:image/png;base64," + base64String;
+
           if (!seen) {
             recs.push({
               mediaid: results[i].mediaid,
@@ -41,7 +45,7 @@ module.exports = function (app, passport) {
               genre: results[i].genre,
               publishdate: results[i].publishdate,
               rating: results[i].rating,
-              thumbnail: results[i].thumbnail,
+              img: base64String,
               type: results[i].type,
               runtime: results[i].runtime,
               numseasons: results[i].numseasons,

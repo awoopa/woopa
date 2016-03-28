@@ -39,6 +39,14 @@ module.exports = function (app, passport) {
             FROM Friends F, WoopaUser W
             WHERE F.user_userID=$1 AND
                   F.friend_userID = W.userID`,
+            req.params.id),
+          t.any(`
+            SELECT M.*, I.img 
+            FROM Recommends_To RT, Media M, Image I 
+            WHERE M.imageID = I.imageID AND
+                  RT.recommenderID = $1 AND
+                  RT.recommendeeID = $1 AND
+                  RT.mediaID = M.mediaID`,
             req.params.id)
         ];
 
@@ -56,33 +64,38 @@ module.exports = function (app, passport) {
             [req.user.userid, req.params.id]));
         }
 
-        console.log(queries);
 
         return t.batch(queries);
       }).then(data => {
-        console.log(data);
+        
         if (data[0]) {
+          for (var i = 0; i < data[5].length; i++) {
+          var base64String = new Buffer(data[5][i].img, 'hex').toString('base64');
+          base64String = "data:image/png;base64," + base64String;
+          data[5][i].img = base64String;
+        }
+
           var values = {
             user: data[0],
             recommendations: data[1],
             reviews: data[2],
             watched: data[3],
-            friends: data[4]
+            friends: data[4],
+            watchlist: data[5]
           };
 
-          if (data[5]) {
+          if (data[6]) {
             values.are_friends = true;
           } else {
             values.are_friends = false;
           }
 
-          if (data[5]) {
-            if (values.user.userid == data[5].userid) {
+          if (req.user && req.user.userid == req.params.id){
               values.is_self = true;
             } else {
               values.is_self = false;
             }
-          }
+        
 
           res.render('user', values);
         } else {
