@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node app.js",
+    "test": "npm run lint",
     "lint": "eslint --ignore-path .gitignore .",
     "dbinit": "node scripts/dbinit.js",
     "dbpopulate": "node scripts/dbpopulate.js",
