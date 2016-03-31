@@ -41,6 +41,32 @@ Promise.all([
           ["itsm@rk.us", "markus", salt, pass, false]
         ),
 
+        // Populate Friends
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [1, 2]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [2, 1]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [1, 3]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [3, 1]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [2, 3]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [3, 2]
+        ),
+
         // Populate Media
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
