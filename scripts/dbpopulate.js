@@ -23,6 +23,7 @@ Promise.all([
 
     db.tx(function(t) {
       return t.batch([
+        // Populate Users
         t.none(
           `INSERT INTO WoopaUser (email, username, salt, password, isAdmin) values($1, $2, $3, $4, $5)`,
           ["jamesjhliu@gmail.com", "yeah568", salt, pass, true]
@@ -39,6 +40,8 @@ Promise.all([
           `INSERT INTO WoopaUser (email, username, salt, password, isAdmin) values($1, $2, $3, $4, $5)`,
           ["itsm@rk.us", "markus", salt, pass, false]
         ),
+
+        // Populate Media
         t.none(
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
           ["Zirconium", "Shikib Sings Zirconium", "History", new Date(2012, 11, 12), 2, 'video', 265, 2]
@@ -67,6 +70,8 @@ Promise.all([
           `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
           ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), 9.9, 'movie', 108, 5]
         ),
+
+        // Populate Reviews
         t.none(
           `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
           ["the best!", 10, 1, 1]
@@ -99,6 +104,8 @@ Promise.all([
           `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
           ["this movie is definitely not a rip off of harold and kumar!", 9, 3, 4]
         ),
+
+        // Populate Recommendations
         t.none(
           `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
           [1, 1, 2]
@@ -139,6 +146,8 @@ Promise.all([
           `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
           [4, 1, 2]
         ),
+
+        // Populate Watch List Entries
         t.none(
           `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
           [5, 1, 1]
@@ -159,6 +168,8 @@ Promise.all([
           `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
           [4, 4, 4]
         ),
+
+        // Populate Watched Media
         t.none(
           `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
           [1, 1, new Date(2016, 3, 27)]
