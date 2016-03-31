@@ -14,10 +14,10 @@ Promise.all([
   fsp.readFile('scripts/assets/psych.jpg'),
   fsp.readFile('scripts/assets/zootopia.jpg')
 ]).then(values => {
-  values.map((imgData, i, arr) => {
-    arr[i] = db.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
+  var queries = values.map((imgData, i, arr) => {
+    return db.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
   });
-  Promise.all(values).then(val => {
+  Promise.all(queries).then(val => {
     console.log(val);
     console.log("Images populated successfully!");
 
