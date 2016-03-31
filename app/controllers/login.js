@@ -1,8 +1,6 @@
-var db = require('../models');
-
-module.exports = function (app, passport) {
+module.exports = function(app, passport) {
   app.route('/login')
-    .get((req, res, next) => {
+    .get((req, res) => {
       res.render('login', {message: req.flash('loginMessage')});
     })
     .post(passport.authenticate('local-login', {
@@ -12,8 +10,8 @@ module.exports = function (app, passport) {
     }));
 
   app.route('/logout')
-    .get((req, res, next) => {
-    	req.logout();
-    	res.redirect('/');
-    })
+    .get((req, res) => {
+      req.logout();
+      res.redirect('/');
+    });
 };

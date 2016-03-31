@@ -1,9 +1,8 @@
 var db = require('../models');
 
-module.exports = function (app, passport) {
+module.exports = function(app) {
   app.route('/u/:id')
-    .get((req, res, next) => {
-
+    .get((req, res) => {
       db.tx(t => {
         var queries = [
           t.oneOrNone(`
@@ -41,8 +40,8 @@ module.exports = function (app, passport) {
                   F.friend_userID = W.userID`,
             req.params.id),
           t.any(`
-            SELECT M.*, I.img 
-            FROM Recommends_To RT, Media M, Image I 
+            SELECT M.*, I.img
+            FROM Recommends_To RT, Media M, Image I
             WHERE M.imageID = I.imageID AND
                   RT.recommenderID = $1 AND
                   RT.recommendeeID = $1 AND
@@ -67,13 +66,12 @@ module.exports = function (app, passport) {
 
         return t.batch(queries);
       }).then(data => {
-        
         if (data[0]) {
           for (var i = 0; i < data[5].length; i++) {
-          var base64String = new Buffer(data[5][i].img, 'hex').toString('base64');
-          base64String = "data:image/png;base64," + base64String;
-          data[5][i].img = base64String;
-        }
+            data[5][i].img = `data:image/png;base64,${
+              new Buffer(data[5][i].img, 'hex').toString('base64')
+            }`;
+          }
 
           var values = {
             user: data[0],
@@ -85,17 +83,18 @@ module.exports = function (app, passport) {
           };
 
           if (data[6]) {
-            values.are_friends = true;
+            values.areFriends = true;
           } else {
-            values.are_friends = false;
+            values.areFriends = false;
           }
 
-          if (req.user && req.user.userid == req.params.id){
-              values.is_self = true;
+          if (req.user) {
+            if (req.user.userid === parseInt(req.params.id, 10)) {
+              values.isSelf = true;
             } else {
-              values.is_self = false;
+              values.isSelf = false;
             }
-        
+          }
 
           res.render('user', values);
         } else {
@@ -106,9 +105,8 @@ module.exports = function (app, passport) {
       });
     });
 
-
   app.route('/u/search')
-    .post((req, res, next) => {
+    .post((req, res) => {
       db.tx(t => {
         return t.batch([
           t.any(`
@@ -118,9 +116,6 @@ module.exports = function (app, passport) {
             [`%${req.body.comment}%`])
         ]);
       }).then(data => {
-
-        console.log(data);
-
         if (data[0]) {
           var values = {
             results: data[0],
@@ -131,7 +126,7 @@ module.exports = function (app, passport) {
         } else {
           res.render('error', {
             message: 'user not found'
-          })
+          });
         }
       }).catch(error => {
         console.log(error);
@@ -145,7 +140,7 @@ module.exports = function (app, passport) {
       } else {
         res.redirect('/login');
       }
-    }, (req, res, next) => {
+    }, (req, res) => {
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
@@ -166,10 +161,10 @@ module.exports = function (app, passport) {
                 (user_userID, friend_userID) values($1, $2)`,
                 [req.user.userid, req.params.id])
             ]);
-          }).then(data => {
+          }).then(() => {
             res.redirect(`/u/${req.params.id}`);
           }).error(err => {
-            console.log(error);
+            console.log(err);
           });
         }
       });
@@ -182,11 +177,11 @@ module.exports = function (app, passport) {
       } else {
         res.redirect('/login');
       }
-    }, (req, res, next) => {
+    }, (req, res) => {
       db.tx(t => {
         return t.batch([
           t.oneOrNone(`
-            SELECT * 
+            SELECT *
             FROM Friends
             WHERE user_userID = $1 AND
                   friend_userID = $2`,
@@ -202,7 +197,7 @@ module.exports = function (app, passport) {
                       friend_userID = $2`,
                 [req.user.userid, req.params.id])
             ]);
-          }).then(data => {
+          }).then(() => {
             res.redirect('/u/' + req.params.id);
           }).error(err => {
             console.log(err);

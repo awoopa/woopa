@@ -12,147 +12,300 @@ Promise.all([
   fsp.readFile('scripts/assets/zirconium.jpg'),
   fsp.readFile('scripts/assets/william.jpg'),
   fsp.readFile('scripts/assets/psych.jpg'),
-  fsp.readFile('scripts/assets/zootopia.jpg'),
+  fsp.readFile('scripts/assets/zootopia.jpg')
 ]).then(values => {
-  values.map((imgData, i, arr) => {
-    arr[i] = db.none(`INSERT INTO Image values ($1, $2)`, [i+1, imgData]);
+  var queries = values.map((imgData, i) => {
+    return db.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
   });
-  Promise.all(values).then(val => {
+  Promise.all(queries).then(val => {
     console.log(val);
     console.log("Images populated successfully!");
 
     db.tx(function(t) {
       return t.batch([
-        t.none(
-          `INSERT INTO WoopaUser (email, username, salt, password, isAdmin) values($1, $2, $3, $4, $5)`,
+        // Populate Users
+        t.none(`
+          INSERT INTO WoopaUser
+          (email, username, salt, password, isAdmin)
+          values($1, $2, $3, $4, $5)`,
           ["jamesjhliu@gmail.com", "yeah568", salt, pass, true]
         ),
-        t.none(
-          `INSERT INTO WoopaUser (email, username, salt, password, isAdmin) values($1, $2, $3, $4, $5)`,
+        t.none(`
+          INSERT INTO WoopaUser
+          (email, username, salt, password, isAdmin)
+          values($1, $2, $3, $4, $5)`,
           ["wqi.william@gmail.com", "wqi", salt, pass, true]
         ),
-        t.none(
-          `INSERT INTO WoopaUser (email, username, salt, password, isAdmin) values($1, $2, $3, $4, $5)`,
+        t.none(`
+          INSERT INTO WoopaUser
+          (email, username, salt, password, isAdmin)
+          values($1, $2, $3, $4, $5)`,
           ["mparkms@gmail.com", "kaabistar", salt, pass, false]
         ),
-        t.none(
-          `INSERT INTO WoopaUser (email, username, salt, password, isAdmin) values($1, $2, $3, $4, $5)`,
+        t.none(`
+          INSERT INTO WoopaUser
+          (email, username, salt, password, isAdmin)
+          values($1, $2, $3, $4, $5)`,
           ["itsm@rk.us", "markus", salt, pass, false]
         ),
+
+        // Populate Friends
         t.none(
-          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [1, 2]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [2, 1]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [1, 3]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [3, 1]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [2, 3]
+        ),
+        t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [3, 2]
+        ),
+
+        // Populate Media
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, numViews, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
           ["Zirconium", "Shikib Sings Zirconium", "History", new Date(2012, 11, 12), 2, 'video', 265, 2]
         ),
-        t.none(
-          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numViews, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 08, 17), 1, 'video', 5201, 3]
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, numViews, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["My Moment", "The best rendition of the best song ever", "Music", new Date(2010, 8, 17), 1, 'video', 5201, 3]
         ),
-        t.none(
-          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 05, 09), 7, 'tvshow', 8, 1]
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 5, 9), 7, 'tvshow', 8, 1]
         ),
-        t.none(
-          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
           ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), 8.4, 'tvshow', 8, 4]
         ),
-        t.none(
-          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Kyle and Abrar Go To White Castle", "First installment in the Kyle and Abrar series", "Comedy", new Date(2004, 07, 30), 9, 'movie', 92, 1]
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Kyle and Abrar Go To White Castle", "First installment in the Kyle and Abrar series", "Comedy", new Date(2004, 7, 30), 9, 'movie', 92, 1]
         ),
-        t.none(
-          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 04, 25), 8, 'movie', 106, 1]
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 4, 25), 8, 'movie', 106, 1]
         ),
-        t.none(
-          `INSERT INTO Media (title, synopsis, genre, publishDate, rating, type, runtime, imageID) values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
           ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), 9.9, 'movie', 108, 5]
         ),
-        t.none(
-          `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
+
+        // Populate Reviews
+        t.none(`
+          INSERT INTO Review_Writes_About
+          (comment, rating, userID, mediaID)
+          values($1, $2, $3, $4)`,
           ["the best!", 10, 1, 1]
         ),
-        t.none(
-          `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
+        t.none(`
+          INSERT INTO Review_Writes_About
+          (comment, rating, userID, mediaID)
+          values($1, $2, $3, $4)`,
           ["the worst!", 1, 2, 1]
         ),
-        t.none(
-          `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
+        t.none(`
+          INSERT INTO Review_Writes_About
+          (comment, rating, userID, mediaID)
+          values($1, $2, $3, $4)`,
           ["meh", 5, 3, 1]
         ),
-        t.none(
-          `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
+        t.none(`
+          INSERT INTO Review_Writes_About
+          (comment, rating, userID, mediaID)
+          values($1, $2, $3, $4)`,
           [":^)", 5, 4, 1]
         ),
-        t.none(
-          `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
+        t.none(`
+          INSERT INTO Review_Writes_About
+          (comment, rating, userID, mediaID)
+          values($1, $2, $3, $4)`,
           ["the best!", 10, 1, 3]
         ),
-        t.none(
-          `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
+        t.none(`
+          INSERT INTO Review_Writes_About
+          (comment, rating, userID, mediaID)
+          values($1, $2, $3, $4)`,
           [":^)", 5, 4, 3]
         ),
-        t.none(
-          `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
+        t.none(`
+          INSERT INTO Review_Writes_About
+          (comment, rating, userID, mediaID)
+          values($1, $2, $3, $4)`,
           ["wow this movie is so good!", 9, 2, 4]
-        ),     
-        t.none(
-          `INSERT INTO Review_Writes_About (comment, rating, userID, mediaID) values($1, $2, $3, $4)`,
+        ),
+        t.none(`
+          INSERT INTO Review_Writes_About
+          (comment, rating, userID, mediaID)
+          values($1, $2, $3, $4)`,
           ["this movie is definitely not a rip off of harold and kumar!", 9, 3, 4]
-        ),    
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        ),
+
+        // Populate Recommendations
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [1, 1, 2]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [1, 2, 1]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [1, 3, 1]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [1, 3, 4]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [1, 4, 2]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [1, 4, 1]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [3, 1, 2]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [3, 2, 1]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [3, 3, 1]
         ),
-        t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
           [4, 1, 2]
         ),
+
+        // Populate Watch List Entries
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
+          [5, 1, 1]
+        ),
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
+          [2, 2, 2]
+        ),
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
+          [3, 2, 2]
+        ),
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
+          [4, 2, 2]
+        ),
+        t.none(`
+          INSERT INTO Recommends_To
+          (mediaID, recommenderID, recommendeeID)
+          values($1, $2, $3)`,
+          [4, 4, 4]
+        ),
+
+        // Populate Watched Media
         t.none(
-          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
-          [4, 4, 3]
-        )         
-      ])
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [1, 1, new Date(2016, 3, 27)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [1, 2, new Date(2016, 3, 27)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [1, 3, new Date(2016, 3, 28)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [1, 4, new Date(2016, 3, 29)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [2, 1, new Date(2016, 3, 27)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [3, 1, new Date(2016, 3, 27)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [3, 2, new Date(2016, 3, 27)]
+        )
+      ]);
     })
-    .then(events => {
+    .then(() => {
       console.log("Data populated successfully!");
       pgp.end();
     })
-    .catch(err => { 
-      if(err) console.log(error);
+    .catch(err => {
+      if (err) {
+        console.log(err);
+      }
       pgp.end();
     });
-  }).catch(err => { console.error('Image population failed: ', err)})
-})
-      
+  }).catch(err => {
+    console.error('Image population failed: ', err);
+  });
+});
+

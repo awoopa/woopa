@@ -1,10 +1,12 @@
-var express = require('express'),
-  router = express.Router(),
-  db = require('../models');
+/* eslint new-cap: "off" */
 
-module.exports = function (app, passport) {
+var express = require('express');
+var router = express.Router();
+var db = require('../models');
+
+module.exports = function(app) {
   app.use('/', router);
-  router.get('/', function (req, res, next) {
+  router.get('/', (req, res) => {
     db.any("SELECT * FROM Media", true)
       .then(media => {
         console.log(media);
@@ -18,11 +20,11 @@ module.exports = function (app, passport) {
         console.log(err);
         res.render('error', {
           message: err
-        })
-      })
+        });
+      });
   });
 
-  router.get('/', function (req, res, next) {
+  router.get('/', (req, res) => {
     db.any("SELECT * FROM WoopaUser", true)
       .then(users => {
         console.log(users);
@@ -36,8 +38,8 @@ module.exports = function (app, passport) {
         console.log(err);
         res.render('error', {
           message: err
-        })
-      })
+        });
+      });
   });
 };
 
