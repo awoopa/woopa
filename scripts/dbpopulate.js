@@ -141,7 +141,51 @@ Promise.all([
         ),
         t.none(
           `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
-          [4, 4, 3]
+          [5, 1, 1]
+        ),
+        t.none(
+          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+          [2, 2, 2]
+        ),
+        t.none(
+          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+          [3, 2, 2]
+        ),
+        t.none(
+          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+          [4, 2, 2]
+        ),
+        t.none(
+          `INSERT INTO Recommends_To (mediaID, recommenderID, recommendeeID) values($1, $2, $3)`,
+          [4, 4, 4]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [1, 1, new Date(2016, 3, 27)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [1, 2, new Date(2016, 3, 27)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [1, 3, new Date(2016, 3, 28)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [1, 4, new Date(2016, 3, 29)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [2, 1, new Date(2016, 3, 27)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [3, 1, new Date(2016, 3, 27)]
+        ),
+        t.none(
+          `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
+          [3, 2, new Date(2016, 3, 27)]
         )
       ]);
     })
