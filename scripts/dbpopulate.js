@@ -14,7 +14,7 @@ Promise.all([
   fsp.readFile('scripts/assets/psych.jpg'),
   fsp.readFile('scripts/assets/zootopia.jpg')
 ]).then(values => {
-  var queries = values.map((imgData, i, arr) => {
+  var queries = values.map((imgData, i) => {
     return db.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
   });
   Promise.all(queries).then(val => {
