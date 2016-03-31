@@ -41,7 +41,7 @@ module.exports = function(app, config) {
     return prettyMs(new Date() - new Date(str), {compact: true}).slice(1);
   }).addFilter('date', dateFilter);
 
-  // app.use(favicon(config.root + '/public/img/favicon.ico'));
+  app.use(favicon(config.root + '/public/img/favicon/favicon.ico'));
   app.use(logger('dev'));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({
