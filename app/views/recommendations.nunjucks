@@ -14,13 +14,13 @@
           {% endif %}
           <a class="ui {{colour}} link card" href="/m/{{rec.mediaid}}">
             <div class="image">
-              {% if rec.selfRecommendation == 1 %}
-                <div class="ui green ribbon label">
-                  <i class="star icon"></i> Watchlisted
-                </div>
-              {% elif rec.selfRecommendation == 2 %}
+              {% if rec.communityRecommendation%}
                 <div class="ui blue ribbon label">
                   <i class="users icon"></i> Community Recommendation
+                </div>
+              {% elif rec.selfRecommendation %}
+                <div class="ui green ribbon label">
+                  <i class="star icon"></i> Watchlisted
                 </div>
               {% endif %}
               <img src={{rec.img}} />
@@ -52,7 +52,7 @@
                 {{rec.publishdate | date("MMM DD, YYYY") }}
               </span>
             </div>
-            {% if rec.selfRecommendation == 0 or rec.selfRecommendation == 1 %}
+            {% if not rec.selfRecommendation%}
               <div class="extra content">
                 <p>Recommended by: </p>
                   {% for user in rec.recommenders %}
