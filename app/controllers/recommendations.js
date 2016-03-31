@@ -27,12 +27,12 @@ module.exports = function(app) {
 
             SELECT M.*, I.*
             FROM Media M, Image I, 
-              (SELECT R.mediaID FROM
-                (SELECT M.type as type,  max(R.avg) AS mx 
-                 FROM  Media M, calc R
-                 WHERE R.mediaid = M.mediaid
+              (SELECT C.mediaID FROM
+                (SELECT M.type as type,  max(C.avg) AS mx 
+                 FROM  Media M, calc C
+                 WHERE C.mediaid = M.mediaid
                  GROUP BY M.type) AS A 
-                JOIN calc R ON A.type = R.type AND A.mx = R.avg)  AS TRM
+                JOIN calc C ON A.type = C.type AND A.mx = C.avg)  AS TRM
             WHERE M.imageID = I.ImageID AND
                   TRM.mediaID = M.mediaID`,
             // EXCEPT
@@ -42,12 +42,27 @@ module.exports = function(app) {
             //       RT.mediaID = M.mediaID AND
             //       U.userID = RT.recommenderID AND
             //       M.imageID = I.ImageID`,
+            [req.user.userid]),
+          t.any(`
+            WITH myfriends AS (
+              SELECT F.friend_userID AS userID
+              FROM Friends F
+              WHERE F.user_userID=$1)
+
+            SELECT M.*, I.*
+            FROM Media M, Image I
+            WHERE NOT EXISTS 
+            ((SELECT MF.userID
+              FROM myfriends MF)
+              EXCEPT
+              (SELECT W.userID
+                FROM Watched W
+                WHERE W.mediaID = M.mediaID)) AND M.imageID = I.ImageID`,
             [req.user.userid])
         ]);
       })
-      .then(data => {
+.then(data => {
         // populate external recommendations
-        console.log(data[0]);
 
         var results = data[0];
         var recs = [];
@@ -55,14 +70,15 @@ module.exports = function(app) {
           var seen = false;
           for (var j = 0; j < recs.length; j++) {
             if (results[i].mediaid === recs[j].mediaid) {
-              recs[j].recommenders.push({
-                email: results[i].email,
-                username: results[i].username
-              });
 
               // check if user is recommending media to themself (e.g. watchlist)
               if (results[i].recommenderid == req.user.userid) {
                 recs[j].selfRecommendation = true;
+              } else {
+                recs[j].recommenders.push({
+                  email: results[i].email,
+                  username: results[i].username
+                });
               }
               seen = true;
             }
@@ -87,26 +103,28 @@ module.exports = function(app) {
               channel: results[i].channel,
               selfRecommendation: false,
               communityRecommendation: false,
-              recommenders: [{
+              friendsRecommendation: false,
+              recommenders: []
+            });
+          // check if user is recommending media to themself (e.g. watchlist)
+          if (results[i].recommenderid == req.user.userid) {
+            recs[recs.length-1].selfRecommendation = true;
+          } else {
+              recs[recs.length-1].recommenders.push({
                 email: results[i].email,
                 username: results[i].username
-              }]
-            });
-                  // check if user is recommending media to themself (e.g. watchlist)
-              if (results[i].recommenderid == req.user.userid) {
-                recs[j].selfRecommendation = true;
-              }
+              });
+            }
           }
         }
 
+        // populate system suggested media - top rated media of each type
+        var resultsC = data[1];
 
-        // populate system suggested media
-        var suggested = data[1];
-
-        for (var i = 0; i < suggested.length; i++) {
+        for (var i = 0; i < resultsC.length; i++) {
           var seen = false;
           for (var j = 0; j < recs.length; j++) {
-            if (results[i].mediaid === recs[j].mediaid) {
+            if (resultsC[i].mediaid === recs[j].mediaid) {
               recs[j].communityRecommendation = true;
               seen = true;
             }
@@ -115,27 +133,69 @@ module.exports = function(app) {
           if (!seen) {
 
             recs.push({
-              mediaid: results[i].mediaid,
-              title: results[i].title,
-              synopsis: results[i].synopsis,
-              genre: results[i].genre,
-              publishdate: results[i].publishdate,
-              rating: results[i].rating,
+              mediaid: resultsC[i].mediaid,
+              title: resultsC[i].title,
+              synopsis: resultsC[i].synopsis,
+              genre: resultsC[i].genre,
+              publishdate: resultsC[i].publishdate,
+              rating: resultsC[i].rating,
               img: `data:image/png;base64,${
-                new Buffer(results[i].img, 'hex').toString('base64')
+                new Buffer(resultsC[i].img, 'hex').toString('base64')
               }`,
-              type: results[i].type,
-              runtime: results[i].runtime,
-              numseasons: results[i].numseasons,
-              numviews: results[i].numviews,
-              channel: results[i].channel,
+              type: resultsC[i].type,
+              runtime: resultsC[i].runtime,
+              numseasons: resultsC[i].numseasons,
+              numviews: resultsC[i].numviews,
+              channel: resultsC[i].channel,
               selfRecommendation: false,
               communityRecommendation: true,
+              friendsRecommendation: false,
               recommenders: []
             });
             // check if user is recommending media to themself (e.g. watchlist)
-            if (results[i].recommenderid == req.user.userid) {
-              recs[j].communityRecommendation = true;
+            if (resultsC[i].recommenderid == req.user.userid) {
+              recs[j].selfRecommendation = true;
+            }
+          }
+        }
+
+        // populate system suggested media - media watched by all friends
+        var resultsF = data[2];
+
+        for (var i = 0; i < resultsF.length; i++) {
+          var seen = false;
+          for (var j = 0; j < recs.length; j++) {
+            if (resultsF[i].mediaid === recs[j].mediaid) {
+              recs[j].friendsRecommendation = true;
+              seen = true;
+            }
+          }
+
+          if (!seen) {
+
+            recs.push({
+              mediaid: resultsF[i].mediaid,
+              title: resultsF[i].title,
+              synopsis: resultsF[i].synopsis,
+              genre: resultsF[i].genre,
+              publishdate: resultsF[i].publishdate,
+              rating: resultsF[i].rating,
+              img: `data:image/png;base64,${
+                new Buffer(resultsF[i].img, 'hex').toString('base64')
+              }`,
+              type: resultsF[i].type,
+              runtime: resultsF[i].runtime,
+              numseasons: resultsF[i].numseasons,
+              numviews: resultsF[i].numviews,
+              channel: resultsF[i].channel,
+              selfRecommendation: false,
+              communityRecommendation: false,
+              friendsRecommendation: true,
+              recommenders: []
+            });
+            // check if user is recommending media to themself (e.g. watchlist)
+            if (resultsF[i].recommenderid == req.user.userid) {
+              recs[j].selfRecommendation = true;
             }
           }
         }
@@ -146,6 +206,9 @@ module.exports = function(app) {
         };
 
         res.render('recommendations', values);
-      });
+      }).catch(function (error) {
+        console.log(error); // printing the error 
     });
+});
 };
+

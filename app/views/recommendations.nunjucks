@@ -18,6 +18,10 @@
                 <div class="ui blue ribbon label">
                   <i class="users icon"></i> Community Recommendation
                 </div>
+              {% elif rec.friendsRecommendation %}
+                <div class="ui orange ribbon label">
+                  <i class="thumbs outline up icon"></i> Popular with Friends
+                </div>
               {% elif rec.selfRecommendation %}
                 <div class="ui green ribbon label">
                   <i class="star icon"></i> Watchlisted
@@ -52,7 +56,7 @@
                 {{rec.publishdate | date("MMM DD, YYYY") }}
               </span>
             </div>
-            {% if not rec.selfRecommendation%}
+            {% if rec.recommenders.length > 0 %}
               <div class="extra content">
                 <p>Recommended by: </p>
                   {% for user in rec.recommenders %}
@@ -60,6 +64,7 @@
                   {% endfor %}
               </div>
             {% endif %}
+            
           </a>
         {% endfor %}
       {% else %}
