@@ -81,10 +81,6 @@ module.exports = function(app) {
         }
       });
     })
-    .put((req, res) => {
-      // update review
-    })
-    .delete((req, res) => {
-      // delete review
-    });
+    .put()
+    .delete();
 };
