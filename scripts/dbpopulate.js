@@ -14,14 +14,17 @@ Promise.all([
   fsp.readFile('scripts/assets/psych.jpg'),
   fsp.readFile('scripts/assets/zootopia.jpg')
 ]).then(values => {
-  var queries = values.map((imgData, i) => {
-    return db.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
-  });
-  Promise.all(queries).then(val => {
+  db.tx(t => {
+    var queries = values.map((imgData, i) => {
+      return t.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
+    });
+    return t.batch(queries);
+  })
+  .then(val => {
     console.log(val);
     console.log("Images populated successfully!");
 
-    db.tx(function(t) {
+    db.tx(t => {
       return t.batch([
         // Populate Users
         t.none(`
