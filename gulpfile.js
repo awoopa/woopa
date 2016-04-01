@@ -1,21 +1,22 @@
 var gulp = require('gulp');
 var nodemon = require('gulp-nodemon');
+var plumber = require('gulp-plumber');
 var livereload = require('gulp-livereload');
 
-gulp.task('develop', () => {
+gulp.task('develop', function() {
   livereload.listen();
   nodemon({
     script: 'app.js',
     ext: 'js coffee nunjucks',
     stdout: false
-  }).on('readable', () => {
-    this.stdout.on('data', chunk => {
+  }).on('readable', function() {
+    this.stdout.on('data', function(chunk) {
       if (/^Express server listening on port/.test(chunk)) {
         livereload.changed(__dirname);
       }
     });
-    this.stdout.pipe(process.stdout);
-    this.stderr.pipe(process.stderr);
+    this.stdout.pipe(plumber()).pipe(process.stdout);
+    this.stderr.pipe(plumber()).pipe(process.stderr);
   });
 });
 
