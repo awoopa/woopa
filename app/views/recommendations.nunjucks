@@ -3,7 +3,7 @@
 {% block content %}
   <div class="ui container">
     <div class="ui text menu">
-      Recommendation Preference: <br></br>
+      Recommendation Preference: &nbsp;
       <div class="ui icon buttons">
         <a class="ui icon button" href="/recommendations?type=high" title="Highest Rated">
           <i class="icon fa fa-thumbs-o-up"></i>
