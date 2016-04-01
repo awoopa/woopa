@@ -1,10 +1,18 @@
 var db = require('../models');
 
 module.exports = function(app) {
+  var high = true;
+
   app.route('/recommendations/')
   .get((req, res, next) => {
     if (req.user) {
       next();
+      var type = req.query.type;
+      if (type == "low") {
+        high = false;
+      } else if (type == "high") {
+        high = true;
+      }
     } else {
       res.redirect('/login');
     }
@@ -19,6 +27,7 @@ module.exports = function(app) {
           U.userID = RT.recommenderID AND
           M.imageID = I.ImageID`,
           [req.user.userid]),
+        // Highest rated media query
         t.any(`
           WITH calc AS (
             SELECT M.mediaid AS mediaid, avg(RWA.rating) as avg, M.title as title, M.type as type  
@@ -56,6 +65,24 @@ module.exports = function(app) {
           SELECT F.friend_userID AS userID
           FROM Friends F
           WHERE F.user_userID=$1`,
+          [req.user.userid]),
+        // Lowest rated media query
+        t.any(`
+          WITH calc AS (
+            SELECT M.mediaid AS mediaid, avg(RWA.rating) as avg, M.title as title, M.type as type  
+            FROM Review_Writes_About RWA, Media M 
+            WHERE RWA.mediaid = M.mediaid GROUP BY M.mediaid)
+
+          SELECT M.*, I.*
+          FROM Media M, Image I, 
+          (SELECT C.mediaID FROM
+            (SELECT M.type as type,  min(C.avg) AS mx 
+             FROM  Media M, calc C
+             WHERE C.mediaid = M.mediaid
+             GROUP BY M.type) AS A 
+            JOIN calc C ON A.type = C.type AND A.mx = C.avg)  AS TRM
+          WHERE M.imageID = I.ImageID AND
+          TRM.mediaID = M.mediaID`,
           [req.user.userid])
         ]);
 })
@@ -117,7 +144,12 @@ module.exports = function(app) {
       }
 
         // populate system suggested media - top rated media of each type
-        var resultsC = data[1];
+        if (high) {
+          var resultsC = data[1];
+        } else {
+          console.log("dagadsgadg");
+          var resultsC = data[4];
+        }
 
         for (var i = 0; i < resultsC.length; i++) {
           var seen = false;

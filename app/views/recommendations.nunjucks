@@ -2,6 +2,17 @@
 
 {% block content %}
   <div class="ui container">
+    <div class="ui text menu">
+      Recommendation Preference: <br></br>
+      <div class="ui icon buttons">
+        <a class="ui icon button" href="/recommendations?type=high" title="Highest Rated">
+          <i class="icon fa fa-thumbs-o-up"></i>
+        </a>
+        <a class="ui icon button" href="/recommendations?type=low" title="Lowest Rated">
+          <i class="icon fa fa-thumbs-o-down" style=""><i class=""></i></i>
+        </a>
+      </div>
+    </div>
     <div class="ui four link cards">
       {% if recommendations %}
         {% for rec in recommendations %}
