@@ -2,65 +2,63 @@ var db = require('../models');
 
 module.exports = function(app) {
   app.route('/recommendations/')
-    .get((req, res, next) => {
-      if (req.user) {
-        next();
-      } else {
-        res.redirect('/login');
-      }
-    }, (req, res) => {
-      db.tx(t => {
-        return t.batch([
-          t.any(`
-            SELECT *
-            FROM Recommends_To RT, Media M, WoopaUser U, Image I
-            WHERE RT.recommendeeID = $1 AND
-                  RT.mediaID = M.mediaID AND
-                  U.userID = RT.recommenderID AND
-                  M.imageID = I.ImageID`,
-            [req.user.userid]),
-          t.any(`
-            WITH calc AS (
-              SELECT M.mediaid AS mediaid, avg(RWA.rating) as avg, M.title as title, M.type as type  
-                FROM Review_Writes_About RWA, Media M 
-                WHERE RWA.mediaid = M.mediaid GROUP BY M.mediaid)
+  .get((req, res, next) => {
+    if (req.user) {
+      next();
+    } else {
+      res.redirect('/login');
+    }
+  }, (req, res) => {
+    db.tx(t => {
+      return t.batch([
+        t.any(`
+          SELECT *
+          FROM Recommends_To RT, Media M, WoopaUser U, Image I
+          WHERE RT.recommendeeID = $1 AND
+          RT.mediaID = M.mediaID AND
+          U.userID = RT.recommenderID AND
+          M.imageID = I.ImageID`,
+          [req.user.userid]),
+        t.any(`
+          WITH calc AS (
+            SELECT M.mediaid AS mediaid, avg(RWA.rating) as avg, M.title as title, M.type as type  
+            FROM Review_Writes_About RWA, Media M 
+            WHERE RWA.mediaid = M.mediaid GROUP BY M.mediaid)
 
-            SELECT M.*, I.*
-            FROM Media M, Image I, 
-              (SELECT C.mediaID FROM
-                (SELECT M.type as type,  max(C.avg) AS mx 
-                 FROM  Media M, calc C
-                 WHERE C.mediaid = M.mediaid
-                 GROUP BY M.type) AS A 
-                JOIN calc C ON A.type = C.type AND A.mx = C.avg)  AS TRM
-            WHERE M.imageID = I.ImageID AND
-                  TRM.mediaID = M.mediaID`,
-            // EXCEPT
-            // SELECT M.*, I.*
-            // FROM Recommends_To RT, Media M, WoopaUser U, Image I
-            // WHERE RT.recommendeeID = 1 AND
-            //       RT.mediaID = M.mediaID AND
-            //       U.userID = RT.recommenderID AND
-            //       M.imageID = I.ImageID`,
-            [req.user.userid]),
-          t.any(`
-            WITH myfriends AS (
-              SELECT F.friend_userID AS userID
-              FROM Friends F
-              WHERE F.user_userID=$1)
+          SELECT M.*, I.*
+          FROM Media M, Image I, 
+          (SELECT C.mediaID FROM
+            (SELECT M.type as type,  max(C.avg) AS mx 
+             FROM  Media M, calc C
+             WHERE C.mediaid = M.mediaid
+             GROUP BY M.type) AS A 
+            JOIN calc C ON A.type = C.type AND A.mx = C.avg)  AS TRM
+          WHERE M.imageID = I.ImageID AND
+          TRM.mediaID = M.mediaID`,
+          [req.user.userid]),
+        t.any(`
+          WITH myfriends AS (
+            SELECT F.friend_userID AS userID
+            FROM Friends F
+            WHERE F.user_userID=$1)
 
-            SELECT M.*, I.*
-            FROM Media M, Image I
-            WHERE NOT EXISTS 
-            ((SELECT MF.userID
-              FROM myfriends MF)
-              EXCEPT
-              (SELECT W.userID
-                FROM Watched W
-                WHERE W.mediaID = M.mediaID)) AND M.imageID = I.ImageID`,
-            [req.user.userid])
+          SELECT M.*, I.*
+          FROM Media M, Image I
+          WHERE NOT EXISTS 
+          ((SELECT MF.userID
+            FROM myfriends MF)
+          EXCEPT
+          (SELECT W.userID
+            FROM Watched W
+            WHERE W.mediaID = M.mediaID)) AND M.imageID = I.ImageID`,
+          [req.user.userid]),
+        t.any(`
+          SELECT F.friend_userID AS userID
+          FROM Friends F
+          WHERE F.user_userID=$1`,
+          [req.user.userid])
         ]);
-      })
+})
 .then(data => {
         // populate external recommendations
 
@@ -110,13 +108,13 @@ module.exports = function(app) {
           if (results[i].recommenderid == req.user.userid) {
             recs[recs.length-1].selfRecommendation = true;
           } else {
-              recs[recs.length-1].recommenders.push({
-                email: results[i].email,
-                username: results[i].username
-              });
-            }
+            recs[recs.length-1].recommenders.push({
+              email: results[i].email,
+              username: results[i].username
+            });
           }
         }
+      }
 
         // populate system suggested media - top rated media of each type
         var resultsC = data[1];
@@ -159,40 +157,41 @@ module.exports = function(app) {
           }
         }
 
-        // populate system suggested media - media watched by all friends
-        var resultsF = data[2];
+        if (data[3].length != 0) {
+                  // populate system suggested media - media watched by all friends
+                  var resultsF = data[2];
 
-        for (var i = 0; i < resultsF.length; i++) {
-          var seen = false;
-          for (var j = 0; j < recs.length; j++) {
-            if (resultsF[i].mediaid === recs[j].mediaid) {
-              recs[j].friendsRecommendation = true;
-              seen = true;
-            }
-          }
+                  for (var i = 0; i < resultsF.length; i++) {
+                    var seen = false;
+                    for (var j = 0; j < recs.length; j++) {
+                      if (resultsF[i].mediaid === recs[j].mediaid) {
+                        recs[j].friendsRecommendation = true;
+                        seen = true;
+                      }
+                    }
 
-          if (!seen) {
+                    if (!seen) {
 
-            recs.push({
-              mediaid: resultsF[i].mediaid,
-              title: resultsF[i].title,
-              synopsis: resultsF[i].synopsis,
-              genre: resultsF[i].genre,
-              publishdate: resultsF[i].publishdate,
-              rating: resultsF[i].rating,
-              img: `data:image/png;base64,${
-                new Buffer(resultsF[i].img, 'hex').toString('base64')
-              }`,
-              type: resultsF[i].type,
-              runtime: resultsF[i].runtime,
-              numseasons: resultsF[i].numseasons,
-              numviews: resultsF[i].numviews,
-              channel: resultsF[i].channel,
-              selfRecommendation: false,
-              communityRecommendation: false,
-              friendsRecommendation: true,
-              recommenders: []
-            });
+                      recs.push({
+                        mediaid: resultsF[i].mediaid,
+                        title: resultsF[i].title,
+                        synopsis: resultsF[i].synopsis,
+                        genre: resultsF[i].genre,
+                        publishdate: resultsF[i].publishdate,
+                        rating: resultsF[i].rating,
+                        img: `data:image/png;base64,${
+                          new Buffer(resultsF[i].img, 'hex').toString('base64')
+                        }`,
+                        type: resultsF[i].type,
+                        runtime: resultsF[i].runtime,
+                        numseasons: resultsF[i].numseasons,
+                        numviews: resultsF[i].numviews,
+                        channel: resultsF[i].channel,
+                        selfRecommendation: false,
+                        communityRecommendation: false,
+                        friendsRecommendation: true,
+                        recommenders: []});
+
             // check if user is recommending media to themself (e.g. watchlist)
             if (resultsF[i].recommenderid == req.user.userid) {
               recs[j].selfRecommendation = true;
@@ -200,15 +199,19 @@ module.exports = function(app) {
           }
         }
 
-        var values = {
-          recommendations: recs,
-          title: 'Recommendations'
-        };
+      }
 
-        res.render('recommendations', values);
-      }).catch(function (error) {
+
+
+      var values = {
+        recommendations: recs,
+        title: 'Recommendations'
+      };
+
+      res.render('recommendations', values);
+    }).catch(function (error) {
         console.log(error); // printing the error 
-    });
-});
+      });
+  });
 };
 
