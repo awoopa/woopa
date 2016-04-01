@@ -1,6 +1,8 @@
-<div class="ui large menu inverted navbar page grid">
-  
-  <a href="/" class="brand item">Woopa</a>
+<div class="ui large menu inverted navbar page">
+  <div class="ui container">
+  <a href="/" class="brand item">
+    <img class="ui image" src="/img/logo.png"/>
+  </a>
   <a href="/m/" class="item">Browse</a>
   {% if currentUser %}
     <a href="/recommendations" class="item">Recommendations</a>
@@ -11,11 +13,12 @@
     {% if currentUser.isadmin %}
     <a href="/admin" class="item">Admin</a>
     {% endif %}
-  	<a href="/u/{{currentUser.userid}}" class="item"><img src="{{currentUser.email | gravatar(50)}}" class="ui avatar image" />{{ currentUser.username }}</a>
+  	<a href="/u/{{currentUser.userid}}" class="item"><img src="{{currentUser.email | gravatar(32)}}" class="ui avatar image" />{{ currentUser.username }}</a>
   	<a href="/logout" class="item">Log out</a>
   {% else %}
     <a href="/login" class="item">Log in</a>
     <a href="/signup" class="item">Sign up</a>
   {% endif %}
+  </div>
   </div>
 </div>

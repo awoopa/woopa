@@ -88,10 +88,12 @@ module.exports = function(app) {
             values.areFriends = false;
           }
 
-          if (req.user && req.user.userid === req.params.id) {
-            values.isSelf = true;
-          } else {
-            values.isSelf = false;
+          if (req.user) {
+            if (req.user.userid === parseInt(req.params.id, 10)) {
+              values.isSelf = true;
+            } else {
+              values.isSelf = false;
+            }
           }
 
           res.render('user', values);

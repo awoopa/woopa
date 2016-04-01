@@ -1,14 +1,22 @@
 var db = require('../models');
 
-module.exports = function (app, passport) {
+module.exports = function(app) {
   app.route('/admin')
     .get((req, res, next) => {
-      if (!req.user.isadmin) {
-        res.redirect('/');
-      } else {
+      if (req.user.isadmin) {
         next();
+      } else {
+        res.redirect('/');
       }
-    }, (req, res, next) => {
-      res.render('admin');
+    }, (req, res) => {
+      db.tx(t => {
+        return t.batch([
+
+        ]);
+      }).then(data => {
+        res.render('admin', {
+          data: data
+        });
+      });
     });
 };
