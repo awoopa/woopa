@@ -3,7 +3,7 @@
 {% block content %}
   <div class="ui container">
     <div class="ui text menu">
-      Show only: 
+      Filter Media Type: &nbsp;
       <div class="ui icon buttons">
         <a class="ui icon button" href="/m?type=movie" title="Movies">
           <i class="film icon"></i>

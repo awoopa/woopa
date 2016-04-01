@@ -2,6 +2,17 @@
 
 {% block content %}
   <div class="ui container">
+    <div class="ui text menu">
+      Recommendation Preference: &nbsp;
+      <div class="ui icon buttons">
+        <a class="ui icon button" href="/recommendations?type=high" title="Highest Rated">
+          <i class="icon fa fa-thumbs-o-up"></i>
+        </a>
+        <a class="ui icon button" href="/recommendations?type=low" title="Lowest Rated">
+          <i class="icon fa fa-thumbs-o-down" style=""><i class=""></i></i>
+        </a>
+      </div>
+    </div>
     <div class="ui four link cards">
       {% if recommendations %}
         {% for rec in recommendations %}
@@ -14,6 +25,19 @@
           {% endif %}
           <a class="ui {{colour}} link card" href="/m/{{rec.mediaid}}">
             <div class="image">
+              {% if rec.communityRecommendation%}
+                <div class="ui blue ribbon label">
+                  <i class="users icon"></i> Community Recommendation
+                </div>
+              {% elif rec.friendsRecommendation %}
+                <div class="ui orange ribbon label">
+                  <i class="thumbs outline up icon"></i> Popular with Friends
+                </div>
+              {% elif rec.selfRecommendation %}
+                <div class="ui green ribbon label">
+                  <i class="star icon"></i> Watchlisted
+                </div>
+              {% endif %}
               <img src={{rec.img}} />
             </div>
             <div class="content">
@@ -43,12 +67,15 @@
                 {{rec.publishdate | date("MMM DD, YYYY") }}
               </span>
             </div>
-            <div class="extra content">
-              <p>Recommended by: </p>
-                  {% for user in rec.recomenders %}
-                  <div class="recommender"><img class="ui avatar image" src="{{ user.email | gravatar(28) }}"/> {{user.username}}</div>
+            {% if rec.recommenders.length > 0 %}
+              <div class="extra content">
+                <p>Recommended by: </p>
+                  {% for user in rec.recommenders %}
+                    <div class="recommender"><img class="ui avatar image" src="{{ user.email | gravatar(28) }}"/> {{user.username}}</div>
                   {% endfor %}
-            </div>
+              </div>
+            {% endif %}
+            
           </a>
         {% endfor %}
       {% else %}

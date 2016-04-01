@@ -160,13 +160,13 @@ Promise.all([
           INSERT INTO Review_Writes_About
           (comment, rating, userID, mediaID)
           values($1, $2, $3, $4)`,
-          ["wow this movie is so good!", 9, 2, 4]
+          ["wow this movie is so good!", 9, 2, 5]
         ),
         t.none(`
           INSERT INTO Review_Writes_About
           (comment, rating, userID, mediaID)
           values($1, $2, $3, $4)`,
-          ["this movie is definitely not a rip off of harold and kumar!", 9, 3, 4]
+          ["this movie is definitely not a rip off of harold and kumar!", 9, 3, 5]
         ),
 
         // Populate Recommendations
