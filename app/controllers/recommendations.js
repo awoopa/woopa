@@ -8,9 +8,9 @@ module.exports = function(app) {
     if (req.user) {
       next();
       var type = req.query.type;
-      if (type == "low") {
+      if (type === "low") {
         high = false;
-      } else if (type == "high") {
+      } else if (type === "high") {
         high = true;
       }
     } else {
@@ -86,72 +86,69 @@ module.exports = function(app) {
           [req.user.userid])
       ]);
     })
-.then(data => {
-  // populate external recommendations
-
-  var results = data[0];
-  var recs = [];
-  for (var i = 0; i < results.length; i++) {
-    var seen = false;
-    for (var j = 0; j < recs.length; j++) {
-            if (results[i].mediaid === recs[j].mediaid) {
-
-              // check if user is recommending media to themself (e.g. watchlist)
-              if (results[i].recommenderid == req.user.userid) {
-                recs[j].selfRecommendation = true;
-              } else {
-                recs[j].recommenders.push({
-                  email: results[i].email,
-                  username: results[i].username
-                });
-              }
-              seen = true;
+    .then(data => {
+      // populate external recommendations
+      var results = data[0];
+      var recs = [];
+      for (var i = 0; i < results.length; i++) {
+        var seen = false;
+        for (var j = 0; j < recs.length; j++) {
+          if (results[i].mediaid === recs[j].mediaid) {
+            // check if user is recommending media to themself (e.g. watchlist)
+            if (results[i].recommenderid === req.user.userid) {
+              recs[j].selfRecommendation = true;
+            } else {
+              recs[j].recommenders.push({
+                email: results[i].email,
+                username: results[i].username
+              });
             }
-    }
+            seen = true;
+          }
+        }
 
-    if (!seen) {
-
-      recs.push({
-        mediaid: results[i].mediaid,
-        title: results[i].title,
-        synopsis: results[i].synopsis,
-        genre: results[i].genre,
-        publishdate: results[i].publishdate,
-        rating: results[i].rating,
-        img: `data:image/png;base64,${
-          new Buffer(results[i].img, 'hex').toString('base64')
-        }`,
-        type: results[i].type,
-        runtime: results[i].runtime,
-        numseasons: results[i].numseasons,
-        numviews: results[i].numviews,
-        channel: results[i].channel,
-        selfRecommendation: false,
-        communityRecommendation: false,
-        friendsRecommendation: false,
-        recommenders: []
-      });     
-      // check if user is recommending media to themself (e.g. watchlist)
-      if (results[i].recommenderid == req.user.userid) {
-        recs[recs.length-1].selfRecommendation = true;
-      } else {
-        recs[recs.length-1].recommenders.push({
-          email: results[i].email,
-          username: results[i].username
-        });
+        if (!seen) {
+          recs.push({
+            mediaid: results[i].mediaid,
+            title: results[i].title,
+            synopsis: results[i].synopsis,
+            genre: results[i].genre,
+            publishdate: results[i].publishdate,
+            rating: results[i].rating,
+            img: `data:image/png;base64,${
+              new Buffer(results[i].img, 'hex').toString('base64')
+            }`,
+            type: results[i].type,
+            runtime: results[i].runtime,
+            numseasons: results[i].numseasons,
+            numviews: results[i].numviews,
+            channel: results[i].channel,
+            selfRecommendation: false,
+            communityRecommendation: false,
+            friendsRecommendation: false,
+            recommenders: []
+          });
+          // check if user is recommending media to themself (e.g. watchlist)
+          if (results[i].recommenderid === req.user.userid) {
+            recs[recs.length - 1].selfRecommendation = true;
+          } else {
+            recs[recs.length - 1].recommenders.push({
+              email: results[i].email,
+              username: results[i].username
+            });
+          }
+        }
       }
-    }
-  }
 
-  // populate system suggested media - top rated media of each type
-  if (high) {
-    var resultsC = data[1];
-  } else {
+      // populate system suggested media - top rated media of each type
+      if (high) {
+        var resultsC = data[1];
+      } else {
     console.log("dagadsgadg");
     var resultsC = data[4];
-  }
+      }
 
-  for (var i = 0; i < resultsC.length; i++) {
+      for (var i = 0; i < resultsC.length; i++) {
     var seen = false;
     for (var j = 0; j < recs.length; j++) {
       if (resultsC[i].mediaid === recs[j].mediaid) {
@@ -187,9 +184,9 @@ module.exports = function(app) {
         recs[j].selfRecommendation = true;
       }
     }
-  }
+      }
 
-  if (data[3].length != 0) {
+      if (data[3].length !== 0) {
     // populate system suggested media - media watched by all friends
     var resultsF = data[2];
 
@@ -230,17 +227,17 @@ module.exports = function(app) {
         }
       }
     }
-  }
+      }
 
-  var values = {
-    recommendations: recs,
-    title: 'Recommendations'
-  };
+      var values = {
+        recommendations: recs,
+        title: 'Recommendations'
+      };
 
-  res.render('recommendations', values);
-}).catch(error => {
-  console.log(error);
-});
+      res.render('recommendations', values);
+    }).catch(error => {
+      console.log(error);
+    });
   });
 };
 
