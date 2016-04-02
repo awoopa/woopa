@@ -79,7 +79,7 @@ Promise.all([
           INSERT INTO Media
           (title, synopsis, genre, publishDate, rating, type, numViews, imageID)
           values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Zirconium", "Shikib Sings Zirconium", "History", new Date(2012, 11, 12), 2, 'video', 265, 2]
+          ["Zirconium", "Shikib Sings Zirconium", "History", new Date(2012, 11, 12), 5.3, 'video', 265, 2]
         ),
         t.none(`
           INSERT INTO Media
@@ -91,13 +91,13 @@ Promise.all([
           INSERT INTO Media
           (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID)
           values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 5, 9), 7, 'tvshow', 8, 1]
+          ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 5, 9), 7.5, 'tvshow', 8, 1]
         ),
         t.none(`
           INSERT INTO Media
           (title, synopsis, genre, publishDate, rating, type, numSeasons, imageID)
           values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), 8.4, 'tvshow', 8, 4]
+          ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), 0, 'tvshow', 8, 4]
         ),
         t.none(`
           INSERT INTO Media
@@ -109,13 +109,13 @@ Promise.all([
           INSERT INTO Media
           (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
           values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 4, 25), 8, 'movie', 106, 1]
+          ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 4, 25), 0, 'movie', 106, 1]
         ),
         t.none(`
           INSERT INTO Media
           (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
           values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-          ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), 9.9, 'movie', 108, 5]
+          ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), 0, 'movie', 108, 5]
         ),
 
         // Populate Reviews
