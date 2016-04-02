@@ -1,6 +1,42 @@
 {% extends 'layout.nunjucks' %}
 
 {% block content %}
+<div class="ui container">
+  <h2 class="ui header">
+    <i class="flag icon"></i>
+    <div class="content">
+      Update Requests
+    </div>
+  </h2>
+  <table class="ui cell padded table">
+    <thead><tr>
+      <th>Media</th>
+      <th>User</th>
+      <th>Details</th>
+    </tr></thead>
+    <tbody>
+      {% for ur in urs %}
+      <tr>
+      <td class="selectable">
+        <a href="/m/{{ur.mediaid}}">
+        {{ur.title}}
+        </a>
+      </td>
+      <td class="selectable">
+        <a href="/u/{{ur.userid}}">
+          <img class="ui avatar image" src="{{ ur.email | gravatar(32)}}" /> {{ur.username}} 
+        </a>
+      </td>
+      <td>
+      {{ur.details}}
+      </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
 <div class="ui four column doubling stackable grid container">
 	<div class="column">
 		
