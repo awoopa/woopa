@@ -179,7 +179,7 @@ module.exports = function(app) {
           });
           // check if user is recommending media to themself (e.g. watchlist)
           if (result.recommenderid === req.user.userid) {
-            recs[j].selfRecommendation = true;
+            recs[recs.length - 1].selfRecommendation = true;
           }
         }
       });
@@ -220,7 +220,7 @@ module.exports = function(app) {
 
             // check if user is recommending media to themself (e.g. watchlist)
             if (resultsF[i].recommenderid === req.user.userid) {
-              recs[j].selfRecommendation = true;
+              recs[recs.length - 1].selfRecommendation = true;
             }
           }
         }
