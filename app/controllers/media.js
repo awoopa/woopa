@@ -172,6 +172,7 @@ module.exports = function(app) {
           res.render('media', values);
         } else {
           res.render('error', {
+            status: 404,
             message: 'media not found'
           });
         }
@@ -223,7 +224,11 @@ module.exports = function(app) {
             console.log(data);
             res.redirect('/m/' + req.params.id);
           }).error(err => {
-            console.log(err);
+            res.render('error', {
+              status: 500,
+              message: err
+            });
+            console.error(err);
           });
         }
       });

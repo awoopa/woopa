@@ -76,6 +76,7 @@ module.exports = function(app) {
           });
         } else {
           res.render('error', {
+            status: 404,
             message: 'media not found'
           });
         }
