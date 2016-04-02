@@ -18,7 +18,6 @@ Promise.all([
     return db.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
   });
   Promise.all(queries).then(val => {
-    console.log(val);
     console.log("Images populated successfully!");
 
     db.tx(function(t) {
