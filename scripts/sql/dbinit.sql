@@ -50,7 +50,7 @@ CREATE TABLE Media (
   numSeasons  integer   NULL,
   numViews    integer   NULL,
   channel     text      NULL,
-  imageID     integer   REFERENCES Image (imageID),
+  imageID     integer   REFERENCES Image (imageID) ON DELETE CASCADE,
   PRIMARY KEY (mediaID)
 );
 
@@ -60,14 +60,14 @@ CREATE TABLE Review_Writes_About (
   comment     text      NOT NULL,
   rating      integer   NOT NULL CHECK (rating >= 1 AND rating <= 10),
   userID      integer   NOT NULL REFERENCES WoopaUser (userID),
-  mediaID     integer   NOT NULL REFERENCES Media (mediaID),
+  mediaID     integer   NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   timestamp   timestamp with time zone NOT NULL DEFAULT now(),
   PRIMARY KEY (reviewID)
 );
 
 
 CREATE TABLE Recommends_To (
-  mediaID       integer NOT NULL REFERENCES Media (mediaID),
+  mediaID       integer NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   recommenderID integer NOT NULL REFERENCES WoopaUser (userID),
   recommendeeID integer NOT NULL REFERENCES WoopaUser (userID),
   PRIMARY KEY (mediaID, recommenderID, recommendeeID)
@@ -82,7 +82,7 @@ CREATE TABLE Actor (
 
 
 CREATE TABLE Appears_In (
-  mediaID   integer NOT NULL REFERENCES Media (mediaID),
+  mediaID   integer NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   actorName text    NOT NULL,
   dob       timestamptz    NOT NULL,
   FOREIGN KEY (actorName, dob) REFERENCES Actor,
@@ -92,7 +92,7 @@ CREATE TABLE Appears_In (
 
 CREATE TABLE Watched (
   userID    integer   NOT NULL REFERENCES WoopaUser (userID),
-  mediaID   integer   NOT NULL REFERENCES Media (mediaID),
+  mediaID   integer   NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   timestamp timestamp with time zone NOT NULL DEFAULT now(),
   PRIMARY KEY(userID, mediaID)
 );
@@ -100,7 +100,7 @@ CREATE TABLE Watched (
 CREATE TABLE UpdateRequest_Submits_On_Reviews (
   updateID      serial    UNIQUE NOT NULL,
   submitterID   integer   NOT NULL REFERENCES WoopaUser (userID),
-  mediaID       integer   NOT NULL REFERENCES Media (mediaID),
+  mediaID       integer   NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   reviewerID    integer   REFERENCES WoopaUser (userID),
   details       text      NOT NULL,
   PRIMARY KEY(updateID)
