@@ -1,5 +1,9 @@
 var db = require('../models');
 
+var multer = require('multer');
+var storage = multer.memoryStorage();
+var upload = multer({storage: storage});
+
 module.exports = function(app) {
   app.route('/m/')
     .get((req, res) => {
@@ -42,6 +46,95 @@ module.exports = function(app) {
           medias: data[0],
           title: 'Browse'
         });
+      });
+    })
+    .post((req, res, next) => {
+      if (req.user && req.user.isadmin) {
+        next();
+      } else {
+        res.status(401);
+        res.render('error', {
+          status: 401,
+          message: "unauthorized",
+          error: {},
+          title: 'error'
+        });
+      }
+    },
+    upload.single('image'),
+    (req, res) => {
+      db.tx(t => {
+        return t.one(`
+          INSERT INTO Image ("img")
+          values($1)
+          RETURNING imageID`,
+          req.file.buffer);
+      }).then(image => {
+        db.tx(t => {
+          var query;
+          var imageID = image.imageid;
+
+
+
+          switch (req.body.type) {
+            case 'movie':
+              query = t.none(`
+              INSERT INTO Media
+              (title, synopsis, genre, publishDate,
+              rating, type, runtime, imageID)
+              values($1, $2, $3, $4, $5, $6, $7, $8)`, [
+                req.body.title,
+                req.body.synopsis,
+                req.body.genre,
+                new Date(req.body.publishDate),
+                0,
+                req.body.type,
+                req.body.runtime,
+                imageID
+              ]);
+              break;
+            case 'tvshow':
+              query = t.none(`
+              INSERT INTO Media
+              (title, synopsis, genre, publishDate,
+              rating, type, numSeasons, imageID)
+              values($1, $2, $3, $4, $5, $6, $7, $8)`, [
+                req.body.title,
+                req.body.synopsis,
+                req.body.genre,
+                new Date(req.body.publishDate),
+                0,
+                req.body.type,
+                req.body.numSeasons,
+                imageID
+              ]);
+              break;
+            case 'video':
+              query = t.none(`
+              INSERT INTO Media
+              (title, synopsis, genre, publishDate,
+              rating, type, numSeaons, channel, imageID)
+              values($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
+                req.body.title,
+                req.body.synopsis,
+                req.body.genre,
+                new Date(req.body.publishDate),
+                0,
+                req.body.type,
+                req.body.numViews,
+                req.body.channel,
+                imageID
+              ]);
+              break;
+          }
+          return t.batch([query]);
+        }).then(() => {
+          res.redirect('/m');
+        }).catch(err => {
+          console.err(err);
+        });
+      }).catch(err => {
+        console.err(err);
       });
     });
 

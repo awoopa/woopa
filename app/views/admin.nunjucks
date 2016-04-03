@@ -35,11 +35,95 @@
     </tbody>
   </table>
 </div>
+<div class="ui container">
+  <h2 class="ui header">
+    <i class="file icon"></i>
+    <div class="content">
+      Create Media
+    </div>
+  </h2>
+  <form class="ui form" action="/m/" method="post" enctype="multipart/form-data">
+    <div class="field">
+      <label>Title</label>
+      <input type="text" name="title" placeholder="Title">
+    </div>
+    <div class="field">
+      <label>Synopsis</label>
+      <textarea name="synopsis" placeholder="Synopsis"></textarea>
+    </div>
+    <div class="two fields">
+      <div class="field">
+        <label>Genre</label>
+        <input type="text" name="genre" placeholder="Genre">
+      </div>
+      <div class="field">
+        <label>Publish Date</label>
+        <input type="date" name="publishDate">
+      </div>
+    </div>
+    <div class="two fields">
+      <div class="field">
+        <label>Type</label>
+        <select class="ui dropdown" name="type">
+          <option value="movie">Movie</option>
+          <option value="tvshow">TV Show</option>
+          <option value="video">Video</option>
+        </select>
+      </div>
 
+      <div id="movie" class="field">
+        <label>Runtime</label>
+        <input type="number" name="runtime">
+      </div>
 
-<div class="ui four column doubling stackable grid container">
-	<div class="column">
-		
-	</div>
+      <div id="tvshow" class="field" style="display: none;">
+        <label>Number of Seasons</label>
+        <input type="number" name="numSeasons">
+      </div>
+
+      <div id="video" class="two fields" style="display: none;">
+        <div class="field">
+          <label>Number of Views</label>
+          <input type="number" name="publishDate">
+        </div>
+        <div class="field">
+          <label>Channel</label>
+          <input type="text" name="channel">
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Thumbnail Image</label>
+      <input type="file" name="image">
+    </div>
+
+    <button class="ui teal submit button" type="submit">Submit</button>
+
+  </form>
 </div>
+
+<script>
+$('select.dropdown').dropdown({
+  action: 'activate',
+  onChange: function(value, text, $selectedItem) {
+    switch (value) {
+      case 'movie':
+        $('#movie').show();
+        $('#tvshow').hide();
+        $('#video').hide();
+        break;
+      case 'tvshow':
+        $('#movie').hide();
+        $('#tvshow').show();
+        $('#video').hide();
+        break;
+      case 'video':
+        $('#movie').hide();
+        $('#tvshow').hide();
+        $('#video').show();
+        break;
+    }
+  }
+});
+</script>
 {% endblock %}
