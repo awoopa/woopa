@@ -246,9 +246,14 @@ module.exports = function(app) {
         return t.none(`
           DELETE FROM Media WHERE mediaID=$1`,
           req.params.id);
+      }).then(() => {
+        res.status(200);
+        res.send('done');
+      }).catch(err => {
+        console.err(err);
+        res.status(400);
+        res.send('err: ' + err);
       });
-      res.status(200);
-      res.send('done');
     });
 
   app.route('/m/:id/watched')
