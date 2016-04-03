@@ -52,6 +52,7 @@ module.exports = function(app) {
         var query;
 
         switch (req.body.type) {
+          default:
           case 'movie':
             query = t.none(`
             INSERT INTO Media
@@ -347,7 +348,7 @@ module.exports = function(app) {
       });
     });
 
-// recommender and recomendee have the same id - recommend to self = watchlist
+  // recommender and recomendee have the same id - recommend to self = watchlist
   app.route('/m/:id/watchlist')
     .get((req, res, next) => {
       if (req.user) {
