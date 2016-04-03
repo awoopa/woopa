@@ -56,7 +56,7 @@
       <div id="tvshow" class="field" style="display: none;">
       {% endif %}
         <label>Number of Seasons</label>
-        <input type="number" name="numSeasons" value="{{media.runtime}}">
+        <input type="number" name="numSeasons" value="{{media.numseasons}}">
       </div>
       {% if media.type == 'video' %}
       <div id="video" class="two fields">

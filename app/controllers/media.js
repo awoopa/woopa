@@ -429,10 +429,45 @@ module.exports = function(app) {
       });
     })
     .post(isAdmin, upload.single('image'), (req, res) => {
+      var fields = [];
+      var values = [req.params.id];
+
+      var i = 2;
+
+      for (var field in req.body) { // eslint-disable-line guard-for-in
+        fields.push(`${field} = $${i}`);
+        if (req.body[field] === '') {
+          values.push(null);
+        } else {
+          values.push(req.body[field]);
+        }
+        i++;
+      }
+
       if (req.file) {
         console.log(req.file.buffer);
+        fields.push(`img = $${i}`);
+        values.push(req.file);
+        i++;
       }
-      res.send('received');
+
+      var q = `UPDATE Media
+          SET ${fields.join(', ')}
+          WHERE mediaID = $1`;
+
+      db.tx(t => {
+        return t.none(q,
+          values);
+      }).then(() => {
+        res.redirect(`/m/${req.params.id}`);
+      }).catch(err => {
+        console.err(err);
+        res.render('error', {
+          status: 500,
+          err: err,
+          message: 'something broke'
+        });
+      });
     });
 
   /**
