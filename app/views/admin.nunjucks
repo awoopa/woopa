@@ -1,6 +1,8 @@
 {% extends 'layout.nunjucks' %}
 
 {% block content %}
+
+<!-- Update Requests -->
 <div class="ui container">
   <h2 class="ui header">
     <i class="flag icon"></i>
@@ -35,6 +37,8 @@
     </tbody>
   </table>
 </div>
+
+<!-- Create Media -->
 <div class="ui container">
   <h2 class="ui header">
     <i class="file icon"></i>
@@ -102,6 +106,37 @@
   </form>
 </div>
 
+<!-- Update Requests -->
+<div class="ui container">
+  <h2 class="ui header">
+    <i class="pencil icon"></i>
+    <div class="content">
+      Edit Media
+    </div>
+  </h2>
+  <table class="ui cell padded table">
+    <thead><tr>
+      <th>Media</th>
+      <th>Actions</th>
+    </tr></thead>
+    <tbody>
+      {% for media in medias %}
+      <tr>
+      <td class="selectable">
+        <a href="/m/{{media.mediaid}}">
+          {{media.title}}
+        </a>
+      </td>
+      <td>
+        Edit
+        <a href="#" class="delete" data-mediaid="{{media.mediaid}}">Delete</span>
+      </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
 <script>
 $('select.dropdown').dropdown({
   action: 'activate',
@@ -125,5 +160,15 @@ $('select.dropdown').dropdown({
     }
   }
 });
+
+$(`.delete`).click(e => {
+  $.ajax({
+    url: `/m/${e.target.dataset.mediaid}`,
+    type: 'DELETE',
+    success: res => {
+      alert('media deleted: ' + res);
+    }
+  })
+})
 </script>
 {% endblock %}

@@ -23,11 +23,15 @@ module.exports = function(app) {
           FROM UpdateRequest_Submits_On_Reviews UR,
                WoopaUser U, Media M
           WHERE UR.mediaID = M.mediaID AND
-                UR.submitterID = U.userID`)
+                UR.submitterID = U.userID`),
+          t.any(`
+            SELECT M.mediaID, M.title
+            FROM Media M`)
         ]);
       }).then(data => {
         res.render('admin', {
           urs: data[0],
+          medias: data[1],
           title: 'Admin'
         });
       });

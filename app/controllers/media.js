@@ -242,7 +242,13 @@ module.exports = function(app) {
       });
     })
     .delete(isAdmin, (req, res) => {
-
+      db.tx(t => {
+        return t.none(`
+          DELETE FROM Media WHERE mediaID=$1`,
+          req.params.id);
+      });
+      res.status(200);
+      res.send('done');
     });
 
   app.route('/m/:id/watched')
