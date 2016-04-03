@@ -12,7 +12,13 @@ Promise.all([
   fsp.readFile('scripts/assets/zirconium.jpg'),
   fsp.readFile('scripts/assets/william.jpg'),
   fsp.readFile('scripts/assets/psych.jpg'),
-  fsp.readFile('scripts/assets/zootopia.jpg')
+  fsp.readFile('scripts/assets/zootopia.jpg'),
+  fsp.readFile('scripts/assets/my_big_fat_greek_wedding_2.jpg'),
+  fsp.readFile('scripts/assets/deadpool.jpg'),
+  fsp.readFile('scripts/assets/batman_v_superman.jpg'),
+  fsp.readFile('scripts/assets/starwars.jpg'),
+  fsp.readFile('scripts/assets/the_dark_night.jpg'),
+  fsp.readFile('scripts/assets/divergent.jpg')
 ]).then(values => {
   var queries = values.map((imgData, i) => {
     return db.none(`INSERT INTO Image values ($1, $2)`, [i + 1, imgData]);
@@ -46,6 +52,12 @@ Promise.all([
           INSERT INTO WoopaUser
           (email, username, salt, password, isAdmin)
           values($1, $2, $3, $4, $5)`,
+          ["sarahy@gmail.com", "sarahy8", salt, pass, false]
+        ),
+        t.none(`
+          INSERT INTO WoopaUser
+          (email, username, salt, password, isAdmin)
+          values($1, $2, $3, $4, $5)`,
           ["itsm@rk.us", "markus", salt, pass, false]
         ),
 
@@ -73,6 +85,30 @@ Promise.all([
         t.none(
           `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
           [3, 2]
+        ),
+         t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [4, 1]
+        ),
+          t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [1, 4]
+        ),
+           t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [4, 2]
+        ),
+            t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [2, 4]
+        ),
+            t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [4, 5]
+        ),
+            t.none(
+          `INSERT INTO Friends (user_userID, friend_userID) values($1, $2)`,
+          [5, 4]
         ),
 
         // Populate Media
@@ -118,19 +154,157 @@ Promise.all([
           values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
           ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), 9.9, 'movie', 108, 5]
         ),
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["My Big Fat Greek Wedding 2", "A Portokalos family secret brings the beloved characters back together for an even bigger and Greeker wedding.", "Comedy", new Date(2016, 3, 25), 6.4, 'movie', 94, 6]
+        ),
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Deadpool", "A former Special Forces operative turned mercenary is subjected to a rogue experiment that leaves him with accelerated healing powers, adopting the alter ego Deadpool.", "Action", new Date(2016, 2, 12), 8.4, 'movie', 108, 7]
+        ),
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Batman v Superman: Dawn of Justice", "Fearing that the actions of Superman are left unchecked, Batman takes on the Man of Steel, while the world wrestles with what kind of a hero it really needs.", "Action", new Date(2016, 3, 25), 7.3, 'movie', 151, 8]
+        ),
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Star Wars: Episode VII - The Force Awakens", "Three decades after the defeat of the Galactic Empire, a new threat arises. The First Order attempts to rule the galaxy and only a ragtag group of heroes can stop them, along with the help of the Resistance.", "Action", new Date(2015, 12, 18), 8.3, 'movie', 135, 9]
+        ),
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["The Dark Knight", "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, the caped crusader must come to terms with one of the greatest psychological tests of his ability to fight injustice.", "Comedy", new Date(2008, 7, 18), 9.0, 'movie', 152, 10]
+        ),
+        t.none(`
+          INSERT INTO Media
+          (title, synopsis, genre, publishDate, rating, type, runtime, imageID)
+          values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+          ["Divergent", "In a world divided by factions based on virtues, Tris learns she's Divergent and won't fit in. When she discovers a plot to destroy Divergents, Tris and the mysterious Four must find out what makes Divergents dangerous before it's too late.", "Adventure", new Date(2014, 3, 21), 6.8, 'movie', 139, 11]
+        ),
+
+        // Populate Actors
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Shailene Woodley", new Date(1991, 11, 15)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Theo James", new Date(1984, 12, 16)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Christian Bale", new Date(1974, 1, 30)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Heath Ledger", new Date(1979, 4, 4)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Aaron Eckhart", new Date(1968, 3, 12)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Daisy Ridley", new Date(1992, 4, 10)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["John Boyega", new Date(1992, 3, 17)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Ben Affleck", new Date(1972, 8, 15)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Ryan Reynolds", new Date(1976, 10, 23)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Nia Vardalos", new Date(1962, 9, 24)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Ginnifer Goodwin", new Date(1978, 5, 22)]
+        ),
+        t.none(
+          `INSERT INTO Actor(actorName, dob) values($1, $2)`,
+          ["Jason Bateman", new Date(1969, 1, 14)]
+        ),
+        
+
+        //Populate Appears In
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [13, "Shailene Woodley", new Date(1991, 11, 15)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [13, "Theo James", new Date(1984, 12, 16)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [12, "Christian Bale", new Date(1974, 1, 30)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [12, "Heath Ledger", new Date(1979, 4, 4)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [12, "Aaron Eckhart", new Date(1968, 3, 12)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [11, "Daisy Ridley", new Date(1992, 4, 10)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [11, "John Boyega", new Date(1992, 3, 17)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [10, "Ben Affleck", new Date(1972, 8, 15)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [9, "Ryan Reynolds", new Date(1976, 10, 23)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [8, "Nia Vardalos", new Date(1962, 9, 24)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [7, "Ginnifer Goodwin", new Date(1978, 5, 22)]
+        ),
+        t.none(
+          `INSERT INTO Appears_In (mediaID, actorName, dob) values($1, $2, $3)`,
+          [7, "Jason Bateman", new Date(1969, 1, 14)]
+        ),
+
 
         // Populate Reviews
         t.none(`
           INSERT INTO Review_Writes_About
           (comment, rating, userID, mediaID)
           values($1, $2, $3, $4)`,
-          ["the best!", 10, 1, 1]
+          ["the best! music to my ears", 10, 1, 1]
         ),
         t.none(`
           INSERT INTO Review_Writes_About
           (comment, rating, userID, mediaID)
           values($1, $2, $3, $4)`,
-          ["the worst!", 1, 2, 1]
+          ["the worst! I really dislike his voice", 1, 2, 1]
         ),
         t.none(`
           INSERT INTO Review_Writes_About
@@ -148,7 +322,7 @@ Promise.all([
           INSERT INTO Review_Writes_About
           (comment, rating, userID, mediaID)
           values($1, $2, $3, $4)`,
-          ["the best!", 10, 1, 3]
+          ["this is a very interesting watch", 10, 1, 3]
         ),
         t.none(`
           INSERT INTO Review_Writes_About
@@ -292,6 +466,7 @@ Promise.all([
           `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
           [3, 2, new Date(2016, 3, 27)]
         )
+
       ]);
     })
     .then(() => {
