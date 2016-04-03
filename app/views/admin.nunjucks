@@ -88,7 +88,7 @@
       <div id="video" class="two fields" style="display: none;">
         <div class="field">
           <label>Number of Views</label>
-          <input type="number" name="publishDate">
+          <input type="number" name="numViews">
         </div>
         <div class="field">
           <label>Channel</label>
