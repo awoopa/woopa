@@ -398,6 +398,43 @@ module.exports = function(app) {
       });
     });
 
+  app.route('/m/:id/edit')
+    .get(isAdmin, (req, res) => {
+      db.tx(t => {
+        return t.oneOrNone(`
+          SELECT *
+          FROM Media
+          WHERE mediaID = $1`,
+          req.params.id);
+      }).then(media => {
+        if (media) {
+          res.render('media-edit', {
+            media: media
+          });
+        } else {
+          res.status(404);
+          res.render('error', {
+            status: 400,
+            message: 'not found'
+          });
+        }
+      }).catch(err => {
+        console.err(err);
+        res.status(500);
+        res.render('error', {
+          status: 500,
+          message: 'something broke',
+          err: err
+        });
+      });
+    })
+    .post(isAdmin, upload.single('image'), (req, res) => {
+      if (req.file) {
+        console.log(req.file.buffer);
+      }
+      res.send('received');
+    });
+
   /**
    * Middleware for authenticating admin users
    * @param {object} req - request object

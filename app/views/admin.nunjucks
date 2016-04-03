@@ -128,7 +128,7 @@
         </a>
       </td>
       <td>
-        Edit
+        <a href="/m/{{media.mediaid}}/edit">Edit</a>
         <a href="#" class="delete" data-mediaid="{{media.mediaid}}">Delete</span>
       </td>
       </tr>

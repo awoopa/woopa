@@ -39,7 +39,10 @@ module.exports = function(app, config) {
     return s;
   }).addFilter('approxtime', str => {
     return prettyMs(new Date() - new Date(str), {compact: true}).slice(1);
-  }).addFilter('date', dateFilter);
+  }).addFilter('hexToImg', str => {
+    return `data:image/png;base64,${new Buffer(str, 'hex').toString('base64')}`;
+  })
+  .addFilter('date', dateFilter);
 
   app.use(favicon(config.root + '/public/img/favicon/favicon.ico'));
   app.use(logger('dev'));

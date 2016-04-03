@@ -1,0 +1,126 @@
+{% extends 'layout.nunjucks' %}
+
+{% block content %}
+<!-- Create Media -->
+<div class="ui container">
+  <h2 class="ui header">
+    <i class="file icon"></i>
+    <div class="content">
+      Edit Media
+    </div>
+  </h2>
+  <img class="ui image" src="{{media.img | hexToImg}}">
+
+  <form class="ui form" method="post" enctype="multipart/form-data">
+    <div class="field">
+      <label>Title</label>
+      <input type="text" name="title" value="{{media.title}}">
+    </div>
+    <div class="field">
+      <label>Synopsis</label>
+      <textarea name="synopsis">{{media.synopsis}}</textarea>
+    </div>
+    <div class="two fields">
+      <div class="field">
+        <label>Genre</label>
+        <input type="text" name="genre" value="{{media.genre}}">
+      </div>
+      <div class="field">
+        <label>Publish Date</label>
+        <input type="date" name="publishDate" value="{{media.publishdate | date("YYYY-MM-DD")}}">
+      </div>
+    </div>
+    <div class="two fields">
+      <div class="field">
+        <label>Type</label>
+        <select class="ui dropdown" name="type" >
+          <option value="movie" {% if media.type == 'movie' %}selected{%endif%}>Movie</option>
+          <option value="tvshow" {% if media.type == 'tvshow' %}selected{%endif%}>TV Show</option>
+          <option value="video" {% if media.type == 'video' %}selected{%endif%}>Video</option>
+        </select>
+      </div>
+
+
+      {% if media.type == 'movie' %}
+      <div id="movie" class="field">
+      {% else %}
+      <div id="movie" class="field" style="display: none;">
+      {% endif %}
+        <label>Runtime</label>
+        <input type="number" name="runtime" value="{{media.runtime}}">
+      </div>
+
+      {% if media.type == 'tvshow' %}
+      <div id="tvshow" class="field">
+      {% else %}
+      <div id="tvshow" class="field" style="display: none;">
+      {% endif %}
+        <label>Number of Seasons</label>
+        <input type="number" name="numSeasons" value="{{media.runtime}}">
+      </div>
+      {% if media.type == 'video' %}
+      <div id="video" class="two fields">
+      {% else %}
+      <div id="video" class="two fields" style="display: none;">
+      {% endif %}
+        <div class="field">
+          <label>Number of Views</label>
+          <input type="number" name="numViews" value="{{media.numviews}}">
+        </div>
+        <div class="field">
+          <label>Channel</label>
+          <input type="text" name="channel" value="{{media.channel}}">
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Thumbnail Image</label>
+      <input type="file" name="image">
+    </div>
+
+    <button class="ui teal submit button" type="submit">Submit</button>
+
+  </form>
+</div>
+
+
+<script>
+$('select.dropdown').dropdown({
+  action: 'activate',
+  onChange: setFields
+});
+
+function setFields(value) {
+  switch (value) {
+    case 'movie':
+      $('#movie').show();
+      $('#tvshow').hide();
+      $('#video').hide();
+      break;
+    case 'tvshow':
+      $('#movie').hide();
+      $('#tvshow').show();
+      $('#video').hide();
+      break;
+    case 'video':
+      $('#movie').hide();
+      $('#tvshow').hide();
+      $('#video').show();
+      break;
+  }
+}
+
+/*$('.submit.button').click(e => {
+  $.ajax({
+    type: 'PUT',
+    url: '/m/{{media.mediaid}}',
+    data: $('form').serialize(),
+    success: function(data, textStatus, jqXHR) {
+      alert('ok');
+    }
+  });
+});*/
+
+//$(setFields($('select[name=type]').val()));
+</script>
+{% endblock %}
