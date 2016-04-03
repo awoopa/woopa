@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS Actor CASCADE;
 DROP TABLE IF EXISTS WoopaUser CASCADE;
 DROP TABLE IF EXISTS Friends CASCADE;
 DROP TYPE IF EXISTS mediaType CASCADE;
-DROP TABLE IF EXISTS Image CASCADE;
 DROP TABLE IF EXISTS Media CASCADE;
 DROP TABLE IF EXISTS Review_Writes_About CASCADE;
 DROP TABLE IF EXISTS Watched CASCADE;
@@ -30,14 +29,6 @@ CREATE TABLE Friends (
 
 CREATE TYPE mediaType AS ENUM ('movie', 'tvshow', 'video');
 
-
-CREATE TABLE Image (
-  imageID     serial    UNIQUE NOT NULL,
-  img         bytea     NOT NULL,
-  PRIMARY KEY (imageID)
-);
-
-
 CREATE TABLE Media (
   mediaID     serial    UNIQUE NOT NULL,
   title       text      NOT NULL,
@@ -50,7 +41,7 @@ CREATE TABLE Media (
   numSeasons  integer   NULL,
   numViews    integer   NULL,
   channel     text      NULL,
-  imageID     integer   REFERENCES Image (imageID),
+  img         bytea     NOT NULL,
   PRIMARY KEY (mediaID)
 );
 

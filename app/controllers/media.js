@@ -10,9 +10,8 @@ module.exports = function(app) {
       var type = req.query.type;
 
       var query = `
-      SELECT M.*, I.img
-      FROM Media M, Image I
-      WHERE M.imageID = I.imageID`;
+      SELECT *
+      FROM Media`;
 
       switch (type) {
         case "movie":
@@ -48,91 +47,64 @@ module.exports = function(app) {
         });
       });
     })
-    .post((req, res, next) => {
-      if (req.user && req.user.isadmin) {
-        next();
-      } else {
-        res.status(401);
-        res.render('error', {
-          status: 401,
-          message: "unauthorized",
-          error: {},
-          title: 'error'
-        });
-      }
-    },
-    upload.single('image'),
-    (req, res) => {
+    .post(isAdmin, upload.single('image'), (req, res) => {
       db.tx(t => {
-        return t.one(`
-          INSERT INTO Image ("img")
-          values($1)
-          RETURNING imageID`,
-          req.file.buffer);
-      }).then(image => {
-        db.tx(t => {
-          var query;
-          var imageID = image.imageid;
+        var query;
 
-
-
-          switch (req.body.type) {
-            case 'movie':
-              query = t.none(`
-              INSERT INTO Media
-              (title, synopsis, genre, publishDate,
-              rating, type, runtime, imageID)
-              values($1, $2, $3, $4, $5, $6, $7, $8)`, [
-                req.body.title,
-                req.body.synopsis,
-                req.body.genre,
-                new Date(req.body.publishDate),
-                0,
-                req.body.type,
-                req.body.runtime,
-                imageID
-              ]);
-              break;
-            case 'tvshow':
-              query = t.none(`
-              INSERT INTO Media
-              (title, synopsis, genre, publishDate,
-              rating, type, numSeasons, imageID)
-              values($1, $2, $3, $4, $5, $6, $7, $8)`, [
-                req.body.title,
-                req.body.synopsis,
-                req.body.genre,
-                new Date(req.body.publishDate),
-                0,
-                req.body.type,
-                req.body.numSeasons,
-                imageID
-              ]);
-              break;
-            case 'video':
-              query = t.none(`
-              INSERT INTO Media
-              (title, synopsis, genre, publishDate,
-              rating, type, numSeaons, channel, imageID)
-              values($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
-                req.body.title,
-                req.body.synopsis,
-                req.body.genre,
-                new Date(req.body.publishDate),
-                0,
-                req.body.type,
-                req.body.numViews,
-                req.body.channel,
-                imageID
-              ]);
-              break;
-          }
-          return t.batch([query]);
-        }).then(() => {
-          res.redirect('/m');
-        }).catch(err => {
-          console.err(err);
-        });
+        switch (req.body.type) {
+          case 'movie':
+            query = t.none(`
+            INSERT INTO Media
+            (title, synopsis, genre, publishDate,
+            rating, type, runtime, img)
+            values($1, $2, $3, $4, $5, $6, $7, $8)`, [
+              req.body.title,
+              req.body.synopsis,
+              req.body.genre,
+              new Date(req.body.publishDate),
+              0,
+              req.body.type,
+              req.body.runtime,
+              req.file.buffer
+            ]);
+            break;
+          case 'tvshow':
+            query = t.none(`
+            INSERT INTO Media
+            (title, synopsis, genre, publishDate,
+            rating, type, numSeasons, img)
+            values($1, $2, $3, $4, $5, $6, $7, $8)`, [
+              req.body.title,
+              req.body.synopsis,
+              req.body.genre,
+              new Date(req.body.publishDate),
+              0,
+              req.body.type,
+              req.body.numSeasons,
+              req.file.buffer
+            ]);
+            break;
+          case 'video':
+            query = t.none(`
+            INSERT INTO Media
+            (title, synopsis, genre, publishDate,
+            rating, type, numSeaons, channel, img)
+            values($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
+              req.body.title,
+              req.body.synopsis,
+              req.body.genre,
+              new Date(req.body.publishDate),
+              0,
+              req.body.type,
+              req.body.numViews,
+              req.body.channel,
+              req.file.buffer
+            ]);
+            break;
+        }
+        return t.batch([query]);
+      }).then(() => {
+        res.redirect('/m');
       }).catch(err => {
         console.err(err);
       });
@@ -143,10 +115,9 @@ module.exports = function(app) {
       db.tx(t => {
         return t.batch([
           t.any(`
-            SELECT M.*, I.img
-            FROM Media M, Image I
-            WHERE M.imageID = I.imageID AND
-            LOWER(title) LIKE LOWER($1)`,
+            SELECT M.*
+            FROM Media M
+            WHERE LOWER(title) LIKE LOWER($1)`,
             [`%${req.body.comment}%`])
         ]);
       }).then(data => {
@@ -178,10 +149,9 @@ module.exports = function(app) {
       db.tx(t => {
         var queries = [
           t.oneOrNone(`
-            SELECT M.*, I.img
-            FROM Media M, Image I
-            WHERE M.imageID = I.imageID AND
-            mediaID = $1`,
+            SELECT *
+            FROM Media
+            WHERE mediaID = $1`,
             req.params.id
           ),
           t.one(`
@@ -270,6 +240,9 @@ module.exports = function(app) {
           });
         }
       });
+    })
+    .delete(isAdmin, (req, res) => {
+
     });
 
   app.route('/m/:id/watched')
@@ -412,4 +385,24 @@ module.exports = function(app) {
         });
       });
     });
+
+  /**
+   * Middleware for authenticating admin users
+   * @param {object} req - request object
+   * @param {object} res - response object
+   * @param {function} next - next in middleware chain
+   */
+  function isAdmin(req, res, next) {
+    if (req.user && req.user.isadmin) {
+      next();
+    } else {
+      res.status(401);
+      res.render('error', {
+        status: 401,
+        message: "unauthorized",
+        error: {},
+        title: 'error'
+      });
+    }
+  }
 };
