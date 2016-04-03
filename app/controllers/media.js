@@ -15,13 +15,13 @@ module.exports = function(app) {
 
       switch (type) {
         case "movie":
-          query += " AND type = 'movie'";
+          query += " WHERE type = 'movie'";
           break;
         case 'tvshow':
-          query += " AND type = 'tvshow'";
+          query += " WHERE type = 'tvshow'";
           break;
         case "video":
-          query += " AND type = 'video'";
+          query += " WHERE type = 'video'";
           break;
         default:
           break;
