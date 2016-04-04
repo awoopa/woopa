@@ -27,7 +27,7 @@ module.exports = function(app) {
           break;
       }
 
-      query += " ORDER BY rating DESC";
+      query += " ORDER BY rating DESC NULLS LAST";
 
       db.tx(t => {
         return t.batch([

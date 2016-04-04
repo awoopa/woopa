@@ -39,9 +39,15 @@
             </div>
             <div class="content">
               <div class="header">{{media.title}}</div>
-              <div class="meta">
-                {{media.genre}} &bull; {{media.rating}}
-              </div>
+                {% if media.rating %}
+                  <div class="meta">
+                    {{media.genre}} &bull; {{media.rating}}
+                  </div>
+                {% else %}
+                  <div class="meta">
+                    {{media.genre}}
+                  </div>
+                {% endif %}
               <div class="description">
                 <p>{{media.synopsis}}</p>
               </div>
