@@ -156,6 +156,8 @@ module.exports = function(app) {
           });
         }
 
+        q += ` ORDER BY ${req.body.orderbyfield} ${req.body.orderbydir}`;
+
         console.log(q);
         console.log(values);
         return t.batch([

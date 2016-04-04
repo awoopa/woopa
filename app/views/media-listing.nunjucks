@@ -76,6 +76,28 @@
               <input type="checkbox" name="project[img]" checked/>
             </div>
           </div>
+          <div class="fields">
+          Order by:
+          <div class="field">
+            <select class="ui dropdown" name="orderbyfield">
+              <option value="title">Title</option>
+              <option value="synopsis">Synopsis</option>
+              <option value="genre">Genre</option>
+              <option value="publishdate">Publish Date</option>
+              <option value="rating">Rating</option>
+              <option value="runtime">Runtime</option>
+              <option value="numseasons">Number of Seasons</option>
+              <option value="numviews">Number of Views</option>
+              <option value="channel">Channel</option>
+            </select>
+            </div>
+            <div class="field">
+            <select class="ui dropdown" name="orderbydir">
+              <option value="DESC">Descending</option>
+              <option value="ASC">Ascending</option>
+            </select>
+            </div>
+          </div>
           <div id="constraints">
           </div>
 
@@ -149,6 +171,7 @@
   
   $('.ui.accordion').accordion();
   $('.ui.checkbox').checkbox();
+  $('.ui.dropdown').dropdown();
 
   var i = 0;
   $('#addconstraint').click((e) => {
