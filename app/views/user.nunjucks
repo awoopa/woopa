@@ -57,10 +57,6 @@
 					{{ review.title }}
 				</div>
 				</div>
-		    <div class="extra">
-		      Rating:
-		      <div class="ui star rating" data-rating="4"></div>
-		    </div>
     	</div>
 		{% endfor %}
 		</div>
