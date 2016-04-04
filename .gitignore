@@ -33,3 +33,5 @@ node_modules
 .node_repl_history
 public/components
 .sass-cache
+
+*.DS_Store

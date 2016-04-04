@@ -1,24 +1,27 @@
 var db = require('../models');
 
+var multer = require('multer');
+var storage = multer.memoryStorage();
+var upload = multer({storage: storage});
+
 module.exports = function(app) {
   app.route('/m/')
     .get((req, res) => {
       var type = req.query.type;
 
       var query = `
-      SELECT M.*, I.img
-      FROM Media M, Image I
-      WHERE M.imageID = I.imageID`;
+      SELECT *
+      FROM Media`;
 
       switch (type) {
         case "movie":
-          query += " AND type = 'movie'";
+          query += " WHERE type = 'movie'";
           break;
         case 'tvshow':
-          query += " AND type = 'tvshow'";
+          query += " WHERE type = 'tvshow'";
           break;
         case "video":
-          query += " AND type = 'video'";
+          query += " WHERE type = 'video'";
           break;
         default:
           break;
@@ -43,6 +46,69 @@ module.exports = function(app) {
           title: 'Browse'
         });
       });
+    })
+    .post(isAdmin, upload.single('image'), (req, res) => {
+      db.tx(t => {
+        var query;
+
+        switch (req.body.type) {
+          default:
+          case 'movie':
+            query = t.none(`
+            INSERT INTO Media
+            (title, synopsis, genre, publishDate,
+            rating, type, runtime, img)
+            values($1, $2, $3, $4, $5, $6, $7, $8)`, [
+              req.body.title,
+              req.body.synopsis,
+              req.body.genre,
+              new Date(req.body.publishDate),
+              0,
+              req.body.type,
+              req.body.runtime,
+              req.file.buffer
+            ]);
+            break;
+          case 'tvshow':
+            query = t.none(`
+            INSERT INTO Media
+            (title, synopsis, genre, publishDate,
+            rating, type, numSeasons, img)
+            values($1, $2, $3, $4, $5, $6, $7, $8)`, [
+              req.body.title,
+              req.body.synopsis,
+              req.body.genre,
+              new Date(req.body.publishDate),
+              0,
+              req.body.type,
+              req.body.numSeasons,
+              req.file.buffer
+            ]);
+            break;
+          case 'video':
+            query = t.none(`
+            INSERT INTO Media
+            (title, synopsis, genre, publishDate,
+            rating, type, numSeaons, channel, img)
+            values($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
+              req.body.title,
+              req.body.synopsis,
+              req.body.genre,
+              new Date(req.body.publishDate),
+              0,
+              req.body.type,
+              req.body.numViews,
+              req.body.channel,
+              req.file.buffer
+            ]);
+            break;
+        }
+        return t.batch([query]);
+      }).then(() => {
+        res.redirect('/m');
+      }).catch(err => {
+        console.err(err);
+      });
     });
 
   app.route('/m/search')
@@ -50,10 +116,9 @@ module.exports = function(app) {
       db.tx(t => {
         return t.batch([
           t.any(`
-            SELECT M.*, I.img
-            FROM Media M, Image I
-            WHERE M.imageID = I.imageID AND
-            LOWER(title) LIKE LOWER($1)`,
+            SELECT M.*
+            FROM Media M
+            WHERE LOWER(title) LIKE LOWER($1)`,
             [`%${req.body.comment}%`])
         ]);
       }).then(data => {
@@ -85,10 +150,9 @@ module.exports = function(app) {
       db.tx(t => {
         var queries = [
           t.oneOrNone(`
-            SELECT M.*, I.img
-            FROM Media M, Image I
-            WHERE M.imageID = I.imageID AND
-            mediaID = $1`,
+            SELECT *
+            FROM Media
+            WHERE mediaID = $1`,
             req.params.id
           ),
           t.one(`
@@ -172,9 +236,24 @@ module.exports = function(app) {
           res.render('media', values);
         } else {
           res.render('error', {
+            status: 404,
             message: 'media not found'
           });
         }
+      });
+    })
+    .delete(isAdmin, (req, res) => {
+      db.tx(t => {
+        return t.none(`
+          DELETE FROM Media WHERE mediaID=$1`,
+          req.params.id);
+      }).then(() => {
+        res.status(200);
+        res.send('done');
+      }).catch(err => {
+        console.err(err);
+        res.status(400);
+        res.send('err: ' + err);
       });
     });
 
@@ -223,7 +302,11 @@ module.exports = function(app) {
             console.log(data);
             res.redirect('/m/' + req.params.id);
           }).error(err => {
-            console.log(err);
+            res.render('error', {
+              status: 500,
+              message: err
+            });
+            console.error(err);
           });
         }
       });
@@ -265,7 +348,7 @@ module.exports = function(app) {
       });
     });
 
-// recommender and recomendee have the same id - recommend to self = watchlist
+  // recommender and recomendee have the same id - recommend to self = watchlist
   app.route('/m/:id/watchlist')
     .get((req, res, next) => {
       if (req.user) {
@@ -314,4 +397,96 @@ module.exports = function(app) {
         });
       });
     });
+
+  app.route('/m/:id/edit')
+    .get(isAdmin, (req, res) => {
+      db.tx(t => {
+        return t.oneOrNone(`
+          SELECT *
+          FROM Media
+          WHERE mediaID = $1`,
+          req.params.id);
+      }).then(media => {
+        if (media) {
+          res.render('media-edit', {
+            media: media
+          });
+        } else {
+          res.status(404);
+          res.render('error', {
+            status: 400,
+            message: 'not found'
+          });
+        }
+      }).catch(err => {
+        console.err(err);
+        res.status(500);
+        res.render('error', {
+          status: 500,
+          message: 'something broke',
+          err: err
+        });
+      });
+    })
+    .post(isAdmin, upload.single('image'), (req, res) => {
+      var fields = [];
+      var values = [req.params.id];
+
+      var i = 2;
+
+      for (var field in req.body) { // eslint-disable-line guard-for-in
+        fields.push(`${field} = $${i}`);
+        if (req.body[field] === '') {
+          values.push(null);
+        } else {
+          values.push(req.body[field]);
+        }
+        i++;
+      }
+
+      if (req.file) {
+        console.log(req.file.buffer);
+        fields.push(`img = $${i}`);
+        values.push(req.file);
+        i++;
+      }
+
+      var q = `UPDATE Media
+          SET ${fields.join(', ')}
+          WHERE mediaID = $1`;
+
+      db.tx(t => {
+        return t.none(q,
+          values);
+      }).then(() => {
+        res.redirect(`/m/${req.params.id}`);
+      }).catch(err => {
+        console.err(err);
+        res.render('error', {
+          status: 500,
+          err: err,
+          message: 'something broke'
+        });
+      });
+    });
+
+  /**
+   * Middleware for authenticating admin users
+   * @param {object} req - request object
+   * @param {object} res - response object
+   * @param {function} next - next in middleware chain
+   */
+  function isAdmin(req, res, next) {
+    if (req.user && req.user.isadmin) {
+      next();
+    } else {
+      res.status(401);
+      res.render('error', {
+        status: 401,
+        message: "unauthorized",
+        error: {},
+        title: 'error'
+      });
+    }
+  }
 };
