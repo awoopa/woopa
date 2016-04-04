@@ -244,7 +244,7 @@ module.exports = function(app) {
     })
     .delete(isAdmin, (req, res) => {
       db.tx(t => {
-        return t.any(`
+        return t.none(`
           DELETE FROM Media WHERE mediaID=$1`,
           req.params.id);
       }).then(data => {
