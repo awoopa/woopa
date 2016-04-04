@@ -42,9 +42,15 @@
             </div>
             <div class="content">
               <div class="header">{{rec.title}}</div> 
-              <div class="meta">
-                {{rec.genre}} &bull; {{rec.rating}}
-              </div>
+                {% if rec.rating %}
+                  <div class="meta">
+                    {{rec.genre}} &bull; {{rec.rating}}
+                  </div>
+                {% else %}
+                  <div class="meta">
+                    {{rec.genre}}
+                  </div>
+                {% endif %}
               <div class="description">
                 
                 <p>{{rec.synopsis}}</p>
