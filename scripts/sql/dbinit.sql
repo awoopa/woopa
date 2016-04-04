@@ -35,11 +35,11 @@ CREATE TABLE Media (
   synopsis    text      NOT NULL,
   genre       text      NOT NULL,
   publishDate timestamptz      NOT NULL,
-  rating      decimal,
+  rating      decimal CHECK (rating >= 1 AND rating <= 10),
   type        mediaType NOT NULL,
-  runtime     integer   NULL,
-  numSeasons  integer   NULL,
-  numViews    integer   NULL,
+  runtime     integer   NULL CHECK (runtime > 0),
+  numSeasons  integer   NULL CHECK (numSeasons > 0),
+  numViews    integer   NULL CHECK (numViews > 0),
   channel     text      NULL,
   img         bytea     NOT NULL,
   PRIMARY KEY (mediaID)
@@ -91,7 +91,7 @@ CREATE TABLE Watched (
 CREATE TABLE UpdateRequest_Submits_On_Reviews (
   updateID      serial    UNIQUE NOT NULL,
   submitterID   integer   NOT NULL REFERENCES WoopaUser (userID),
-  mediaID       integer   NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
+  mediaID       integer   NOT NULL REFERENCES Media (mediaID) ON DELETE NO ACTION,
   reviewerID    integer   REFERENCES WoopaUser (userID),
   details       text      NOT NULL,
   PRIMARY KEY(updateID)

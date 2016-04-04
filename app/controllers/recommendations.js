@@ -26,6 +26,7 @@ module.exports = function(app) {
           RT.mediaID = M.mediaID AND
           U.userID = RT.recommenderID`,
           [req.user.userid]),
+
         // Highest rated media query
         t.any(`
           WITH calc AS (
@@ -43,6 +44,8 @@ module.exports = function(app) {
             JOIN calc C ON A.type = C.type AND A.mx = C.avg)  AS TRM
           WHERE TRM.mediaID = M.mediaID`,
           [req.user.userid]),
+
+        // Division query
         t.any(`
           WITH myfriends AS (
             SELECT F.friend_userID AS userID
@@ -59,11 +62,13 @@ module.exports = function(app) {
             FROM Watched W
             WHERE W.mediaID = M.mediaID))`,
           [req.user.userid]),
+
         t.any(`
           SELECT F.friend_userID AS userID
           FROM Friends F
           WHERE F.user_userID=$1`,
           [req.user.userid]),
+
         // Lowest rated media query
         t.any(`
           WITH calc AS (
