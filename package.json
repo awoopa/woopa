@@ -33,7 +33,6 @@
     "nunjucks-date-filter": "^0.1.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "pg": "^4.5.2",
     "pg-hstore": "2.3.2",
     "pg-promise": "^3.4.3",
     "pretty-ms": "^2.1.0",
