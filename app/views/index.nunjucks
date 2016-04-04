@@ -5,7 +5,7 @@
   <div class="ui middle four cards">
     <div class="ui red card">
       <div class="image">
-        <img src="http://placehold.it/150x150"/>
+        <img src="http://imgur.com/S4lZrUv.jpg"/>
       </div>
       <div class="content">
         <div class="ui header huge">Watch</div>
@@ -14,7 +14,7 @@
     </div>
     <div class="ui green card">
       <div class="image">
-        <img src="http://placehold.it/150x150"/>
+        <img src="http://i.imgur.com/eZ8TfZF.jpg"/>
       </div>
       <div class="content">
         <div class="ui header huge">Discover</div>
@@ -22,7 +22,7 @@
     </div>
     <div class="ui blue card">
       <div class="image">
-        <img src="http://placehold.it/150x150"/>
+        <img src="http://imgur.com/K0XSPWo.jpg"/>
       </div>
       <div class="content">
         <div class="ui header huge">Recommend</div>
@@ -30,7 +30,7 @@
     </div>
     <div class="ui yellow card">
       <div class="image">
-        <img src="http://placehold.it/150x150"/>
+        <img src="http://imgur.com/zfLI9FW.jpg"/>
       </div>
       <div class="content">
         <div class="ui header huge">Woopa!</div>
