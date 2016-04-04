@@ -45,7 +45,7 @@ module.exports = function(app) {
           WHERE TRM.mediaID = M.mediaID`,
           [req.user.userid]),
 
-        //Division query
+        // Division query
         t.any(`
           WITH myfriends AS (
             SELECT F.friend_userID AS userID
@@ -68,7 +68,7 @@ module.exports = function(app) {
           FROM Friends F
           WHERE F.user_userID=$1`,
           [req.user.userid]),
-        
+
         // Lowest rated media query
         t.any(`
           WITH calc AS (

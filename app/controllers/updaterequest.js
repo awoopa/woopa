@@ -19,7 +19,7 @@ module.exports = function(app) {
       });
     });
 
-   app.route('/ur/:id')
+  app.route('/ur/:id')
     .delete(isAdmin, (req, res) => {
       db.tx(t => {
         return t.none(`
