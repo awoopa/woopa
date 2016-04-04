@@ -15,6 +15,12 @@ a {
   cursor: default !important;
 }
 
+.middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /*
 dirty hack to prevent the Semantic UI icon class from changing the font
 */
