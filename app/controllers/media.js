@@ -27,7 +27,7 @@ module.exports = function(app) {
           break;
       }
 
-      query += " ORDER BY rating DESC";
+      query += " ORDER BY rating DESC NULLS LAST";
 
       db.tx(t => {
         return t.batch([
@@ -114,12 +114,52 @@ module.exports = function(app) {
   app.route('/m/search')
     .post((req, res) => {
       db.tx(t => {
+        var projectFields = ['mediaID'];
+
+        for (var field in req.body.project) {
+          if (req.body.project.hasOwnProperty(field)) {
+            projectFields.push(field);
+          }
+        }
+
+        var q = `
+          SELECT ${projectFields.join(', ')}
+          FROM Media M
+          WHERE LOWER(title) LIKE LOWER($1)`;
+        var values = [`%${req.body.comment}%`];
+
+        console.log(req.body.constraints);
+
+        var paramNum = 2;
+
+        if (req.body.constraints) {
+          req.body.constraints.forEach(e => {
+            switch (e.valuetype) {
+              case 'int':
+                values.push(parseInt(e.value, 10));
+                q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${paramNum++}`;
+                break;
+              case 'float':
+                values.push(parseFloat(e.value));
+                q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${paramNum++}`;
+                break;
+              case 'string':
+                values.push(e.value);
+                q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${paramNum++}`;
+                break;
+              case 'none':
+                q += ` ${e.connective} ${e.not} ${e.field} ${e.comp}`;
+                break;
+              default:
+                break;
+            }
+          });
+        }
+
+        console.log(q);
+        console.log(values);
         return t.batch([
-          t.any(`
-            SELECT M.*
-            FROM Media M
-            WHERE LOWER(title) LIKE LOWER($1)`,
-            [`%${req.body.comment}%`])
+          t.any(q, values)
         ]);
       }).then(data => {
         if (data[0]) {
