@@ -22,16 +22,14 @@ module.exports = function(app) {
   app.route('/ur/:id')
     .delete(isAdmin, (req, res) => {
       db.tx(t => {
-        return t.none(`
+        return t.any(`
           DELETE FROM UpdateRequest_Submits_On_Reviews WHERE updateID=$1`,
           req.params.id);
       }).then(() => {
-        res.status(200);
-        res.send('done');
+        res.status(200).json({success: true});
       }).catch(err => {
-        console.err(err);
-        res.status(400);
-        res.send('err: ' + err);
+        console.error(err);
+        res.status(400).json({success: false, err: err});
       });
     });
 
