@@ -142,6 +142,10 @@ module.exports = function(app) {
         }
       }).catch(error => {
         console.log(error);
+        res.render('error', {
+          status: 400,
+          message: 'bad request'
+        });
       });
     });
 
