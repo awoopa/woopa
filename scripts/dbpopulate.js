@@ -109,7 +109,7 @@ Promise.all([
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, numViews, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Zirconium", "Shikib Sings Zirconium", "History", new Date(2012, 11, 12), 2, 'video', 265, images[1]]
+        ["Zirconium", "Shikib Sings Zirconium", "History", new Date(2012, 11, 12), 5.3, 'video', 265, images[1]]
       ),
       t.none(`
         INSERT INTO Media
@@ -121,13 +121,13 @@ Promise.all([
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, numSeasons, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 5, 9), 7, 'tvshow', 8, images[0]]
+        ["Sailor Moonkib", "A lone algorithmicist defends the solar system from alien invasion", "Drama", new Date(1995, 5, 9), 7.5, 'tvshow', 8, images[0]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, numSeasons, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), 8.4, 'tvshow', 8, images[3]]
+        ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), 2, 'tvshow', 8, images[3]]
       ),
       t.none(`
         INSERT INTO Media
@@ -139,49 +139,49 @@ Promise.all([
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 4, 25), 8, 'movie', 106, images[0]]
+        ["Kyle and Abrar Escape From Guantanamo Bay", "Second installment in the Kyle and Abrar series", "Comedy", new Date(2008, 4, 25), null, 'movie', 106, images[0]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), 9.9, 'movie', 108, images[4]]
+        ["Zootopia", "In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.", "Action", new Date(2016, 2, 4), null, 'movie', 108, images[4]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["My Big Fat Greek Wedding 2", "A Portokalos family secret brings the beloved characters back together for an even bigger and Greeker wedding.", "Comedy", new Date(2016, 3, 25), 6.4, 'movie', 94, images[5]]
+        ["My Big Fat Greek Wedding 2", "A Portokalos family secret brings the beloved characters back together for an even bigger and Greeker wedding.", "Comedy", new Date(2016, 3, 25), null, 'movie', 94, images[5]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Deadpool", "A former Special Forces operative turned mercenary is subjected to a rogue experiment that leaves him with accelerated healing powers, adopting the alter ego Deadpool.", "Action", new Date(2016, 2, 12), 8.4, 'movie', 108, images[6]]
+        ["Deadpool", "A former Special Forces operative turned mercenary is subjected to a rogue experiment that leaves him with accelerated healing powers, adopting the alter ego Deadpool.", "Action", new Date(2016, 2, 12), 8, 'movie', 108, images[6]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Batman v Superman: Dawn of Justice", "Fearing that the actions of Superman are left unchecked, Batman takes on the Man of Steel, while the world wrestles with what kind of a hero it really needs.", "Action", new Date(2016, 3, 25), 7.3, 'movie', 151, images[7]]
+        ["Batman v Superman: Dawn of Justice", "Fearing that the actions of Superman are left unchecked, Batman takes on the Man of Steel, while the world wrestles with what kind of a hero it really needs.", "Action", new Date(2016, 3, 25), 6, 'movie', 151, images[7]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Star Wars: Episode VII - The Force Awakens", "Three decades after the defeat of the Galactic Empire, a new threat arises. The First Order attempts to rule the galaxy and only a ragtag group of heroes can stop them, along with the help of the Resistance.", "Action", new Date(2015, 12, 18), 8.3, 'movie', 135, images[8]]
+        ["Star Wars: Episode VII - The Force Awakens", "Three decades after the defeat of the Galactic Empire, a new threat arises. The First Order attempts to rule the galaxy and only a ragtag group of heroes can stop them, along with the help of the Resistance.", "Action", new Date(2015, 12, 18), null, 'movie', 135, images[8]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["The Dark Knight", "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, the caped crusader must come to terms with one of the greatest psychological tests of his ability to fight injustice.", "Comedy", new Date(2008, 7, 18), 9.0, 'movie', 152, images[9]]
+        ["The Dark Knight", "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, the caped crusader must come to terms with one of the greatest psychological tests of his ability to fight injustice.", "Comedy", new Date(2008, 7, 18), null, 'movie', 152, images[9]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Divergent", "In a world divided by factions based on virtues, Tris learns she's Divergent and won't fit in. When she discovers a plot to destroy Divergents, Tris and the mysterious Four must find out what makes Divergents dangerous before it's too late.", "Adventure", new Date(2014, 3, 21), 6.8, 'movie', 139, images[10]]
+        ["Divergent", "In a world divided by factions based on virtues, Tris learns she's Divergent and won't fit in. When she discovers a plot to destroy Divergents, Tris and the mysterious Four must find out what makes Divergents dangerous before it's too late.", "Adventure", new Date(2014, 3, 21), null, 'movie', 139, images[10]]
       ),
 
       // Populate Actors
@@ -332,6 +332,30 @@ Promise.all([
         (comment, rating, userID, mediaID)
         values($1, $2, $3, $4)`,
         ["this movie is definitely not a rip off of harold and kumar!", 9, 3, 5]
+      ),
+      t.none(`
+        INSERT INTO Review_Writes_About
+        (comment, rating, userID, mediaID)
+        values($1, $2, $3, $4)`,
+        ["it really isn't william's moment.", 1, 1, 2]
+      ),
+      t.none(`
+        INSERT INTO Review_Writes_About
+        (comment, rating, userID, mediaID)
+        values($1, $2, $3, $4)`,
+        ["pretty good movie!", 8, 1, 9]
+      ),
+      t.none(`
+        INSERT INTO Review_Writes_About
+        (comment, rating, userID, mediaID)
+        values($1, $2, $3, $4)`,
+        ["this movie was alright", 6, 1, 10]
+      ),
+      t.none(`
+        INSERT INTO Review_Writes_About
+        (comment, rating, userID, mediaID)
+        values($1, $2, $3, $4)`,
+        ["Terrible tv show, only someone with no taste would watch this. The only reason I watch is to send random screenshots of places I recognize into group chats.", 2, 1, 4]
       ),
 
       // Populate Recommendations
