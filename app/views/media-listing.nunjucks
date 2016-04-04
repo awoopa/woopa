@@ -29,8 +29,54 @@
         Advanced Search
         </div>
         <div class="content">
+          <div class="fields">
+            Show:
+            <div class="ui inline checkbox field">
+              <label>Title</label>
+              <input type="checkbox" name="project[title]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Synopsis</label>
+              <input type="checkbox" name="project[synopsis]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Genre</label>
+              <input type="checkbox" name="project[genre]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Publish Date</label>
+              <input type="checkbox" name="project[publishDate]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Rating</label>
+              <input type="checkbox" name="project[rating]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Type</label>
+              <input type="checkbox" name="project[type]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Runtime</label>
+              <input type="checkbox" name="project[runtime]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Number of Seasons</label>
+              <input type="checkbox" name="project[numSeasons]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Number of Views</label>
+              <input type="checkbox" name="project[numViews]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Channel</label>
+              <input type="checkbox" name="project[channel]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Image</label>
+              <input type="checkbox" name="project[img]" checked/>
+            </div>
+          </div>
           <div id="constraints">
-          
           </div>
 
           <div id="addconstraint" class="ui blue button"><i class="plus icon"></i>Add constraint</div>
@@ -77,7 +123,9 @@
                 {% endif %}
               </span>
               <span class="right floated">
-                {{media.publishdate | date("MMM DD, YYYY") }}
+                {% if media.publishdate %}
+                  {{media.publishdate | date("MMM DD, YYYY") }}
+                {% endif %}
               </span>
             </div>
           </a>
@@ -94,6 +142,7 @@
   <script>
   
   $('.ui.accordion').accordion();
+  $('.ui.checkbox').checkbox();
 
   var i = 0;
   $('#addconstraint').click((e) => {
