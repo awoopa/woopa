@@ -127,7 +127,7 @@ Promise.all([
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, numSeasons, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), null, 'tvshow', 8, images[3]]
+        ["Psych", "A novice sleuth is hired by the police after he cons them into thinking he has psychic powers which help solve crimes.", "Comedy", new Date(2006, 6, 7), 2, 'tvshow', 8, images[3]]
       ),
       t.none(`
         INSERT INTO Media
@@ -157,13 +157,13 @@ Promise.all([
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Deadpool", "A former Special Forces operative turned mercenary is subjected to a rogue experiment that leaves him with accelerated healing powers, adopting the alter ego Deadpool.", "Action", new Date(2016, 2, 12), null, 'movie', 108, images[6]]
+        ["Deadpool", "A former Special Forces operative turned mercenary is subjected to a rogue experiment that leaves him with accelerated healing powers, adopting the alter ego Deadpool.", "Action", new Date(2016, 2, 12), 8, 'movie', 108, images[6]]
       ),
       t.none(`
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, runtime, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Batman v Superman: Dawn of Justice", "Fearing that the actions of Superman are left unchecked, Batman takes on the Man of Steel, while the world wrestles with what kind of a hero it really needs.", "Action", new Date(2016, 3, 25), null, 'movie', 151, images[7]]
+        ["Batman v Superman: Dawn of Justice", "Fearing that the actions of Superman are left unchecked, Batman takes on the Man of Steel, while the world wrestles with what kind of a hero it really needs.", "Action", new Date(2016, 3, 25), 6, 'movie', 151, images[7]]
       ),
       t.none(`
         INSERT INTO Media
@@ -338,6 +338,24 @@ Promise.all([
         (comment, rating, userID, mediaID)
         values($1, $2, $3, $4)`,
         ["it really isn't william's moment.", 1, 1, 2]
+      ),
+      t.none(`
+        INSERT INTO Review_Writes_About
+        (comment, rating, userID, mediaID)
+        values($1, $2, $3, $4)`,
+        ["pretty good movie!", 8, 1, 9]
+      ),
+      t.none(`
+        INSERT INTO Review_Writes_About
+        (comment, rating, userID, mediaID)
+        values($1, $2, $3, $4)`,
+        ["this movie was alright", 6, 1, 10]
+      ),
+      t.none(`
+        INSERT INTO Review_Writes_About
+        (comment, rating, userID, mediaID)
+        values($1, $2, $3, $4)`,
+        ["Terrible tv show, only someone with no taste would watch this. The only reason I watch is to send random screenshots of places I recognize into group chats.", 2, 1, 4]
       ),
 
       // Populate Recommendations
