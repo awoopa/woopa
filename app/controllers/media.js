@@ -122,25 +122,30 @@ module.exports = function(app) {
 
         console.log(req.body.constraints);
 
-        req.body.constraints.forEach((e, i) => {
+        var paramNum = 2;
+
+        req.body.constraints.forEach((e) => {
           switch (e.valuetype) {
             case 'int':
-              values.push(parseInt(e.value));
-              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${i + 2}`;
+              values.push(parseInt(e.value, 10));
+              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${paramNum++}`;
               break;
             case 'float':
               values.push(parseFloat(e.value));
-              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${i + 2}`;
+              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${paramNum++}`;
               break;
             case 'string':
               values.push(e.value);
-              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${i + 2}`;
+              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${paramNum++}`;
               break;
             case 'none':
               q += ` ${e.connective} ${e.not} ${e.field} ${e.comp}`;
               break;
+            default:
+              break;
           }
         });
+
         console.log(q);
         console.log(values);
         return t.batch([

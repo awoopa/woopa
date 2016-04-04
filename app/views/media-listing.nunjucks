@@ -189,9 +189,9 @@
       <div class="field">
         <input type="text" name="constraints[(i)][value]" />
       </div>
-      <div class="field">
-        <input type="text" name="constraints[(i)][valuetype]" value="float" />
-      </div>
+      
+      <input type="hidden" name="constraints[(i)][valuetype]" value="float" />
+      
     </div>
   </script>
 {% endblock %}
