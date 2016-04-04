@@ -11,14 +11,18 @@
 
 	  <p>Published {{ media.publishdate | date("MMM DD, YYYY") }}</p>
 	  <p>Synopsis: {{ media.synopsis }}</p>
-	  <p>Rating: {{ media.rating }}</p>
+    {% if media.rating %}
+	     <p>Rating: {{ media.rating }}</p>
+    {% endif %}
     <br/>
     <br/>
     <div class="column">
-      <h3>Actors:</h3>
-      {% for actor in actors %}
-        <p>{{ actor.actorname }}</p>
-      {% endfor %}
+      {% if actors.length > 0 %}
+        <h3>Actors:</h3>
+        {% for actor in actors %}
+          <p>{{ actor.actorname }}</p>
+        {% endfor %}
+      {% endif %}
     </div>
 	</div>
 	<div class="column">
@@ -77,8 +81,24 @@
 			  </div>
 			</div>
 		{% endif %}
+
+	{% if currentUser %}
+		<button class="ui labeled icon button" id="ur-button" onclick="$('#ur-form').show();">
+			<i class="flag icon"></i>
+			Submit update request
+		</button>
+		<div id="ur-form" style="display:none;">
+			<form action="/ur/" method="post">
+				<div class="content">
+					<input class="hidden" name="mediaID" value="{{media.mediaid}}" readonly />
+					<textarea placeholder="Enter details..." id="details" name="details" style="width:100%;font-size:14px"></textarea>
+				</div>
+				<button class="ui submit button" type="submit">Submit</button>
+			</form>
 		</div>
+	{% endif %}
 	</div>
+
 	<div class="column">
 		<h2>Reviews</h2>
 		<div class="ui one cards">
@@ -123,6 +143,17 @@
   	{% endif %}
 		</div>
 	<div>
+
+	<div class="ui modal" id="update-request-form">
+		<div class="header">Submit update request for {{ media.title }}</div>
+		<form action="/ur/submit" method="post">
+			<div class="content">
+				<textarea placeholder="Enter details..." type="text" id="details"></textarea>
+			</div>
+			<div class="ui approve positive button" type="submit">Submit</div>
+		</form>
+	</div>
+
 </div>
 
 <script>
@@ -135,5 +166,7 @@ $('.new-review .rating').rating({
 $('.dropdown').dropdown({
     action: 'hide'
 });
+
+// $('#update-request-form').modal('attach events', '#ur-button', 'show');
 </script>
 {% endblock %}

@@ -1,14 +1,41 @@
 {% extends 'layout.nunjucks' %}
 
 {% block content %}
-  <h1>{{ title }}</h1>
-  <p>Welcome to {{ title }}</p>
+<div class="ui container flex">
+  <div class="ui middle four cards">
+    <div class="ui red card">
+      <div class="image">
+        <img src="http://imgur.com/S4lZrUv.jpg"/>
+      </div>
+      <div class="content">
+        <div class="ui header huge">Watch</div>
+      </div>
 
-  <h1>Media</h1>
-  <ul>
-    {% for m in media %}
-    <li><a href="/m/{{m.mediaid}}">{{m.mediaid}} {{m.title}} {{m.rating}}</a> </li>
-    {% endfor %}
-  </ul>
-
+    </div>
+    <div class="ui green card">
+      <div class="image">
+        <img src="http://i.imgur.com/eZ8TfZF.jpg"/>
+      </div>
+      <div class="content">
+        <div class="ui header huge">Discover</div>
+      </div>
+    </div>
+    <div class="ui blue card">
+      <div class="image">
+        <img src="http://imgur.com/K0XSPWo.jpg"/>
+      </div>
+      <div class="content">
+        <div class="ui header huge">Recommend</div>
+      </div>
+    </div>
+    <div class="ui yellow card">
+      <div class="image">
+        <img src="http://imgur.com/zfLI9FW.jpg"/>
+      </div>
+      <div class="content">
+        <div class="ui header huge">Woopa!</div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

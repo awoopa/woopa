@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS Actor CASCADE;
 DROP TABLE IF EXISTS WoopaUser CASCADE;
 DROP TABLE IF EXISTS Friends CASCADE;
 DROP TYPE IF EXISTS mediaType CASCADE;
-DROP TABLE IF EXISTS Image CASCADE;
 DROP TABLE IF EXISTS Media CASCADE;
 DROP TABLE IF EXISTS Review_Writes_About CASCADE;
 DROP TABLE IF EXISTS Watched CASCADE;
@@ -30,27 +29,19 @@ CREATE TABLE Friends (
 
 CREATE TYPE mediaType AS ENUM ('movie', 'tvshow', 'video');
 
-
-CREATE TABLE Image (
-  imageID     serial    UNIQUE NOT NULL,
-  img         bytea     NOT NULL,
-  PRIMARY KEY (imageID)
-);
-
-
 CREATE TABLE Media (
   mediaID     serial    UNIQUE NOT NULL,
   title       text      NOT NULL,
   synopsis    text      NOT NULL,
   genre       text      NOT NULL,
   publishDate timestamptz      NOT NULL,
-  rating      decimal,
+  rating      decimal CHECK (rating >= 1 AND rating <= 10),
   type        mediaType NOT NULL,
-  runtime     integer   NULL,
-  numSeasons  integer   NULL,
-  numViews    integer   NULL,
+  runtime     integer   NULL CHECK (runtime > 0),
+  numSeasons  integer   NULL CHECK (numSeasons > 0),
+  numViews    integer   NULL CHECK (numViews > 0),
   channel     text      NULL,
-  imageID     integer   REFERENCES Image (imageID),
+  img         bytea     NOT NULL,
   PRIMARY KEY (mediaID)
 );
 
@@ -60,14 +51,14 @@ CREATE TABLE Review_Writes_About (
   comment     text      NOT NULL,
   rating      integer   NOT NULL CHECK (rating >= 1 AND rating <= 10),
   userID      integer   NOT NULL REFERENCES WoopaUser (userID),
-  mediaID     integer   NOT NULL REFERENCES Media (mediaID),
+  mediaID     integer   NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   timestamp   timestamp with time zone NOT NULL DEFAULT now(),
   PRIMARY KEY (reviewID)
 );
 
 
 CREATE TABLE Recommends_To (
-  mediaID       integer NOT NULL REFERENCES Media (mediaID),
+  mediaID       integer NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   recommenderID integer NOT NULL REFERENCES WoopaUser (userID),
   recommendeeID integer NOT NULL REFERENCES WoopaUser (userID),
   PRIMARY KEY (mediaID, recommenderID, recommendeeID)
@@ -82,7 +73,7 @@ CREATE TABLE Actor (
 
 
 CREATE TABLE Appears_In (
-  mediaID   integer NOT NULL REFERENCES Media (mediaID),
+  mediaID   integer NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   actorName text    NOT NULL,
   dob       timestamptz    NOT NULL,
   FOREIGN KEY (actorName, dob) REFERENCES Actor,
@@ -92,7 +83,7 @@ CREATE TABLE Appears_In (
 
 CREATE TABLE Watched (
   userID    integer   NOT NULL REFERENCES WoopaUser (userID),
-  mediaID   integer   NOT NULL REFERENCES Media (mediaID),
+  mediaID   integer   NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
   timestamp timestamp with time zone NOT NULL DEFAULT now(),
   PRIMARY KEY(userID, mediaID)
 );
@@ -100,7 +91,7 @@ CREATE TABLE Watched (
 CREATE TABLE UpdateRequest_Submits_On_Reviews (
   updateID      serial    UNIQUE NOT NULL,
   submitterID   integer   NOT NULL REFERENCES WoopaUser (userID),
-  mediaID       integer   NOT NULL REFERENCES Media (mediaID),
+  mediaID       integer   NOT NULL REFERENCES Media (mediaID) ON DELETE NO ACTION,
   reviewerID    integer   REFERENCES WoopaUser (userID),
   details       text      NOT NULL,
   PRIMARY KEY(updateID)

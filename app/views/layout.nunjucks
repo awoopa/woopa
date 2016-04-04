@@ -17,6 +17,14 @@
 </head>
 <body>
   {% include "partial-navbar.nunjucks" %}
+  {% if notice %}
+  <div class="ui container">
+    <div class="ui {{notice.type}} message">
+    <div class="header">{{notice.header}}</div>
+    {{notice.message}}
+    </div>
+  </div>
+  {% endif %}
   {% block content %}{% endblock %}
 </body>
 </html>

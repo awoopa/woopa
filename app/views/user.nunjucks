@@ -8,13 +8,13 @@
 	  	<img class="ui small circular image" src="{{ user.email | gravatar }}"> 
 	  	<div class="content">{{ user.username }}</div></h1>
 
-    {% if not is_self %}
-    	{% if currentUser and not are_friends%}
+    {% if not isSelf %}
+    	{% if currentUser and not areFriends%}
   	    <a class="ui labeled icon button" href="/u/{{user.userid}}/add">
   	      <i class="add user icon"></i>
   	      Add Friend
   	    </a>
-  		{% elif currentUser and are_friends %}
+  		{% elif currentUser and areFriends %}
   	    <button class="ui green labeled icon button">
   	      <i class="checkmark icon"></i>
   	      Friends
@@ -57,10 +57,6 @@
 					{{ review.title }}
 				</div>
 				</div>
-		    <div class="extra">
-		      Rating:
-		      <div class="ui star rating" data-rating="4"></div>
-		    </div>
     	</div>
 		{% endfor %}
 		</div>
