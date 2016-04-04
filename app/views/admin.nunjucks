@@ -167,8 +167,14 @@ $(`.delete_m`).click(e => {
   $.ajax({
     url: `/m/${e.target.dataset.mediaid}`,
     type: 'DELETE',
-    success: res => {
-      alert('Media deleted: ' + res);
+    complete: res => {
+      res = JSON.parse(res.responseText);
+      if (res.success) {
+        alert("Media successfully deleted!");
+        document.location.reload(true);
+      } else {
+        alert("Failed to delete: " + res.err.detail)
+      }
     }
   })
 })
@@ -178,8 +184,14 @@ $(`.delete_ur`).click(e => {
   $.ajax({
     url: `/ur/${e.target.dataset.updateid}`,
     type: 'DELETE',
-    success: res => {
-      alert('Update Request deleted: ' + res);
+    complete: res => {
+      res = JSON.parse(res.responseText);
+      if (res.success) {
+        alert("Update request successfully deleted!");
+        document.location.reload(true);
+      } else {
+        alert("Failed to delete: " + res.err.detail)
+      }
     }
   })
 })

@@ -107,7 +107,7 @@ module.exports = function(app) {
       }).then(() => {
         res.redirect('/m');
       }).catch(err => {
-        console.err(err);
+        console.error(err);
       });
     });
 
@@ -156,6 +156,8 @@ module.exports = function(app) {
           });
         }
 
+        q += ` ORDER BY ${req.body.orderbyfield} ${req.body.orderbydir}`;
+
         console.log(q);
         console.log(values);
         return t.batch([
@@ -182,6 +184,10 @@ module.exports = function(app) {
         }
       }).catch(error => {
         console.log(error);
+        res.render('error', {
+          status: 400,
+          message: 'bad request'
+        });
       });
     });
 
@@ -287,13 +293,17 @@ module.exports = function(app) {
         return t.none(`
           DELETE FROM Media WHERE mediaID=$1`,
           req.params.id);
-      }).then(() => {
-        res.status(200);
-        res.send('done');
+      }).then(data => {
+        console.log('delete successful' + data);
+        res.status(200).json({
+          success: true
+        });
       }).catch(err => {
-        console.err(err);
-        res.status(400);
-        res.send('err: ' + err);
+        console.log(err);
+        res.status(400).json({
+          success: false,
+          err: err
+        });
       });
     });
 
@@ -459,7 +469,7 @@ module.exports = function(app) {
           });
         }
       }).catch(err => {
-        console.err(err);
+        console.error(err);
         res.status(500);
         res.render('error', {
           status: 500,
