@@ -91,7 +91,7 @@ CREATE TABLE Watched (
 CREATE TABLE UpdateRequest_Submits_On_Reviews (
   updateID      serial    UNIQUE NOT NULL,
   submitterID   integer   NOT NULL REFERENCES WoopaUser (userID),
-  mediaID       integer   NOT NULL REFERENCES Media (mediaID) ON DELETE CASCADE,
+  mediaID       integer   NOT NULL REFERENCES Media (mediaID) ON DELETE NO ACTION,
   reviewerID    integer   REFERENCES WoopaUser (userID),
   details       text      NOT NULL,
   PRIMARY KEY(updateID)

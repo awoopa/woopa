@@ -15,6 +15,7 @@
       <th>Media</th>
       <th>User</th>
       <th>Details</th>
+      <th></th>
     </tr></thead>
     <tbody>
       {% for ur in urs %}
@@ -32,6 +33,7 @@
       <td>
       {{ur.details}}
       </td>
+      <td> <a href="#" class="delete_ur" data-updateid="{{ur.updateid}}">Delete</span></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -129,7 +131,7 @@
       </td>
       <td>
         <a href="/m/{{media.mediaid}}/edit">Edit</a>
-        <a href="#" class="delete" data-mediaid="{{media.mediaid}}">Delete</span>
+        <a href="#" class="delete_m" data-mediaid="{{media.mediaid}}">Delete</span>
       </td>
       </tr>
       {% endfor %}
@@ -161,12 +163,23 @@ $('select.dropdown').dropdown({
   }
 });
 
-$(`.delete`).click(e => {
+$(`.delete_m`).click(e => {
   $.ajax({
     url: `/m/${e.target.dataset.mediaid}`,
     type: 'DELETE',
     success: res => {
-      alert('media deleted: ' + res);
+      alert('Media deleted: ' + res);
+    }
+  })
+})
+
+$(`.delete_ur`).click(e => {
+  console.log('clicked');
+  $.ajax({
+    url: `/ur/${e.target.dataset.updateid}`,
+    type: 'DELETE',
+    success: res => {
+      alert('Update Request deleted: ' + res);
     }
   })
 })
