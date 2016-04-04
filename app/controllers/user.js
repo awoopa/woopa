@@ -40,10 +40,9 @@ module.exports = function(app) {
                   F.friend_userID = W.userID`,
             req.params.id),
           t.any(`
-            SELECT M.*, I.img
-            FROM Recommends_To RT, Media M, Image I
-            WHERE M.imageID = I.imageID AND
-                  RT.recommenderID = $1 AND
+            SELECT M.*
+            FROM Recommends_To RT, Media M
+            WHERE RT.recommenderID = $1 AND
                   RT.recommendeeID = $1 AND
                   RT.mediaID = M.mediaID`,
             req.params.id)

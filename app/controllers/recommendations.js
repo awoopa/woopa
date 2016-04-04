@@ -21,11 +21,10 @@ module.exports = function(app) {
       return t.batch([
         t.any(`
           SELECT *
-          FROM Recommends_To RT, Media M, WoopaUser U, Image I
+          FROM Recommends_To RT, Media M, WoopaUser U
           WHERE RT.recommendeeID = $1 AND
           RT.mediaID = M.mediaID AND
-          U.userID = RT.recommenderID AND
-          M.imageID = I.ImageID`,
+          U.userID = RT.recommenderID`,
           [req.user.userid]),
         // Highest rated media query
         t.any(`
@@ -34,16 +33,15 @@ module.exports = function(app) {
             FROM Review_Writes_About RWA, Media M
             WHERE RWA.mediaid = M.mediaid GROUP BY M.mediaid)
 
-          SELECT M.*, I.*
-          FROM Media M, Image I,
+          SELECT M.*
+          FROM Media M,
           (SELECT C.mediaID FROM
             (SELECT M.type as type,  max(C.avg) AS mx
              FROM  Media M, calc C
              WHERE C.mediaid = M.mediaid
              GROUP BY M.type) AS A
             JOIN calc C ON A.type = C.type AND A.mx = C.avg)  AS TRM
-          WHERE M.imageID = I.ImageID AND
-          TRM.mediaID = M.mediaID`,
+          WHERE TRM.mediaID = M.mediaID`,
           [req.user.userid]),
         t.any(`
           WITH myfriends AS (
@@ -51,15 +49,15 @@ module.exports = function(app) {
             FROM Friends F
             WHERE F.user_userID=$1)
 
-          SELECT M.*, I.*
-          FROM Media M, Image I
+          SELECT M.*
+          FROM Media M
           WHERE NOT EXISTS
           ((SELECT MF.userID
             FROM myfriends MF)
           EXCEPT
           (SELECT W.userID
             FROM Watched W
-            WHERE W.mediaID = M.mediaID)) AND M.imageID = I.ImageID`,
+            WHERE W.mediaID = M.mediaID))`,
           [req.user.userid]),
         t.any(`
           SELECT F.friend_userID AS userID
@@ -73,16 +71,15 @@ module.exports = function(app) {
             FROM Review_Writes_About RWA, Media M
             WHERE RWA.mediaid = M.mediaid GROUP BY M.mediaid)
 
-          SELECT M.*, I.*
-          FROM Media M, Image I,
+          SELECT M.*
+          FROM Media M,
           (SELECT C.mediaID FROM
             (SELECT M.type as type,  min(C.avg) AS mx
              FROM  Media M, calc C
              WHERE C.mediaid = M.mediaid
              GROUP BY M.type) AS A
             JOIN calc C ON A.type = C.type AND A.mx = C.avg)  AS TRM
-          WHERE M.imageID = I.ImageID AND
-          TRM.mediaID = M.mediaID`,
+          WHERE TRM.mediaID = M.mediaID`,
           [req.user.userid])
       ]);
     })

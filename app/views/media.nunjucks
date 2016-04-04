@@ -93,30 +93,8 @@
 			</form>
 		</div>
 	{% endif %}
-
-
-	  <p>Published {{ media.publishdate | date("MMM DD, YYYY") }}</p>
-	  <p>Synopsis: {{ media.synopsis }}</p>
-	  <p>Rating: {{ media.rating }}</p>
-    <br/>
-    <br/>
-    <div class="column">
-      <h3>Actors:</h3>
-      {% for actor in actors %}
-        <p>{{ actor.actorname }}</p>
-      {% endfor %}
-    </div>
 	</div>
-	<div class="column">
-		<div class="ui statistic">
-		  <div class="value">
-		    {{ recommendations }}
-		  </div>
-		  <div class="label">
-		    Recommendations
-		  </div>
-		</div>
-	</div>
+
 	<div class="column">
 		<h2>Reviews</h2>
 		<div class="ui one cards">
