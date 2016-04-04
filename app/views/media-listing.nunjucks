@@ -98,14 +98,53 @@
   var i = 0;
   $('#addconstraint').click((e) => {
     var template = $('#constraint-template').html().replace(/\(i\)/g, i++);
-    $('#constraints').append(template)
+    $('#constraints').append(template);
+    $('.ui.dropdown').dropdown();
     $('.fieldname').dropdown({
       action: 'activate',
       onChange: (val, text, e) => {
-        console.log(e.context.parentNode.parentNode.parentNode.dataset.constraintNo);
+        var i = e.context.parentNode.parentNode.parentNode.dataset.constraintNo;
+        console.log(i);
+        switch (val) {
+          case 'runtime':
+          case 'numseasons':
+          case 'numviews':
+            $(`input[name='constraints[${i}][valuetype]'`).val('int');
+            break;
+          case 'rating':
+            $(`input[name='constraints[${i}][valuetype]'`).val('float');
+            break;
+          case 'title':
+          case 'synopsis':
+          case 'genre':
+          case 'channel':
+            $(`input[name='constraints[${i}][valuetype]'`).val('string');
+            break;
+        }
       }
     });
-    $('.ui.dropdown:not(.fieldname)').dropdown();
+    $('.comp').dropdown({
+      action: 'activate',
+      onChange: (val, text, e) => {
+        var i = e.context.parentNode.parentNode.parentNode.dataset.constraintNo;
+        console.log(i);
+        switch (val) {
+          case ">":
+          case ">=":
+          case "=":
+          case "<=":
+          case "<":
+          case "!=":
+            $(`input[name='constraints[${i}][value]'`).show();
+            break;
+          case 'IS NULL':
+          case 'IS NOT NULL':
+            $(`input[name='constraints[${i}][value]'`).val('').hide();
+            $(`input[name='constraints[${i}][valuetype]'`).val('none');
+            break;
+        }
+      }
+    });
   });
   </script>
 
@@ -126,25 +165,33 @@
       <div class="field" data-constraint-no="(i)">
         <select class="ui fieldname dropdown" name="constraints[(i)][field]">
           <option value="rating">Rating</option>
+          <option value="title">Title</option>
+          <option value="synopsis">Synopsis</option>
+          <option value="genre">Genre</option>
           <option value="runtime">Runtime</option>
           <option value="numseasons">Number of Seasons</option>
           <option value="numviews">Number of Views</option>
+          <option value="channel">Channel</option>
         </select>
       </div>
-      <div class="field">
-        <select class="ui dropdown" name="constraints[(i)][comp]">
+      <div class="field" data-constraint-no="(i)">
+        <select class="ui comp dropdown" name="constraints[(i)][comp]">
           <option value=">">&gt;</option>
           <option value=">=">&gt;=</option>
           <option value="=">=</option>
           <option value="<=">&lt;</option>
           <option value="<">&lt;=</option>
           <option value="!=">!=</option>
+          <option value="IS NULL">IS NULL</option>
+          <option value="IS NOT NULL">IS NOT NULL</option>
         </select>
       </div>
       <div class="field">
         <input type="text" name="constraints[(i)][value]" />
       </div>
-      <input type="hidden" name="constraints[(i)][valuetype]" />
+      <div class="field">
+        <input type="text" name="constraints[(i)][valuetype]" value="float" />
+      </div>
     </div>
   </script>
 {% endblock %}

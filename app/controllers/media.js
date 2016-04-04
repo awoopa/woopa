@@ -115,18 +115,34 @@ module.exports = function(app) {
     .post((req, res) => {
       db.tx(t => {
         var q = `
-          SELECT M.* 
-          FROM Media M 
+          SELECT M.*
+          FROM Media M
           WHERE LOWER(title) LIKE LOWER($1)`;
         var values = [`%${req.body.comment}%`];
 
         console.log(req.body.constraints);
 
         req.body.constraints.forEach((e, i) => {
-          q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${i + 2}`;
-          values.push(parseFloat(e.value));
+          switch (e.valuetype) {
+            case 'int':
+              values.push(parseInt(e.value));
+              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${i + 2}`;
+              break;
+            case 'float':
+              values.push(parseFloat(e.value));
+              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${i + 2}`;
+              break;
+            case 'string':
+              values.push(e.value);
+              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${i + 2}`;
+              break;
+            case 'none':
+              q += ` ${e.connective} ${e.not} ${e.field} ${e.comp}`;
+              break;
+          }
         });
-
+        console.log(q);
+        console.log(values);
         return t.batch([
           t.any(q, values)
         ]);
