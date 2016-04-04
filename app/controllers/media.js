@@ -461,7 +461,6 @@ module.exports = function(app) {
       }).then(() => {
         res.redirect(`/m/${req.params.id}`);
       }).catch(err => {
-        console.err(err);
         res.render('error', {
           status: 500,
           err: err,

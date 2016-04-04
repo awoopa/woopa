@@ -37,9 +37,9 @@ CREATE TABLE Media (
   publishDate timestamptz      NOT NULL,
   rating      decimal CHECK (rating >= 1 AND rating <= 10),
   type        mediaType NOT NULL,
-  runtime     integer   NULL,
-  numSeasons  integer   NULL,
-  numViews    integer   NULL,
+  runtime     integer   NULL CHECK (runtime > 0),
+  numSeasons  integer   NULL CHECK (numSeasons > 0),
+  numViews    integer   NULL CHECK (numViews > 0),
   channel     text      NULL,
   img         bytea     NOT NULL,
   PRIMARY KEY (mediaID)
