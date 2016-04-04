@@ -35,7 +35,7 @@ CREATE TABLE Media (
   synopsis    text      NOT NULL,
   genre       text      NOT NULL,
   publishDate timestamptz      NOT NULL,
-  rating      decimal,
+  rating      decimal CHECK (rating >= 1 AND rating <= 10),
   type        mediaType NOT NULL,
   runtime     integer   NULL,
   numSeasons  integer   NULL,
