@@ -114,12 +114,21 @@ module.exports = function(app) {
   app.route('/m/search')
     .post((req, res) => {
       db.tx(t => {
+        var q = `
+          SELECT M.* 
+          FROM Media M 
+          WHERE LOWER(title) LIKE LOWER($1)`;
+        var values = [`%${req.body.comment}%`];
+
+        console.log(req.body.constraints);
+
+        req.body.constraints.forEach((e, i) => {
+          q += ` ${e.connective} ${e.field} ${e.comp} $${i + 2}`;
+          values.push(parseFloat(e.value));
+        });
+
         return t.batch([
-          t.any(`
-            SELECT M.*
-            FROM Media M
-            WHERE LOWER(title) LIKE LOWER($1)`,
-            [`%${req.body.comment}%`])
+          t.any(q, values)
         ]);
       }).then(data => {
         if (data[0]) {

@@ -16,12 +16,57 @@
         </a>
       </div>
     </div>
-    <form action="/m/search" method="post">
+
+    <form class="ui fluid form" action="/m/search" method="post">
       <div class="ui fluid action input">
         <input type="text" name="comment" id="comment" placeholder="Search by Title...">
         <button class="ui button">Search</button>
       </div>
+
+      <div class="ui styled fluid accordion field">
+        <div class="title">
+        <i class="dropdown icon"></i>
+        Advanced Search
+        </div>
+        <div class="content">
+          <div id="constraints">
+          <div id="constraintfields" class="fields">
+            <div class="field">
+              <select class="ui dropdown" name="constraints[0][connective]">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+              </select>
+            </div>
+            <div class="field">
+              <select class="ui dropdown" name="constraints[0][field]">
+                <option value="rating">Rating</option>
+                <option value="runtime">Runtime</option>
+                <option value="numseasons">Number of Seasons</option>
+                <option value="numviews">Number of Views</option>
+              </select>
+            </div>
+            <div class="field">
+              <select class="ui dropdown" name="constraints[0][comp]">
+                <option value=">">&gt;</option>
+                <option value=">=">&gt;=</option>
+                <option value="=">=</option>
+                <option value="<=">&lt;</option>
+                <option value="<">&lt;=</option>
+                <option value="!=">!=</option>
+              </select>
+            </div>
+            <div class="field">
+              <input type="text" name="constraints[0][value]" />
+            </div>
+          </div>
+          </div>
+
+          <div id="addconstraint" class="ui blue button"><i class="plus icon"></i>Add constraint</div>
+        </div>
+      </div>
     </form>
+
+    
 
     <div class="ui four stackable link cards">
       {% if medias %}
@@ -70,4 +115,51 @@
       {% endif %}
     </div>
   </div>
+
+
+
+
+  <script>
+  
+  $('.ui.accordion').accordion();
+  $('.ui.dropdown').dropdown();
+  var i = 1;
+  $('#addconstraint').click((e) => {
+    var template = $('#constraint-template').html().replace(/\(i\)/g, i++);
+    $('#constraints').append(template)
+    $('.ui.dropdown').dropdown();
+  });
+  </script>
+
+  <script id="constraint-template" type="text/x-custom-template">
+    <div id="constraintfields" class="fields">
+      <div class="field">
+        <select class="ui dropdown" name="constraints[(i)][connective]">
+          <option value="AND">AND</option>
+          <option value="OR">OR</option>
+        </select>
+      </div>
+      <div class="field">
+        <select class="ui dropdown" name="constraints[(i)][field]">
+          <option value="rating">Rating</option>
+          <option value="runtime">Runtime</option>
+          <option value="numseasons">Number of Seasons</option>
+          <option value="numviews">Number of Views</option>
+        </select>
+      </div>
+      <div class="field">
+        <select class="ui dropdown" name="constraints[(i)][comp]">
+          <option value=">">&gt;</option>
+          <option value=">=">&gt;=</option>
+          <option value="=">=</option>
+          <option value="<=">&lt;</option>
+          <option value="<">&lt;=</option>
+          <option value="!=">!=</option>
+        </select>
+      </div>
+      <div class="field">
+        <input type="text" name="constraints[(i)][value]" />
+      </div>
+    </div>
+  </script>
 {% endblock %}
