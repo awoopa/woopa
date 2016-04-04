@@ -16,12 +16,75 @@
         </a>
       </div>
     </div>
-    <form action="/m/search" method="post">
+
+    <form class="ui fluid form" action="/m/search" method="post">
       <div class="ui fluid action input">
         <input type="text" name="comment" id="comment" placeholder="Search by Title...">
         <button class="ui button">Search</button>
       </div>
+
+      <div class="ui styled fluid accordion field">
+        <div class="title">
+        <i class="dropdown icon"></i>
+        Advanced Search
+        </div>
+        <div class="content">
+          <div class="fields">
+            Show:
+            <div class="ui inline checkbox field">
+              <label>Title</label>
+              <input type="checkbox" name="project[title]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Synopsis</label>
+              <input type="checkbox" name="project[synopsis]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Genre</label>
+              <input type="checkbox" name="project[genre]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Publish Date</label>
+              <input type="checkbox" name="project[publishDate]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Rating</label>
+              <input type="checkbox" name="project[rating]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Type</label>
+              <input type="checkbox" name="project[type]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Runtime</label>
+              <input type="checkbox" name="project[runtime]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Number of Seasons</label>
+              <input type="checkbox" name="project[numSeasons]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Number of Views</label>
+              <input type="checkbox" name="project[numViews]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Channel</label>
+              <input type="checkbox" name="project[channel]" checked/>
+            </div>
+            <div class="ui inline checkbox field">
+              <label>Image</label>
+              <input type="checkbox" name="project[img]" checked/>
+            </div>
+          </div>
+          <div id="constraints">
+          </div>
+
+          <div id="addconstraint" class="ui blue button"><i class="plus icon"></i>Add constraint</div>
+        </div>
+      </div>
     </form>
+
+    
 
     <div class="ui four stackable link cards">
       {% if medias %}
@@ -66,7 +129,9 @@
                 {% endif %}
               </span>
               <span class="right floated">
-                {{media.publishdate | date("MMM DD, YYYY") }}
+                {% if media.publishdate %}
+                  {{media.publishdate | date("MMM DD, YYYY") }}
+                {% endif %}
               </span>
             </div>
           </a>
@@ -76,4 +141,112 @@
       {% endif %}
     </div>
   </div>
+
+
+
+
+  <script>
+  
+  $('.ui.accordion').accordion();
+  $('.ui.checkbox').checkbox();
+
+  var i = 0;
+  $('#addconstraint').click((e) => {
+    var template = $('#constraint-template').html().replace(/\(i\)/g, i++);
+    $('#constraints').append(template);
+    $('.ui.dropdown').dropdown();
+    $('.fieldname').dropdown({
+      action: 'activate',
+      onChange: (val, text, e) => {
+        var i = e.context.parentNode.parentNode.parentNode.dataset.constraintNo;
+        console.log(i);
+        switch (val) {
+          case 'runtime':
+          case 'numseasons':
+          case 'numviews':
+            $(`input[name='constraints[${i}][valuetype]'`).val('int');
+            break;
+          case 'rating':
+            $(`input[name='constraints[${i}][valuetype]'`).val('float');
+            break;
+          case 'title':
+          case 'synopsis':
+          case 'genre':
+          case 'channel':
+            $(`input[name='constraints[${i}][valuetype]'`).val('string');
+            break;
+        }
+      }
+    });
+    $('.comp').dropdown({
+      action: 'activate',
+      onChange: (val, text, e) => {
+        var i = e.context.parentNode.parentNode.parentNode.dataset.constraintNo;
+        console.log(i);
+        switch (val) {
+          case ">":
+          case ">=":
+          case "=":
+          case "<=":
+          case "<":
+          case "!=":
+            $(`input[name='constraints[${i}][value]'`).show();
+            break;
+          case 'IS NULL':
+          case 'IS NOT NULL':
+            $(`input[name='constraints[${i}][value]'`).val('').hide();
+            $(`input[name='constraints[${i}][valuetype]'`).val('none');
+            break;
+        }
+      }
+    });
+  });
+  </script>
+
+  <script id="constraint-template" type="text/x-custom-template">
+    <div id="constraintfields" class="fields">
+      <div class="field">
+        <select class="ui dropdown" name="constraints[(i)][connective]">
+          <option value="AND">AND</option>
+          <option value="OR">OR</option>
+        </select>
+      </div>
+      <div class="field">
+        <select class="ui dropdown" name="constraints[(i)][not]">
+          <option value=" ">&nbsp;</option>
+          <option value="NOT">NOT</option>
+        </select>
+      </div>
+      <div class="field" data-constraint-no="(i)">
+        <select class="ui fieldname dropdown" name="constraints[(i)][field]">
+          <option value="rating">Rating</option>
+          <option value="title">Title</option>
+          <option value="synopsis">Synopsis</option>
+          <option value="genre">Genre</option>
+          <option value="runtime">Runtime</option>
+          <option value="numseasons">Number of Seasons</option>
+          <option value="numviews">Number of Views</option>
+          <option value="channel">Channel</option>
+        </select>
+      </div>
+      <div class="field" data-constraint-no="(i)">
+        <select class="ui comp dropdown" name="constraints[(i)][comp]">
+          <option value=">">&gt;</option>
+          <option value=">=">&gt;=</option>
+          <option value="=">=</option>
+          <option value="<=">&lt;</option>
+          <option value="<">&lt;=</option>
+          <option value="!=">!=</option>
+          <option value="IS NULL">IS NULL</option>
+          <option value="IS NOT NULL">IS NOT NULL</option>
+        </select>
+      </div>
+      <div class="field">
+        <input type="text" name="constraints[(i)][value]" />
+      </div>
+      
+      <input type="hidden" name="constraints[(i)][valuetype]" value="float" />
+      
+    </div>
+  </script>
 {% endblock %}
