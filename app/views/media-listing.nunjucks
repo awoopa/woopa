@@ -165,15 +165,20 @@
           case 'numseasons':
           case 'numviews':
             $(`input[name='constraints[${i}][valuetype]'`).val('int');
+            $(`input[name='constraints[${i}][value]'`).attr('type', 'number');
+            $(`input[name='constraints[${i}][value]'`).attr('step', 1);
             break;
           case 'rating':
             $(`input[name='constraints[${i}][valuetype]'`).val('float');
+            $(`input[name='constraints[${i}][value]'`).attr('type', 'number');
+            $(`input[name='constraints[${i}][value]'`).attr('step', 0.1);
             break;
           case 'title':
           case 'synopsis':
           case 'genre':
           case 'channel':
             $(`input[name='constraints[${i}][valuetype]'`).val('string');
+            $(`input[name='constraints[${i}][value]'`).attr('type', 'text');
             break;
         }
       }
@@ -242,7 +247,7 @@
         </select>
       </div>
       <div class="field">
-        <input type="text" name="constraints[(i)][value]" />
+        <input type="number" name="constraints[(i)][value]" step="0.1" required />
       </div>
       
       <input type="hidden" name="constraints[(i)][valuetype]" value="float" />
