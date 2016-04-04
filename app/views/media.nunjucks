@@ -11,14 +11,18 @@
 
 	  <p>Published {{ media.publishdate | date("MMM DD, YYYY") }}</p>
 	  <p>Synopsis: {{ media.synopsis }}</p>
-	  <p>Rating: {{ media.rating }}</p>
+    {% if media.rating %}
+	     <p>Rating: {{ media.rating }}</p>
+    {% endif %}
     <br/>
     <br/>
     <div class="column">
-      <h3>Actors:</h3>
-      {% for actor in actors %}
-        <p>{{ actor.actorname }}</p>
-      {% endfor %}
+      {% if actors.length > 0 %}
+        <h3>Actors:</h3>
+        {% for actor in actors %}
+          <p>{{ actor.actorname }}</p>
+        {% endfor %}
+      {% endif %}
     </div>
 	</div>
 	<div class="column">
