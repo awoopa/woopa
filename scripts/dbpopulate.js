@@ -315,8 +315,6 @@ Promise.all([
       ),
 
       // Populate Reviews
-
-
       t.none(`
         INSERT INTO Review_Writes_About
         (comment, rating, userID, mediaID)
@@ -329,8 +327,8 @@ Promise.all([
         values($1, $2, $3, $4)`,
         [":^)", 5, 4, 3]
       ),
-      
-      //My moment - community rec good 
+
+      // My moment - community rec good
       t.none(`
         INSERT INTO Review_Writes_About
         (comment, rating, userID, mediaID)
@@ -355,9 +353,8 @@ Promise.all([
         values($1, $2, $3, $4)`,
         [":^)", 5, 4, 1]
       ),
-      
-      
-      //walking dead - community rec to use to change aggregation
+
+      // walking dead - community rec to use to change aggregation
       t.none(`
         INSERT INTO Review_Writes_About
         (comment, rating, userID, mediaID)
@@ -365,7 +362,7 @@ Promise.all([
         ["Pretty good show", 7, 5, 14]
       ),
 
-      //Game of thrones - community rec good
+      // Game of thrones - community rec good
       t.none(`
         INSERT INTO Review_Writes_About
         (comment, rating, userID, mediaID)
@@ -399,7 +396,7 @@ Promise.all([
         ["Even though they are animals this is really relatable to real life. I love it.", 8, 5, 7]
       ),
 
-      //Batman v sumperman - communty rec for lowest avg rating
+      // Batman v Superman - communty rec for lowest avg rating
       t.none(`
         INSERT INTO Review_Writes_About
         (comment, rating, userID, mediaID)
@@ -421,7 +418,7 @@ Promise.all([
         ["it really isn't william's moment.", 1, 1, 2]
       ),
 
-      //Psych - communuty rec for lowest avg rating
+      // Psych - communuty rec for lowest avg rating
       t.none(`
         INSERT INTO Review_Writes_About
         (comment, rating, userID, mediaID)
@@ -615,7 +612,6 @@ Promise.all([
         `INSERT INTO Watched (userID, mediaID, timestamp) values($1, $2, $3)`,
         [4, 11, new Date(2016, 3, 27)]
       )
-      
     ]);
   })
   .then(() => {
