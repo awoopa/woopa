@@ -199,7 +199,7 @@ Promise.all([
         INSERT INTO Media
         (title, synopsis, genre, publishDate, rating, type, numSeasons, img)
         values($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-        ["Game of Thrones", "While a civil war brews between several noble families in Westeros, the children of the former rulers of the land attempt to rise up to power. Meanwhile a forgotten race, bent on destruction, return after thousands of years in the North.", "Drama", new Date(2011, 9, 9), 6.5, 'tvshow', 7.5, images[12]]
+        ["Game of Thrones", "While a civil war brews between several noble families in Westeros, the children of the former rulers of the land attempt to rise up to power. Meanwhile a forgotten race, bent on destruction, return after thousands of years in the North.", "Drama", new Date(2011, 9, 9), 7.5, 'tvshow', 6, images[12]]
       ),
       t.none(`
         INSERT INTO Media
