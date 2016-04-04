@@ -107,7 +107,7 @@ module.exports = function(app) {
       }).then(() => {
         res.redirect('/m');
       }).catch(err => {
-        console.err(err);
+        console.error(err);
       });
     });
 
@@ -244,16 +244,20 @@ module.exports = function(app) {
     })
     .delete(isAdmin, (req, res) => {
       db.tx(t => {
-        return t.none(`
+        return t.any(`
           DELETE FROM Media WHERE mediaID=$1`,
           req.params.id);
-      }).then(() => {
-        res.status(200);
-        res.send('done');
+      }).then(data => {
+        console.log('delete successful' + data);
+        res.status(200).json({
+          success: true
+        });
       }).catch(err => {
-        console.err(err);
-        res.status(400);
-        res.send('err: ' + err);
+        console.log(err);
+        res.status(400).json({
+          success: false,
+          err: err
+        });
       });
     });
 
@@ -419,7 +423,7 @@ module.exports = function(app) {
           });
         }
       }).catch(err => {
-        console.err(err);
+        console.error(err);
         res.status(500);
         res.render('error', {
           status: 500,
