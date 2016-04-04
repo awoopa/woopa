@@ -123,7 +123,7 @@ module.exports = function(app) {
         console.log(req.body.constraints);
 
         req.body.constraints.forEach((e, i) => {
-          q += ` ${e.connective} ${e.field} ${e.comp} $${i + 2}`;
+          q += ` ${e.connective} ${e.not} ${e.field} ${e.comp} $${i + 2}`;
           values.push(parseFloat(e.value));
         });
 

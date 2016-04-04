@@ -30,35 +30,7 @@
         </div>
         <div class="content">
           <div id="constraints">
-          <div id="constraintfields" class="fields">
-            <div class="field">
-              <select class="ui dropdown" name="constraints[0][connective]">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
-              </select>
-            </div>
-            <div class="field">
-              <select class="ui dropdown" name="constraints[0][field]">
-                <option value="rating">Rating</option>
-                <option value="runtime">Runtime</option>
-                <option value="numseasons">Number of Seasons</option>
-                <option value="numviews">Number of Views</option>
-              </select>
-            </div>
-            <div class="field">
-              <select class="ui dropdown" name="constraints[0][comp]">
-                <option value=">">&gt;</option>
-                <option value=">=">&gt;=</option>
-                <option value="=">=</option>
-                <option value="<=">&lt;</option>
-                <option value="<">&lt;=</option>
-                <option value="!=">!=</option>
-              </select>
-            </div>
-            <div class="field">
-              <input type="text" name="constraints[0][value]" />
-            </div>
-          </div>
+          
           </div>
 
           <div id="addconstraint" class="ui blue button"><i class="plus icon"></i>Add constraint</div>
@@ -122,12 +94,18 @@
   <script>
   
   $('.ui.accordion').accordion();
-  $('.ui.dropdown').dropdown();
-  var i = 1;
+
+  var i = 0;
   $('#addconstraint').click((e) => {
     var template = $('#constraint-template').html().replace(/\(i\)/g, i++);
     $('#constraints').append(template)
-    $('.ui.dropdown').dropdown();
+    $('.fieldname').dropdown({
+      action: 'activate',
+      onChange: (val, text, e) => {
+        console.log(e.context.parentNode.parentNode.parentNode.dataset.constraintNo);
+      }
+    });
+    $('.ui.dropdown:not(.fieldname)').dropdown();
   });
   </script>
 
@@ -140,7 +118,13 @@
         </select>
       </div>
       <div class="field">
-        <select class="ui dropdown" name="constraints[(i)][field]">
+        <select class="ui dropdown" name="constraints[(i)][not]">
+          <option value=" ">&nbsp;</option>
+          <option value="NOT">NOT</option>
+        </select>
+      </div>
+      <div class="field" data-constraint-no="(i)">
+        <select class="ui fieldname dropdown" name="constraints[(i)][field]">
           <option value="rating">Rating</option>
           <option value="runtime">Runtime</option>
           <option value="numseasons">Number of Seasons</option>
@@ -160,6 +144,7 @@
       <div class="field">
         <input type="text" name="constraints[(i)][value]" />
       </div>
+      <input type="hidden" name="constraints[(i)][valuetype]" />
     </div>
   </script>
 {% endblock %}
