@@ -29,26 +29,22 @@ module.exports = function(app) {
 
       query += " ORDER BY rating DESC NULLS LAST";
 
-      db.tx(t => {
-        return t.batch([
-          t.any(query)
-        ]);
-      })
+      db.any(query)
       .then(data => {
-        for (var i = 0; i < data[0].length; i++) {
-          data[0][i].img = `data:image/png;base64,${
-            new Buffer(data[0][i].img, 'hex').toString('base64')
+        for (var i = 0; i < data.length; i++) {
+          data[i].img = `data:image/png;base64,${
+            new Buffer(data[i].img, 'hex').toString('base64')
           }`;
         }
 
         res.render('media-listing', {
-          medias: data[0],
+          medias: data,
           title: 'Browse'
         });
       });
     })
     .post(isAdmin, upload.single('image'), (req, res) => {
-      db.tx(t => {
+      
         var query;
 
         switch (req.body.type) {
@@ -103,8 +99,8 @@ module.exports = function(app) {
             ]);
             break;
         }
-        return t.batch([query]);
-      }).then(() => {
+      db.none(query)
+      .then(() => {
         res.redirect('/m');
       }).catch(err => {
         console.error(err);
